@@ -1,0 +1,370 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #2b2c2b;
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto", "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  color: #bbbbbb;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+#root {
+  height: calc(100vh - 12px);
+}
+
+hr {
+  height: 3px;
+}
+
+/* scrollbar custom */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #2b2c2b;
+  border-radius: 10px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+/* 스크롤바들이 만나는 하단 모서리 */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.Pane1,
+.Pane2 {
+  overflow: auto;
+  position: static;
+  /* height: calc(100% - 120px); */
+  min-width: 0%;
+  min-height: 0%;
+  height: 100%;
+}
+
+.Resizer {
+  z-index: 1;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding;
+  background-clip: padding-box;
+}
+
+.Resizer:hover {
+  -webkit-transition: all 2s ease;
+  transition: all 2s ease;
+}
+
+.Resizer.horizontal {
+  height: 4px;
+  margin-bottom: -7px;
+  cursor: row-resize;
+  width: 100vw;
+  border-radius: 5px;
+}
+
+.Resizer.horizontal:hover {
+  /* border-top: 2px solid greenyellow;
+  border-bottom: 2px solid greenyellow; */
+  background-color: #f4e5ad;
+  background-size: 2px;
+}
+
+.Resizer.vertical {
+  width: 4px;
+  height: 100vh;
+  margin-right: -7px;
+  cursor: col-resize;
+  border-radius: 5px;
+}
+
+.Resizer.vertical:hover {
+  /* border-left: 2px solid greenyellow;
+  border-right: 2px solid greenyellow; */
+  background-color: #f4e5ad;
+  background-size: 2px;
+}
+.Resizer.disabled {
+  cursor: not-allowed;
+}
+.Resizer.disabled:hover {
+  border-color: transparent;
+}
+
+code {
+  font-family: "JetBrains Mono", "Pretendard Variable", Pretendard,
+    -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.kSMuXp {
+  padding: 0 20px 0 20px !important;
+}
+
+.terminalContainer form {
+  font-family: "JetBrains Mono", "Pretendard Variable", Pretendard,
+    -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+.terminalContainer input {
+  font-family: "JetBrains Mono", "Pretendard Variable", Pretendard,
+    -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+.terminalContainer span {
+  font-family: "JetBrains Mono", "Pretendard Variable", Pretendard,
+    -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+.terminalContainer div {
+  font-family: "JetBrains Mono", "Pretendard Variable", Pretendard,
+    -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+textarea::-webkit-resizer {
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent #797979 #797979 transparent;
+  border-radius: 0 0 5px 0;
+}
+
+input:-internal-autofill-selected {
+  appearance: menulist-button;
+  background-image: none !important;
+  background-color: transparent !important;
+  color: fieldtext !important;
+}
+
+/* autofill bg */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-transition: background-color 9999s ease-out;
+  -webkit-text-fill-color: #fff !important;
+}
+
+/* text selection color */
+::-moz-selection {
+  /* Code for Firefox */
+  color: white;
+  background: #a34dc1;
+}
+
+::selection {
+  color: white;
+  background: #a34dc1;
+}
+
+.css-14gcpgt-MuiTreeView-root p {
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto", "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+.contexify-crow {
+  --contexify-menu-bgColor: rgba(40, 40, 40, 0.98);
+  --contexify-separator-color: #4c4c4c;
+  --contexify-item-color: #fff;
+  --contexify-activeItem-color: #fff;
+  --contexify-activeItem-bgColor: #786f7b;
+  --contexify-rightSlot-color: #6f6e77;
+  --contexify-activeRightSlot-color: #fff;
+  --contexify-arrow-color: #6f6e77;
+  --contexify-activeArrow-color: #fff;
+  --contexify-menu-minWidth: 120px;
+}
+
+.contexify-crow-nav {
+  --contexify-menu-bgColor: rgba(40, 40, 40, 0.98);
+  --contexify-separator-color: #4c4c4c;
+  --contexify-item-color: #fff;
+  --contexify-activeItem-color: #fff;
+  --contexify-activeItem-bgColor: #786f7b;
+  --contexify-rightSlot-color: #6f6e77;
+  --contexify-activeRightSlot-color: #fff;
+  --contexify-arrow-color: #6f6e77;
+  --contexify-activeArrow-color: #fff;
+  --contexify-menu-minWidth: 110px;
+}
+
+:root {
+  --toastify-color-light: #fff;
+  /* --toastify-color-dark: #121212; */
+  --toastify-color-dark: #3c3c3c;
+  /* --toastify-color-info: #3498db; */
+  --toastify-color-info: #9187ff;
+  /* --toastify-color-success: #07bc0c; */
+  --toastify-color-success: #d4a8e3;
+  /* --toastify-color-warning: #f1c40f; */
+  --toastify-color-warning: #ffdc62;
+  /* --toastify-color-error: #e74c3c; */
+  --toastify-color-error: #f97988;
+  --toastify-color-transparent: rgba(255, 255, 255, 0.7);
+
+  --toastify-icon-color-info: var(--toastify-color-info);
+  --toastify-icon-color-success: var(--toastify-color-success);
+  --toastify-icon-color-warning: var(--toastify-color-warning);
+  --toastify-icon-color-error: var(--toastify-color-error);
+
+  --toastify-toast-width: 320px;
+  --toastify-toast-background: #fff;
+  --toastify-toast-min-height: 64px;
+  --toastify-toast-max-height: 800px;
+  --toastify-font-family: sans-serif;
+  --toastify-z-index: 9999;
+
+  --toastify-text-color-light: #757575;
+  --toastify-text-color-dark: #fff;
+
+  /* //Used only for colored theme */
+  --toastify-text-color-info: #fff;
+  --toastify-text-color-success: #fff;
+  --toastify-text-color-warning: #fff;
+  --toastify-text-color-error: #fff;
+
+  --toastify-spinner-color: #616161;
+  --toastify-spinner-color-empty-area: #e0e0e0;
+
+  /* // Used when no type is provided
+  // toast("**hello**") */
+  --toastify-color-progress-light: linear-gradient(
+    to right,
+    #4cd964,
+    #5ac8fa,
+    #007aff,
+    #34aadc,
+    #5856d6,
+    #ff2d55
+  );
+  /* // Used when no type is provided */
+  --toastify-color-progress-dark: #bb86fc;
+  --toastify-color-progress-info: var(--toastify-color-info);
+  --toastify-color-progress-success: var(--toastify-color-success);
+  --toastify-color-progress-warning: var(--toastify-color-warning);
+  --toastify-color-progress-error: var(--toastify-color-error);
+}
+
+.Toastify div {
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto", "Apple SD Gothic Neo",
+    "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+/* sweet alert 2 */
+.swal2-container.swal2-center.swal2-backdrop-show {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+.swal2-modal.swal2-popup {
+  padding: 40px 40px 38px !important;
+  border-radius: 10px !important;
+  width: fit-content !important;
+  background-color: #3c3c3c !important;
+  color: white !important;
+}
+
+.swal2-title {
+  font-size: 18px !important;
+  color: white !important;
+  font-weight: 400 !important;
+  width: 100% !important;
+}
+
+.swal2-input {
+  border-radius: 10px !important;
+  background-color: #797979 !important;
+  color: white !important;
+}
+
+.swal2-input:focus {
+  border: 2px solid #d4a8e3 !important;
+  box-shadow: none !important;
+}
+
+.swal2-actions {
+  margin-top: 10px !important;
+}
+
+/* .swal2-styled.swal2-styled {
+  font-size: 14px !important;
+  padding: 0 !important;
+  width: 70px !important;
+  height: 35px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+} */
+
+.swal2-styled.swal2-confirm {
+  font-size: 14px !important;
+  padding: 0 !important;
+  width: 70px !important;
+  height: 35px !important;
+  background-color: #d4a8e3 !important;
+}
+
+.swal2-styled.swal2-confirm:hover {
+  background-color: #a34dc1 !important;
+  box-shadow: none !important;
+}
+.swal2-styled.swal2-confirm:focus {
+  box-shadow: none !important;
+}
+
+.swal2-styled.swal2-cancel {
+  font-size: 14px !important;
+  padding: 0 !important;
+  width: 70px !important;
+  height: 35px !important;
+  background-color: #797979 !important;
+}
+
+.swal2-styled.swal2-cancel:hover {
+  background-color: #626262 !important;
+  box-shadow: none !important;
+}
+
+/* mini loading font */
+.mini-loading div {
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+  BlinkMacSystemFont, system-ui, "Segoe UI", "Roboto", "Apple SD Gothic Neo",
+  "Noto Sans KR", "Malgun Gothic", "Oxygen", "Ubuntu", "Cantarell",
+  "Fira Sans", "Droid Sans", "Helvetica Neue", "Apple Color Emoji",
+  "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
