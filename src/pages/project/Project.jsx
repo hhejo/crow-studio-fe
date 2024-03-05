@@ -8,7 +8,7 @@ import SplitPane from "react-split-pane";
 import { TiArrowRightThick } from "react-icons/ti";
 
 import { getTeamDetail } from "../../redux/teamSlice";
-import { startLoading, endLoading } from "../../redux/globalSlice";
+import { startLoading, endLoading } from "../../redux/global-slice";
 
 import fileApi from "../../api/fileApi";
 import editorApi from "../../api/editorApi";

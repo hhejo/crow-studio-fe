@@ -7,7 +7,7 @@ import compileApi from "../../../api/compileApi";
 import editorApi from "../../../api/editorApi";
 import fileApi from "../../../api/fileApi";
 
-import { startLoading, endLoading } from "../../../redux/globalSlice";
+import { startLoading, endLoading } from "../../../redux/global-slice";
 
 import { BsPlayFill } from "react-icons/bs";
 import { BsStopFill } from "react-icons/bs";

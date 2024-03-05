@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import teamApi from "../../api/teamApi";
 import api from "../../api/api";
 
-import { startLoading, endLoading } from "../../redux/globalSlice";
+import { startLoading, endLoading } from "../../redux/global-slice";
 
 import Header from "../../components/Header";
 import Loading from "../../components/Loading";

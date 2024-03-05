@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Loading from "./Loading";
 
 import api from "../api/api";
-import { startLoading, endLoading } from "../redux/globalSlice";
+import { startLoading, endLoading } from "../redux/global-slice";
 
 const WithLoading = ({ children }) => {
   const dispatch = useDispatch();

@@ -1,32 +1,31 @@
-import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-
 import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
-
 import { logout } from "../redux/user-slice";
 
 const MENU_ID = "nav-menu-id";
 
+// Header
 const Header = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [dispatch, navigate] = [useDispatch(), useNavigate()];
   const { isLoggedIn, uid, nickname } = useSelector(
     (state) => state.user.value
   );
+  const { show } = useContextMenu({ id: MENU_ID });
 
+  // clickProfileHandler
   const clickProfileHandler = (e) => displayMenu(e);
 
+  // logoutHandler
   const logoutHandler = () => {
     dispatch(logout());
     toast.success("로그아웃 성공");
     navigate("/", { replace: true });
   };
 
-  const { show } = useContextMenu({ id: MENU_ID });
-
+  // displayMenu
   const displayMenu = (e) => {
     show({ event: e });
     return e;
@@ -46,6 +45,7 @@ const Header = () => {
           </>
         )}
       </Menu>
+      {/* Nav */}
       <nav className="flex flex-wrap items-center justify-center px-2 py-1 bg-component_item_bg_dark m-3 rounded-lg">
         <div className="w-full flex relative px-12 justify-between">
           {/* 로고, 아이콘 */}
@@ -69,12 +69,14 @@ const Header = () => {
           {/* 프로필 */}
           <div className="flex item-center mt-2.5">
             <div className="cursor-pointer mt-[3px]">
+              {/* 로그인 O */}
               {isLoggedIn && (
                 <div className="hover:text-white" onClick={clickProfileHandler}>
-                  {" "}
-                  {nickname}{" "}
+                  {nickname}
                 </div>
               )}
+
+              {/* 로그인 X */}
               {!isLoggedIn && (
                 <div className="flex justify-end items-center">
                   <div

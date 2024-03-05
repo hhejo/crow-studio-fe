@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 import compileApi from "../../../api/compileApi";
 
-import { startLoading, endLoading } from "../../../redux/globalSlice";
+import { startLoading, endLoading } from "../../../redux/global-slice";
 
 import { BsPlayFill } from "react-icons/bs";
 import { BsStopFill } from "react-icons/bs";
