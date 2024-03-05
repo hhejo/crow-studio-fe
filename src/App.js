@@ -1,19 +1,17 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
-
-import { getUser } from "./redux/userSlice";
-
+import { auth } from "./firebase";
+import { setCurrentUser } from "./redux/user-slice";
 import ProtectedRoute from "./route/ProtectedRoute";
 import PrivateRoute from "./route/PrivateRoute";
-
-import Intro from "./pages/intro/Intro";
-import Login from "./pages/login/Login";
-import Signup from "./pages/signup/Signup";
+import Intro from "./pages/intro";
+import Login from "./pages/login";
+import Signup from "./pages/signup";
 import Mypage from "./pages/mypage/Mypage";
 import Teams from "./pages/teams/Teams";
 import TeamCreate from "./pages/team-create/TeamCreate";
@@ -23,9 +21,9 @@ import NotFound from "./pages/not-found/NotFound";
 import Forbidden from "./pages/forbidden/Forbidden";
 import YMonaco from "./pages/code-share/YMonaco";
 // import Redirect from "./pages/redirect/Redirect";
-
 import WithLoading from "./components/WithLoading";
 
+// router
 const router = createBrowserRouter([
   {
     path: "/",
@@ -100,20 +98,21 @@ const router = createBrowserRouter([
     ),
   },
   { path: "/project/code-share", element: <YMonaco /> },
-  // { path: "/redirect", element: <Redirect /> },
   { path: "/403", element: <Forbidden /> },
   { path: "/404", element: <NotFound /> },
   { path: "*", element: <NotFound /> },
+  // { path: "/redirect", element: <Redirect /> },
 ]);
 
+// App
 function App() {
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.user.value.isLoggedIn);
   AOS.init();
   useEffect(() => {
-    const accessToken = localStorage.getItem("access-token");
-    if (accessToken) dispatch(getUser());
-  }, [dispatch, isLoggedIn]);
+    auth.onAuthStateChanged((user) => {
+      if (user) dispatch(setCurrentUser(user)); // 로그인 된 상태이면 로그인 유저 정보를 Redux에 저장
+    });
+  }, [dispatch]);
 
   return (
     <>

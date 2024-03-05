@@ -1,32 +1,31 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
+import { auth } from "../firebase";
 import userApi from "../api/userApi";
 
 // 초기 상태값
 const initialState = {
   value: {
     isLoggedIn: false,
-    mySeq: "",
-    myEmail: "",
-    myNickname: "",
-    myImageURL: "",
-    myGitUsername: "",
-    myGitToken: "",
+    accessToken: "",
+    uid: "",
+    email: "",
+    nickname: "",
+    imageURL: "",
+    gitUsername: "",
+    gitToken: "",
   },
 };
 
-// JWT에 해당하는 유저 정보 조희
-export const getUser = createAsyncThunk(
-  "user/getUser",
-  async (_, { rejectWithValue }) => {
+// setCurrentUser: 로그인 된 현재 사용자 정보를 Redux에 설정
+export const setCurrentUser = createAsyncThunk(
+  "user/setCurrentUser",
+  async (user, { rejectWithValue }) => {
     try {
-      const response = await userApi.getUser();
-      return response.data;
+      const { accessToken, uid, email } = user;
+      const { displayName: nickname, photoURL: imageURL } = user;
+      return { accessToken, uid, email, nickname, imageURL };
     } catch (err) {
-      if (!err.reponse) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
+      return rejectWithValue(err);
     }
   }
 );
@@ -79,37 +78,30 @@ export const updateGitAuth = createAsyncThunk(
   }
 );
 
+// userSlice
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
     logout: (state) => {
-      localStorage.removeItem("access-token");
+      auth.signOut();
       state.value = initialState.value;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getUser.fulfilled, (state, action) => {
-        const {
-          userId,
-          userNickname,
-          userProfile,
-          userSeq,
-          userGitUsername,
-          userGitToken,
-        } = action.payload;
+      .addCase(setCurrentUser.fulfilled, (state, action) => {
+        const { accessToken, uid, email, nickname, imageURL } = action.payload;
         state.value = {
           isLoggedIn: true,
-          myEmail: userId,
-          myNickname: userNickname,
-          myImageURL: userProfile,
-          mySeq: userSeq,
-          myGitUsername: userGitUsername,
-          myGitToken: userGitToken,
+          accessToken,
+          uid,
+          email,
+          nickname,
+          imageURL,
         };
       })
-      .addCase(getUser.rejected, (state) => {
+      .addCase(setCurrentUser.rejected, (state, action) => {
         state.value = initialState.value;
       })
       .addCase(updateNickname.fulfilled, (state, action) => {
