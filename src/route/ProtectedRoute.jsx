@@ -1,12 +1,9 @@
-import React from "react";
 import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ProtectedRoute = ({ children }) => {
-  const isLoggedIn = !!localStorage.getItem("access-token");
-
-  if (isLoggedIn) {
-    return <Navigate to="/teams" replace />;
-  }
+  const { isLoggedIn } = useSelector((state) => state.user.value);
+  if (isLoggedIn) return <Navigate to="/teams" replace />;
   return children;
 };
 
