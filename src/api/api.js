@@ -15,9 +15,7 @@ const api = axios.create({ baseURL, headers });
 api.interceptors.request.use((config) => {
   if (!config.headers.Authorization) {
     const accessToken = localStorage.getItem("access-token");
-    if (accessToken) {
-      config.headers.Authorization = accessToken;
-    }
+    if (accessToken) config.headers.Authorization = accessToken;
   }
   return config;
 });

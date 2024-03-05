@@ -22,7 +22,9 @@ import Project from "./pages/project/Project";
 import NotFound from "./pages/not-found/NotFound";
 import Forbidden from "./pages/forbidden/Forbidden";
 import YMonaco from "./pages/code-share/YMonaco";
-import Redirect from "./pages/redirect/Redirect";
+// import Redirect from "./pages/redirect/Redirect";
+
+import WithLoading from "./components/WithLoading";
 
 const router = createBrowserRouter([
   {
@@ -97,43 +99,24 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
-  {
-    path: "/project/code-share",
-    element: <YMonaco />,
-  },
-  {
-    path: "/redirect",
-    element: <Redirect />,
-  },
-  {
-    path: "/403",
-    element: <Forbidden />,
-  },
-  {
-    path: "/404",
-    element: <NotFound />,
-  },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
+  { path: "/project/code-share", element: <YMonaco /> },
+  // { path: "/redirect", element: <Redirect /> },
+  { path: "/403", element: <Forbidden /> },
+  { path: "/404", element: <NotFound /> },
+  { path: "*", element: <NotFound /> },
 ]);
 
 function App() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.user.value.isLoggedIn);
-
   AOS.init();
-
   useEffect(() => {
     const accessToken = localStorage.getItem("access-token");
-    if (accessToken) {
-      dispatch(getUser());
-    }
+    if (accessToken) dispatch(getUser());
   }, [dispatch, isLoggedIn]);
 
   return (
-    <React.Fragment>
+    <>
       <RouterProvider router={router} />
       <ToastContainer
         position="bottom-right"
@@ -148,7 +131,7 @@ function App() {
         theme="dark"
         className="rounded-[10px] text-[16px]"
       />
-    </React.Fragment>
+    </>
   );
 }
 
