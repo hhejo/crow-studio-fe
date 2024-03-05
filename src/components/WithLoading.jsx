@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Loading from "./Loading";
@@ -34,10 +34,10 @@ const WithLoading = ({ children }) => {
   }, [dispatch]);
 
   return (
-    <React.Fragment>
+    <>
       {isLoading && <Loading />}
       {children}
-    </React.Fragment>
+    </>
   );
 };
 

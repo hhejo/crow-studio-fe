@@ -7,7 +7,7 @@ import withReactContent from "sweetalert2-react-content";
 import ReactTooltip from "react-tooltip";
 
 import { getTeamDetail, modifyProjectType } from "../../redux/teamSlice";
-import { searchUser } from "../../redux/userSlice";
+import { searchUser } from "../../redux/user-slice";
 
 import teamApi from "../../api/teamApi";
 

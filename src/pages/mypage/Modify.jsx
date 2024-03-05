@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
 import userApi from "../../api/userApi";
-import { logout, updateNickname, updateGitAuth } from "../../redux/userSlice";
+import { logout, updateNickname, updateGitAuth } from "../../redux/user-slice";
 
 import NicknameForm from "./components/NicknameForm";
 import PasswordForm from "./components/PasswordForm";

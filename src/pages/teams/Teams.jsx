@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -9,17 +9,17 @@ import TeamList from "./components/TeamList";
 
 const Teams = () => {
   const navigate = useNavigate();
-  const myNickname = useSelector((state) => state.user.value.myNickname);
+  const nickname = useSelector((state) => state.user.value.nickname);
   const [myTeams, setMyTeams] = useState([]);
 
   const createTeamHandler = () => navigate("/teams/create");
   const clickTeamHandler = (teamSeq) => navigate(`/teams/${teamSeq}`);
 
   useEffect(() => {
-    teamApi
-      .getTeams()
-      .then((res) => setMyTeams(res.data))
-      .catch(console.error);
+    // teamApi
+    //   .getTeams()
+    //   .then((res) => setMyTeams(res.data))
+    //   .catch(console.error);
   }, []);
 
   return (
@@ -38,7 +38,7 @@ const Teams = () => {
             <div className="flex items-center">
               {/* 현재 로그인한 유저 닉네임 */}
               <span className="md:text-xl text-sm font-bold text-point_light_yellow md:mr-2 mr-1">
-                {myNickname}
+                {nickname}
               </span>
               {/* 제목 */}
               <span className="text-white text-sm md:font-bold mr-1">
