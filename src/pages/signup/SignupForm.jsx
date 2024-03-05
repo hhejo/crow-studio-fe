@@ -1,18 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import EmailForm from "../../components/forms/EmailForm";
+import NicknameForm from "../../components/forms/NicknameForm";
+import PasswordForm from "../../components/forms/PasswordForm";
+import SubmitButton from "../../components/SubmitButton";
 
-import EmailForm from "./components/EmailForm";
-import NicknameForm from "./components/NicknameForm";
-import Password1Form from "./components/Password1Form";
-import Password2Form from "./components/Password2Form";
-import SignupButton from "./components/SignupButton";
-
+// 초기 입력 상태
 const initialInputState = {
   email: "",
   nickname: "",
   password1: "",
   password2: "",
-}; // 초기 이메일, 닉네임, 비밀번호1, 비밀번호2 상태
+};
 
+// 초기 에러 메시지 상태
 const initialErrState = {
   emailErrMsg: "",
   nicknameErrMsg: "",
@@ -20,9 +20,11 @@ const initialErrState = {
   password2ErrMsg: "",
 };
 
+// 이메일 정규표현식
 const emailRegEx =
   /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
 
+// SignupForm
 const SignupForm = ({ signupHandler }) => {
   const [inputs, setInputs] = useState(initialInputState); // 초기 입력
   const [errMsgs, setErrMsgs] = useState(initialErrState); // 초기 에러메시지
@@ -30,9 +32,9 @@ const SignupForm = ({ signupHandler }) => {
   const { emailErrMsg, nicknameErrMsg, password1ErrMsg, password2ErrMsg } =
     errMsgs; // 에러메시지 상태 할당
 
+  // inputChangeHandler
   const inputChangeHandler = (e) => {
-    const eName = e.target.name;
-    const eValue = e.target.value;
+    const { name: eName, value: eValue } = e.target;
     if (eName === "email") {
       setInputs((prev) => {
         return { ...prev, email: eValue };
@@ -52,53 +54,59 @@ const SignupForm = ({ signupHandler }) => {
     }
   };
 
+  // submitSignupHandler
   const submitSignupHandler = (e) => {
     e.preventDefault();
-    let isInvalid = false;
     setErrMsgs(initialErrState);
+    let isValid = true;
+    // 이메일
     if (email.trim().length === 0) {
       setErrMsgs((prev) => {
         return { ...prev, emailErrMsg: "이메일을 입력하세요" };
       });
-      isInvalid = true;
+      isValid = false;
     } else if (!emailRegEx.test(email)) {
       setErrMsgs((prev) => {
         return { ...prev, emailErrMsg: "이메일 형식이 올바르지 않습니다" };
       });
-      isInvalid = true;
+      isValid = false;
     }
+    // 닉네임
     if (nickname.trim().length === 0) {
       setErrMsgs((prev) => {
         return { ...prev, nicknameErrMsg: "닉네임을 입력하세요" };
       });
-      isInvalid = true;
+      isValid = false;
     }
+    // 비밀번호 1
     if (password1.trim().length === 0) {
       setErrMsgs((prev) => {
         return { ...prev, password1ErrMsg: "비밀번호를 입력하세요" };
       });
-      isInvalid = true;
+      isValid = false;
     }
+    //비밀번호 2
     if (password2.trim().length === 0) {
       setErrMsgs((prev) => {
         return { ...prev, password2ErrMsg: "비밀번호를 한번 더 입력하세요" };
       });
-      isInvalid = true;
+      isValid = false;
     }
+    // 비밀번호 불일치
     if (password2 !== password1) {
       setErrMsgs((prev) => {
         return { ...prev, password2ErrMsg: "비밀번호가 일치하지 않습니다" };
       });
-      isInvalid = true;
+      isValid = false;
     }
-    if (isInvalid) {
-      return;
-    }
+
+    if (!isValid) return;
+
     setErrMsgs(initialErrState);
     const signupData = {
-      userId: email,
-      userPassword: password2,
-      userNickname: nickname,
+      email: email,
+      password: password2,
+      nickname: nickname,
     };
     signupHandler(signupData);
   };
@@ -112,7 +120,7 @@ const SignupForm = ({ signupHandler }) => {
       {/* 이메일 */}
       <EmailForm
         email={email}
-        inputChangeHandler={inputChangeHandler}
+        emailChangeHandler={inputChangeHandler}
         emailErrMsg={emailErrMsg}
       />
 
@@ -124,21 +132,31 @@ const SignupForm = ({ signupHandler }) => {
       />
 
       {/* 비밀번호 1 */}
-      <Password1Form
-        password1={password1}
-        inputChangeHandler={inputChangeHandler}
-        password1ErrMsg={password1ErrMsg}
+      <PasswordForm
+        password={password1}
+        passwordChangeHandler={inputChangeHandler}
+        passwordErrMsg={password1ErrMsg}
+        htmlFor={"password1"}
+        labelContent={"비밀번호"}
+        id={"password1"}
+        name={"password1"}
+        placeholder={"비밀번호를 입력하세요"}
       />
 
       {/* 비밀번호 2 */}
-      <Password2Form
-        password2={password2}
-        inputChangeHandler={inputChangeHandler}
-        password2ErrMsg={password2ErrMsg}
+      <PasswordForm
+        password={password2}
+        passwordChangeHandler={inputChangeHandler}
+        passwordErrMsg={password2ErrMsg}
+        htmlFor={"password2"}
+        labelContent={"비밀번호 확인"}
+        id={"password2"}
+        name={"password2"}
+        placeholder={"비밀번호를 한 번 더 입력하세요"}
       />
 
       {/* 회원가입 버튼 */}
-      <SignupButton onClick={submitSignupHandler}>회원가입</SignupButton>
+      <SubmitButton clickHandler={submitSignupHandler}>회원가입</SubmitButton>
     </form>
   );
 };

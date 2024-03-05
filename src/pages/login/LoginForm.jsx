@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import EmailForm from "../../components/forms/EmailForm";
+import PasswordForm from "../../components/forms/PasswordForm";
+import SubmitButton from "../../components/SubmitButton";
 
-import EmailForm from "./components/EmailForm";
-import PasswordForm from "./components/PasswordForm";
-import LoginButton from "./components/LoginButton";
-
+// 이메일 정규표현식
 const emailRegEx =
   /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
+
 // const passwordRegEx = /^[A-Za-z0-9]{8,20}$/;
 
+// LoginForm
 const LoginForm = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,26 +21,26 @@ const LoginForm = ({ onLogin }) => {
 
   const submitLoginHandler = (e) => {
     e.preventDefault();
-    let isInvalid = false;
+    let isValid = true;
     setEmailErrMsg("");
     setPasswordErrMsg("");
     if (email.trim().length === 0) {
       setEmailErrMsg("이메일을 입력하세요");
-      isInvalid = true;
+      isValid = false;
     } else if (!emailRegEx.test(email)) {
       setEmailErrMsg("이메일 형식이 올바르지 않습니다");
-      isInvalid = true;
+      isValid = false;
     }
     if (password.trim().length === 0) {
       setPasswordErrMsg("비밀번호를 입력하세요");
-      isInvalid = true;
+      isValid = false;
     }
-    if (isInvalid) {
-      return;
-    }
+
+    if (!isValid) return;
+
     setEmailErrMsg("");
     setPasswordErrMsg("");
-    const loginData = { userId: email, userPassword: password };
+    const loginData = { email, password };
     onLogin(loginData);
   };
 
@@ -60,10 +62,15 @@ const LoginForm = ({ onLogin }) => {
         password={password}
         passwordChangeHandler={passwordChangeHandler}
         passwordErrMsg={passwordErrMsg}
+        htmlFor={"password"}
+        labelContent={"비밀번호"}
+        id={"password"}
+        name={"password"}
+        placeholder={"비밀번호를 입력하세요"}
       />
 
       {/* 로그인 버튼 */}
-      <LoginButton submitLoginHandler={submitLoginHandler}>로그인</LoginButton>
+      <SubmitButton clickHandler={submitLoginHandler}>로그인</SubmitButton>
     </form>
   );
 };

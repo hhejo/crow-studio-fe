@@ -1,7 +1,5 @@
-import React from "react";
-
 const NicknameForm = (props) => {
-  const { nickname, inputChangeHandler, nicknameErrMsg } = props;
+  const { nickname, inputChangeHandler, nicknameErrMsg } = props; // 닉네임, onChange 핸들러, 닉네임 입력 에러 메시지
 
   return (
     <div className="w-80 mb-1">
@@ -17,7 +15,8 @@ const NicknameForm = (props) => {
         onChange={inputChangeHandler}
       />
       <div className="h-6 mt-1 ml-3 mb-0.5 text-sm text-point_pink">
-        {nicknameErrMsg}
+        {" "}
+        {nicknameErrMsg}{" "}
       </div>
     </div>
   );
