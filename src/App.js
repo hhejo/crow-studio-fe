@@ -12,7 +12,7 @@ import PrivateRoute from "./route/PrivateRoute";
 import Intro from "./pages/intro";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
-import Mypage from "./pages/mypage/Mypage";
+import Mypage from "./pages/mypage";
 import Teams from "./pages/teams/Teams";
 import TeamCreate from "./pages/team-create/TeamCreate";
 import TeamDetail from "./pages/team-detail/TeamDetail";
@@ -54,7 +54,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/mypage/:userSeq",
+    path: "/mypage/:uid",
     element: (
       <WithLoading>
         <Mypage />
@@ -109,9 +109,10 @@ function App() {
   const dispatch = useDispatch();
   AOS.init();
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) dispatch(setCurrentUser(user)); // 로그인 된 상태이면 로그인 유저 정보를 Redux에 저장
     });
+    return () => unsubscribe();
   }, [dispatch]);
 
   return (

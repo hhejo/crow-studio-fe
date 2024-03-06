@@ -1,27 +1,34 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { firestore } from "../../firebase";
 
-import userApi from "../../api/userApi";
-
-const Profile = ({ isMe, userSeq }) => {
+const Profile = ({ isMe, mypageUid, currentUid }) => {
   const navigate = useNavigate();
-  const { myNickname, myEmail, myGitUsername } = useSelector(
-    (state) => state.user.value
-  );
-  const [userInfo, setUserInfo] = useState({});
-  const { userNickname, userId } = userInfo;
+  const {
+    email: currentEmail,
+    nickname: currentNickname,
+    gitUsername: currentGitUsername,
+  } = useSelector((state) => state.user.value);
+  const [mypageUser, setMypageUser] = useState({});
+  const { nickname: mypageNickname, email: mypageEmail } = mypageUser;
 
   useEffect(() => {
-    userApi
-      .getMypage(userSeq)
-      .then((res) => setUserInfo(res.data))
-      .catch((err) => {
-        if (err.response.status === 404) {
-          navigate("/404", { replace: true });
-        }
+    async function fetchUser() {
+      const collectionRef = collection(firestore, "users");
+      const q = query(collectionRef, where("uid", "==", mypageUid));
+      const querySnapshot = await getDocs(q);
+      const fetchedUsers = [];
+      querySnapshot.forEach((doc) => {
+        const { uid, email, nickname } = doc.data();
+        fetchedUsers.push({ docId: doc.id, email, nickname, uid });
       });
-  }, [userSeq, myNickname, myGitUsername, navigate]);
+      if (fetchedUsers[0]) setMypageUser(fetchedUsers[0]);
+      else navigate("/404", { replace: true }); // 404
+    }
+    fetchUser();
+  }, [navigate, mypageUid]);
 
   return (
     <div
@@ -38,16 +45,16 @@ const Profile = ({ isMe, userSeq }) => {
 
         {/* 닉네임 */}
         <div className="text-white text-2xl font-bold">
-          {isMe ? myNickname : userNickname}
+          {isMe ? currentNickname : mypageNickname}
         </div>
 
         {/* 메일 */}
-        <div className="text-sm">{+isMe ? myEmail : userId}</div>
+        <div className="text-sm">{isMe ? currentEmail : mypageEmail}</div>
 
         {/* 깃 이메일 */}
         <div className="text-primary_-2_dark text-sm mb-6 flex">
           <div className="mr-2">깃 계정:</div>
-          {isMe && (myGitUsername || "깃 이메일 연결되지 않음")}
+          {isMe && (currentGitUsername || "깃 이메일 연결되지 않음")}
         </div>
 
         {/* 정보 수정 버튼 */}

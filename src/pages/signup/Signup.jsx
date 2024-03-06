@@ -2,7 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "../../firebase";
+import { collection, addDoc } from "firebase/firestore";
+import { auth, firestore } from "../../firebase";
 import { setCurrentUser } from "../../redux/user-slice";
 import Header from "../../components/Header";
 import SignupTitle from "./SignupTitle";
@@ -18,6 +19,18 @@ const Signup = () => {
       const { email, password: pw, nickname } = signupData; // 입력한 email, password, nickname 가져오기
       const { user } = await createUserWithEmailAndPassword(auth, email, pw); // firebase에 email, password를 가진 유저 생성
       await updateProfile(user, { displayName: nickname }); // 닉네임 적용
+      const newUserToAdd = {
+        uid: user.uid,
+        email,
+        password: "",
+        nickname,
+        accessToken: user.accessToken,
+        imageURL: "",
+        gitUsername: "",
+        gitToken: "",
+      };
+      const collectionRef = collection(firestore, "users"); // firestore의 users 컬렉션
+      await addDoc(collectionRef, newUserToAdd); // users 컬렉션에 유저 정보 삽입
       dispatch(setCurrentUser(user)); // Redux에 user 정보 저장
       toast.success("회원가입 성공"); // 토스트 출력
       navigate("/teams"); // /teams로 이동
