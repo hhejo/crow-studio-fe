@@ -1,12 +1,11 @@
-import React, { useState, Fragment } from "react";
+import { useState, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { toast } from "react-toastify";
 
-import teamApi from "../../api/teamApi";
-import api from "../../api/api";
+// import teamApi from "../../api/teamApi";
 
 import { startLoading, endLoading } from "../../redux/global-slice";
 
@@ -34,9 +33,8 @@ const pjtType = [
 // const teamNameRegEx = /^[a-zA-Z0-9]{1,9}/g;
 
 const TeamCreate = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const isLoading = useSelector((state) => state.global.value.isLoading);
+  const [dispatch, navigate] = [useDispatch(), useNavigate()];
+  const { isLoading } = useSelector((state) => state.global.value);
   const [inputs, setInputs] = useState(initialInputState);
   const [errorMsgs, setErrorMsgs] = useState(initialErrorState);
   const { teamName, projectType, teamGit } = inputs;
@@ -104,6 +102,8 @@ const TeamCreate = () => {
     if (isInvalid) {
       return;
     }
+    console.log("팀");
+    return;
 
     // console.log("돌파");
     // console.log("isInvalid:", isInvalid);
@@ -116,26 +116,26 @@ const TeamCreate = () => {
     };
     setErrorMsgs(initialErrorState);
     dispatch(startLoading());
-    teamApi
-      .createTeam(teamData)
-      .then(() => {
-        navigate("/teams", { replace: true });
-        dispatch(endLoading());
-        toast.success("팀 생성 완료");
-      })
-      .catch((errorStatusCode) => {
-        dispatch(endLoading());
-        if (errorStatusCode === 409) {
-          toast.warning("이미 해당 이름으로 생성된 팀이 있습니다");
-        } else if (errorStatusCode.response.status === 404) {
-          toast.warning("해당 깃 주소가 유효하지 않습니다");
-        } else if (errorStatusCode.response.status === 403) {
-          toast.warning("깃 계정과 연결되어있지 않습니다");
-        } else {
-          toast.error("Error");
-          console.log(errorStatusCode);
-        }
-      });
+    // teamApi
+    //   .createTeam(teamData)
+    //   .then(() => {
+    //     navigate("/teams", { replace: true });
+    //     dispatch(endLoading());
+    //     toast.success("팀 생성 완료");
+    //   })
+    //   .catch((errorStatusCode) => {
+    //     dispatch(endLoading());
+    //     if (errorStatusCode === 409) {
+    //       toast.warning("이미 해당 이름으로 생성된 팀이 있습니다");
+    //     } else if (errorStatusCode.response.status === 404) {
+    //       toast.warning("해당 깃 주소가 유효하지 않습니다");
+    //     } else if (errorStatusCode.response.status === 403) {
+    //       toast.warning("깃 계정과 연결되어있지 않습니다");
+    //     } else {
+    //       toast.error("Error");
+    //       console.log(errorStatusCode);
+    //     }
+    //   });
   };
 
   const goTeamListHandler = () => navigate("/teams");
@@ -161,7 +161,7 @@ const TeamCreate = () => {
   };
 
   return (
-    <React.Fragment>
+    <>
       {isLoading && <Loading />}
       {!isLoading && (
         <div className="flex flex-col w-full h-full">
@@ -309,6 +309,8 @@ const TeamCreate = () => {
                   팀 생성
                 </button>
               </form>
+
+              {/* 팀 목록 버튼 */}
               <button
                 onClick={goTeamListHandler}
                 className="xs:w-80 w-[226.03px] px-10 py-2 text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark hover:bg-component_item_bg_+2_dark hover:text-white rounded-md transition"
@@ -319,7 +321,7 @@ const TeamCreate = () => {
           </div>
         </div>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

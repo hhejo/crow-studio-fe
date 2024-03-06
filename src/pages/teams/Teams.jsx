@@ -2,17 +2,16 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import teamApi from "../../api/teamApi";
-
 import Header from "../../components/Header";
 import TeamList from "./components/TeamList";
 
 const Teams = () => {
   const navigate = useNavigate();
-  const nickname = useSelector((state) => state.user.value.nickname);
+  const { nickname } = useSelector((state) => state.user.value);
   const [myTeams, setMyTeams] = useState([]);
 
   const createTeamHandler = () => navigate("/teams/create");
+
   const clickTeamHandler = (teamSeq) => navigate(`/teams/${teamSeq}`);
 
   useEffect(() => {
@@ -24,7 +23,9 @@ const Teams = () => {
 
   return (
     <div className="flex flex-col h-full w-full">
+      {/* 헤더 */}
       <Header />
+      {/*  */}
       <div
         data-aos="fade-in"
         className="m-3 mb-6 h-full flex flex-wrap justify-center items-center"
@@ -35,6 +36,7 @@ const Teams = () => {
           </div>
           {/* 타이틀 */}
           <div className="flex justify-between items-center md:mb-5 mb-2">
+            {/* 팀 */}
             <div className="flex items-center">
               {/* 현재 로그인한 유저 닉네임 */}
               <span className="md:text-xl text-sm font-bold text-point_light_yellow md:mr-2 mr-1">
@@ -44,6 +46,7 @@ const Teams = () => {
               <span className="text-white text-sm md:font-bold mr-1">
                 님의 팀
               </span>
+              {/* 팀 개수 */}
               <span className="bg-point_purple_op20 text-white text-xs font-semibold mr-2 px-1.5 py-0.5 rounded">
                 {myTeams.length}
               </span>
