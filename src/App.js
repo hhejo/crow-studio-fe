@@ -5,7 +5,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, firestore } from "./firebase";
 import { setCurrentUser } from "./redux/user-slice";
 import ProtectedRoute from "./route/ProtectedRoute";
@@ -16,7 +16,7 @@ import Signup from "./pages/signup";
 import Mypage from "./pages/mypage";
 import Teams from "./pages/teams";
 import TeamCreate from "./pages/team-create";
-import TeamDetail from "./pages/team-detail/TeamDetail";
+import TeamDetail from "./pages/team-detail";
 import Project from "./pages/project/Project";
 import NotFound from "./pages/not-found/NotFound";
 import Forbidden from "./pages/forbidden/Forbidden";
@@ -73,7 +73,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/teams/:teamSeq",
+    path: "/teams/:teamUid",
     element: (
       <PrivateRoute>
         <WithLoading>

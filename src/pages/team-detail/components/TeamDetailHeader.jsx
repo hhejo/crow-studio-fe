@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -11,7 +11,7 @@ import TeamNameUpdateInput from "./TeamNameUpdateInput";
 import RedButton from "./RedButton";
 
 const TeamDetailHeader = (props) => {
-  const { teamName, isLeader, teamSeq, setTeamName } = props;
+  const { teamName, isLeader, teamUid, setTeamName } = props;
   const navigate = useNavigate();
   const [showTeamNameUpdate, setShowTeamNameUpdate] = useState(false);
   const MySwal = withReactContent(Swal);
@@ -22,7 +22,7 @@ const TeamDetailHeader = (props) => {
   const submitTeamNameUpdateHandler = async (updatedTeamName) => {
     try {
       const teamNameData = { teamName: updatedTeamName };
-      await teamApi.updateTeamName(teamSeq, teamNameData);
+      await teamApi.updateTeamName(teamUid, teamNameData);
       setTeamName(updatedTeamName);
       setShowTeamNameUpdate(false);
       toast.success("팀 이름 변경 성공");
@@ -48,7 +48,7 @@ const TeamDetailHeader = (props) => {
       return;
     }
     try {
-      await teamApi.deleteTeam(teamSeq);
+      await teamApi.deleteTeam(teamUid);
       navigate("/teams");
       toast.success("팀 삭제 성공");
     } catch (err) {
@@ -68,7 +68,7 @@ const TeamDetailHeader = (props) => {
       return;
     }
     try {
-      await teamApi.resignTeam(teamSeq);
+      await teamApi.resignTeam(teamUid);
       navigate("/teams");
       toast.success("팀 탈퇴 성공");
     } catch (err) {
