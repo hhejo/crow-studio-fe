@@ -8,6 +8,7 @@ const initialState = {
     isLoggedIn: false,
     accessToken: "",
     uid: "",
+    docId: "",
     email: "",
     nickname: "",
     imageURL: "",
@@ -21,9 +22,9 @@ export const setCurrentUser = createAsyncThunk(
   "user/setCurrentUser",
   async (user, { rejectWithValue }) => {
     try {
-      const { accessToken, uid, email } = user;
+      const { accessToken, uid, docId, email } = user;
       const { displayName: nickname, photoURL: imageURL } = user;
-      return { accessToken, uid, email, nickname, imageURL };
+      return { accessToken, uid, docId, email, nickname, imageURL };
     } catch (err) {
       return rejectWithValue(err);
     }
@@ -31,20 +32,20 @@ export const setCurrentUser = createAsyncThunk(
 );
 
 // 닉네임 변경
-export const updateNickname = createAsyncThunk(
-  "user/updateNickname",
-  async (updatedNicknameData, { rejectWithValue }) => {
-    try {
-      const response = await userApi.updateNickname(updatedNicknameData);
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
+// export const updateNickname = createAsyncThunk(
+//   "user/updateNickname",
+//   async (updatedNicknameData, { rejectWithValue }) => {
+//     try {
+//       const response = await userApi.updateNickname(updatedNicknameData);
+//       return response.data;
+//     } catch (err) {
+//       if (!err.response) {
+//         throw err;
+//       }
+//       return rejectWithValue(err.response.status);
+//     }
+//   }
+// );
 
 // 유저 검색
 export const searchUser = createAsyncThunk(
@@ -91,11 +92,13 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(setCurrentUser.fulfilled, (state, action) => {
-        const { accessToken, uid, email, nickname, imageURL } = action.payload;
+        const { accessToken, uid, docId, email, nickname, imageURL } =
+          action.payload;
         state.value = {
           isLoggedIn: true,
           accessToken,
           uid,
+          docId,
           email,
           nickname,
           imageURL,
@@ -104,9 +107,9 @@ export const userSlice = createSlice({
       .addCase(setCurrentUser.rejected, (state, action) => {
         state.value = initialState.value;
       })
-      .addCase(updateNickname.fulfilled, (state, action) => {
-        state.value.myNickname = action.payload.userNickname;
-      })
+      // .addCase(updateNickname.fulfilled, (state, action) => {
+      //   state.value.myNickname = action.payload.userNickname;
+      // })
       .addCase(updateGitAuth.fulfilled, (state, action) => {
         state.value.myGitUsername = action.payload.userGitUsername;
       });

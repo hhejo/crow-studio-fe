@@ -30,8 +30,8 @@ const Signup = () => {
         gitToken: "",
       };
       const collectionRef = collection(firestore, "users"); // firestore의 users 컬렉션
-      await addDoc(collectionRef, newUserToAdd); // users 컬렉션에 유저 정보 삽입
-      dispatch(setCurrentUser(user)); // Redux에 user 정보 저장
+      const docRef = await addDoc(collectionRef, newUserToAdd); // users 컬렉션에 유저 정보 삽입
+      dispatch(setCurrentUser({ ...user, docId: docRef.id })); // Redux에 user 정보 저장
       toast.success("회원가입 성공"); // 토스트 출력
       navigate("/teams"); // /teams로 이동
     } catch (error) {

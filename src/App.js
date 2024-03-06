@@ -5,7 +5,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { auth } from "./firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { auth, firestore } from "./firebase";
 import { setCurrentUser } from "./redux/user-slice";
 import ProtectedRoute from "./route/ProtectedRoute";
 import PrivateRoute from "./route/PrivateRoute";
@@ -110,7 +111,17 @@ function App() {
   AOS.init();
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) dispatch(setCurrentUser(user)); // 로그인 된 상태이면 로그인 유저 정보를 Redux에 저장
+      if (user) {
+        async function fetchUser() {
+          const collectionRef = collection(firestore, "users");
+          const q = query(collectionRef, where("uid", "==", user.uid));
+          const querySnapshot = await getDocs(q);
+          let docId = "";
+          querySnapshot.forEach((doc) => (docId = doc.id));
+          dispatch(setCurrentUser({ ...user, docId }));
+        }
+        fetchUser();
+      }
     });
     return () => unsubscribe();
   }, [dispatch]);
