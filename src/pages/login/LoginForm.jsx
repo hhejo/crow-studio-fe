@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { EmailForm } from "../../components/forms/EmailForm";
-import { PasswordForm } from "../../components/forms/PasswordForm";
-import SubmitButton from "../../components/SubmitButton";
+import { InputForm } from "../../components/forms/InputForm";
+import { Button } from "../../components/Button";
 
 // 이메일 정규표현식
 const emailRegEx =
@@ -16,8 +15,14 @@ const LoginForm = ({ onLogin }) => {
   const [emailErrMsg, setEmailErrMsg] = useState("");
   const [passwordErrMsg, setPasswordErrMsg] = useState("");
 
-  const emailChangeHandler = (e) => setEmail(e.target.value);
-  const passwordChangeHandler = (e) => setPassword(e.target.value);
+  const emailChangeHandler = (e) => {
+    setEmail(e.target.value);
+    setEmailErrMsg("");
+  };
+  const passwordChangeHandler = (e) => {
+    setPassword(e.target.value);
+    setPasswordErrMsg("");
+  };
 
   const loginHandler = (e) => {
     e.preventDefault();
@@ -51,27 +56,35 @@ const LoginForm = ({ onLogin }) => {
       className="flex flex-col items-center"
     >
       {/* 이메일 */}
-      <EmailForm
-        email={email}
-        onChangeHandler={emailChangeHandler}
-        errMsg={emailErrMsg}
+      <InputForm
+        type="email"
+        id="email"
+        name="email"
         placeholder="이메일을 입력하세요"
+        htmlFor="email"
+        labelContent="이메일"
+        value={email}
+        onChange={emailChangeHandler}
+        errMsg={emailErrMsg}
       />
 
       {/* 비밀번호 */}
-      <PasswordForm
-        password={password}
-        onChangeHandler={passwordChangeHandler}
-        errMsg={passwordErrMsg}
-        htmlFor="password"
-        labelContent="비밀번호"
+      <InputForm
+        type="password"
         id="password"
         name="password"
         placeholder="비밀번호를 입력하세요"
+        htmlFor="password"
+        labelContent="비밀번호"
+        value={password}
+        onChange={passwordChangeHandler}
+        errMsg={passwordErrMsg}
       />
 
       {/* 로그인 버튼 */}
-      <SubmitButton onClickHandler={loginHandler}>로그인</SubmitButton>
+      <Button type="submit" onClick={loginHandler}>
+        로그인
+      </Button>
     </form>
   );
 };

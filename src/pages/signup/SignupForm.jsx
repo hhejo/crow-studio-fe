@@ -1,10 +1,6 @@
 import { useState } from "react";
-// import { EmailForm, NicknameForm, PasswordForm } from "../../components/forms";
-import { EmailForm } from "../../components/forms/EmailForm";
-import { NicknameForm } from "../../components/forms/NicknameForm";
-import { PasswordForm } from "../../components/forms/PasswordForm";
-// import PasswordForm from "../../components/forms/PasswordForm";
-import SubmitButton from "../../components/SubmitButton";
+import { InputForm } from "../../components/forms/InputForm";
+import { Button } from "../../components/Button";
 
 // 초기 입력 상태
 const initialInputState = { email: "", nickname: "", pw1: "", pw2: "" };
@@ -35,17 +31,29 @@ const SignupForm = ({ signup }) => {
       setInputs((prev) => {
         return { ...prev, email: eValue };
       });
+      setErrMsgs((prev) => {
+        return { ...prev, emailErrMsg: "" };
+      });
     } else if (eName === "nickname") {
       setInputs((prev) => {
         return { ...prev, nickname: eValue };
+      });
+      setErrMsgs((prev) => {
+        return { ...prev, nicknameErrMsg: "" };
       });
     } else if (eName === "pw1") {
       setInputs((prev) => {
         return { ...prev, pw1: eValue };
       });
+      setErrMsgs((prev) => {
+        return { ...prev, pw1ErrMsg: "" };
+      });
     } else if (eName === "pw2") {
       setInputs((prev) => {
         return { ...prev, pw2: eValue };
+      });
+      setErrMsgs((prev) => {
+        return { ...prev, pw2ErrMsg: "" };
       });
     }
   };
@@ -110,47 +118,61 @@ const SignupForm = ({ signup }) => {
       className="flex flex-col items-center"
     >
       {/* 이메일 */}
-      <EmailForm
-        email={email}
-        onChangeHandler={inputChangeHandler}
-        errMsg={emailErrMsg}
+      <InputForm
+        type="email"
+        id="email"
+        name="email"
         placeholder="이메일을 입력하세요"
+        htmlFor="email"
+        labelContent="이메일"
+        value={email}
+        onChange={inputChangeHandler}
+        errMsg={emailErrMsg}
       />
 
       {/* 닉네임 */}
-      <NicknameForm
-        nickname={nickname}
-        onChangeHandler={inputChangeHandler}
-        errMsg={nicknameErrMsg}
+      <InputForm
+        type="text"
+        id="nickname"
+        name="nickname"
         placeholder="닉네임을 입력하세요"
+        htmlFor="nickname"
+        labelContent="닉네임"
+        value={nickname}
+        onChange={inputChangeHandler}
+        errMsg={nicknameErrMsg}
       />
 
       {/* 비밀번호 1 */}
-      <PasswordForm
-        password={pw1}
-        onChangeHandler={inputChangeHandler}
-        errMsg={pw1ErrMsg}
-        htmlFor="pw1"
-        labelContent="비밀번호"
+      <InputForm
+        type="password"
         id="pw1"
         name="pw1"
         placeholder="비밀번호를 입력하세요"
+        htmlFor="pw1"
+        labelContent="비밀번호"
+        value={pw1}
+        onChange={inputChangeHandler}
+        errMsg={pw1ErrMsg}
       />
 
       {/* 비밀번호 2 */}
-      <PasswordForm
-        password={pw2}
-        onChangeHandler={inputChangeHandler}
-        errMsg={pw2ErrMsg}
-        htmlFor="pw2"
-        labelContent="비밀번호 확인"
+      <InputForm
+        type="password"
         id="pw2"
         name="pw2"
         placeholder="비밀번호를 한 번 더 입력하세요"
+        htmlFor="pw2"
+        labelContent="비밀번호 확인"
+        value={pw2}
+        onChange={inputChangeHandler}
+        errMsg={pw2ErrMsg}
       />
 
       {/* 회원가입 버튼 */}
-      <SubmitButton onClickHandler={signupHandler}>회원가입</SubmitButton>
+      <Button type="submit" onClick={signupHandler}>
+        회원가입
+      </Button>
     </form>
   );
 };
