@@ -19,12 +19,13 @@ const LoginForm = ({ onLogin }) => {
     setEmail(e.target.value);
     setEmailErrMsg("");
   };
+
   const passwordChangeHandler = (e) => {
     setPassword(e.target.value);
     setPasswordErrMsg("");
   };
 
-  const loginHandler = (e) => {
+  const submitHandler = (e) => {
     e.preventDefault();
     let isValid = true;
     setEmailErrMsg("");
@@ -52,7 +53,7 @@ const LoginForm = ({ onLogin }) => {
   return (
     <form
       method="post"
-      onSubmit={loginHandler}
+      onSubmit={submitHandler}
       className="flex flex-col items-center"
     >
       {/* 이메일 */}
@@ -82,7 +83,7 @@ const LoginForm = ({ onLogin }) => {
       />
 
       {/* 로그인 버튼 */}
-      <Button type="submit" onClick={loginHandler}>
+      <Button type="submit" onClick={submitHandler}>
         로그인
       </Button>
     </form>

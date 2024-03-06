@@ -25,13 +25,13 @@ const TeamListItem = ({ team, clickTeam }) => {
         <Member isLeader={true} teamLeaderNickname={teamLeaderNickname} />
         {/* 팀원들 */}
         <div className="flex md:flex-row flex-col">
-          {members.map((member) => (
+          {/* {members.map((member) => (
             <Member
               key={`member${member.memberSeq}`}
               isLeader={false}
               memberNickname={member.memberNickname}
             />
-          ))}
+          ))} */}
         </div>
       </div>
     </div>

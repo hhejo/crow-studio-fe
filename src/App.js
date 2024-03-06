@@ -5,7 +5,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
 import { auth, firestore } from "./firebase";
 import { setCurrentUser } from "./redux/user-slice";
 import ProtectedRoute from "./route/ProtectedRoute";

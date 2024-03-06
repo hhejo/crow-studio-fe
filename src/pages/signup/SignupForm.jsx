@@ -24,7 +24,6 @@ const SignupForm = ({ signup }) => {
   const { email, nickname, pw1, pw2 } = inputs; // 이메일, 비밀번호 상태 할당
   const { emailErrMsg, nicknameErrMsg, pw1ErrMsg, pw2ErrMsg } = errMsgs; // 에러메시지 상태 할당
 
-  // inputChangeHandler
   const inputChangeHandler = (e) => {
     const { name: eName, value: eValue } = e.target;
     if (eName === "email") {
@@ -58,8 +57,7 @@ const SignupForm = ({ signup }) => {
     }
   };
 
-  // signupHandler
-  const signupHandler = (e) => {
+  const submitHandler = (e) => {
     e.preventDefault();
     setErrMsgs(initialErrState);
     let isValid = true;
@@ -114,7 +112,7 @@ const SignupForm = ({ signup }) => {
   return (
     <form
       method="post"
-      onSubmit={signupHandler}
+      onSubmit={submitHandler}
       className="flex flex-col items-center"
     >
       {/* 이메일 */}
@@ -170,7 +168,7 @@ const SignupForm = ({ signup }) => {
       />
 
       {/* 회원가입 버튼 */}
-      <Button type="submit" onClick={signupHandler}>
+      <Button type="submit" onClick={submitHandler}>
         회원가입
       </Button>
     </form>

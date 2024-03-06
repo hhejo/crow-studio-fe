@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
+import { doc, getDoc } from "firebase/firestore";
+import { firestore } from "../../firebase";
 import Header from "../../components/Header";
 import TeamList from "./components/TeamList";
 
 const Teams = () => {
   const navigate = useNavigate();
-  const { nickname } = useSelector((state) => state.user.value);
+  const { docId, nickname } = useSelector((state) => state.user.value);
   const [myTeams, setMyTeams] = useState([]);
 
   const createTeamHandler = () => navigate("/teams/create");
@@ -15,11 +16,17 @@ const Teams = () => {
   const clickTeamHandler = (teamSeq) => navigate(`/teams/${teamSeq}`);
 
   useEffect(() => {
-    // teamApi
-    //   .getTeams()
-    //   .then((res) => setMyTeams(res.data))
-    //   .catch(console.error);
-  }, []);
+    async function fetchTeams() {
+      const documentSnapshot = await getDoc(doc(firestore, "users", docId));
+      const { teams } = documentSnapshot.data();
+      for (let teamUid of teams) {
+        const documentSnapshot = await getDoc(doc(firestore, "teams", teamUid));
+        const team = documentSnapshot.data();
+        setMyTeams((prev) => [...prev, team]);
+      }
+    }
+    fetchTeams();
+  }, [docId]);
 
   return (
     <div className="flex flex-col h-full w-full">

@@ -28,6 +28,7 @@ const Signup = () => {
         imageURL: "",
         gitUsername: "",
         gitToken: "",
+        teams: [],
       };
       const collectionRef = collection(firestore, "users"); // firestore의 users 컬렉션
       const docRef = await addDoc(collectionRef, newUserToAdd); // users 컬렉션에 유저 정보 삽입
