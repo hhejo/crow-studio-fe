@@ -15,7 +15,6 @@ import Header from "../../components/Header";
 import TeamDetailHeader from "./components/TeamDetailHeader";
 import Leader from "./components/Leader";
 import Member from "./components/Member";
-import TeamListButton from "./components/TeamListButton";
 
 import Modal from "react-modal";
 
@@ -61,18 +60,13 @@ const TeamDetail = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
   const { teamUid } = useParams();
   const { uid } = useSelector((state) => state.user.value);
-
   const MySwal = withReactContent(Swal);
-
   const [team, setTeam] = useState({});
   const { teamName, leaderNickname, leaderUid, members, projectType, teamGit } =
     team;
-
   const [projectTypeInput, setProjectTypeInput] = useState(false);
   const [modifiedProjectType, setModifiedProjectType] = useState(projectType);
-
   const [searchUserName, setSearchUserName] = useState("");
-
   const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
@@ -109,9 +103,6 @@ const TeamDetail = () => {
   };
 
   const addUserHandler = async (addUserSeq, addUserName) => {
-    //
-    //
-    //
     const res = await MySwal.fire({
       title: `${addUserName}님을 팀원으로 추가할까요?`,
       showCancelButton: true,
@@ -119,12 +110,7 @@ const TeamDetail = () => {
       cancelButtonText: "아니오",
       background: "#3C3C3C",
     });
-    if (!res.isConfirmed) {
-      return;
-    }
-    //
-    //
-    //
+    if (!res.isConfirmed) return;
     const addMemberData = { teamUid, memberSeq: addUserSeq };
     try {
       await teamApi.addMember(addMemberData);
@@ -133,18 +119,12 @@ const TeamDetail = () => {
       setTeam(res);
       toast.success("팀원 추가 성공");
     } catch (err) {
-      if (err.response.status === 409) {
-        toast.warning("이미 추가된 팀원입니다");
-      } else {
-        toast.error("Error");
-      }
+      if (err.response.status === 409) toast.warning("이미 추가된 팀원입니다");
+      else toast.error("Error");
     }
   };
 
   const deleteMemberHandler = async (memberNickname, memberSeq) => {
-    //
-    //
-    //
     const res = await MySwal.fire({
       title: `${memberNickname}님을 팀에서 삭제하시겠습니까?`,
       showCancelButton: true,
@@ -156,9 +136,6 @@ const TeamDetail = () => {
       // if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
       return;
     }
-    //
-    //
-    //
     const deleteMemberData = { teamUid, memberSeq };
     try {
       await teamApi.deleteMember(deleteMemberData);
@@ -182,9 +159,6 @@ const TeamDetail = () => {
   function closeModal() {
     setIsOpen(false);
   }
-
-  const goTeamListHandler = () => navigate("/teams");
-  const goProjectHandler = () => navigate(`/project/${teamUid}`);
 
   // modify project listbox
   const [selected, setSelected] = useState(pjtType[0]);
@@ -282,119 +256,134 @@ const TeamDetail = () => {
         className="flex flex-wrap items-center justify-center m-3 mb-6 h-full"
       >
         <div className="p-8 lg:w-4/5 w-fit max-w-[1000px] h-fit flex flex-col justify-center items-center border border-primary_-2_dark rounded-md">
+          {/* 팀 상세 정보 */}
           <div className="text-4xl font-bold text-white pb-2 mb-5 w-full">
             팀 상세 정보
           </div>
+
+          {/* TeamDetailHeader */}
           <TeamDetailHeader
             teamName={teamName}
             isLeader={leaderUid === uid}
             teamUid={teamUid}
-            setTeamName={setTeamNameHandler}
+            modifyTeamName={setTeamNameHandler}
           />
 
-          {/* 팀장 */}
-          <div className="flex items-center mb-2 md:w-full w-[285px] h-fit bg-component_item_bg_dark rounded-md">
-            <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
-              팀장
-            </div>
-            <Leader teamLeaderNickname={leaderNickname} />
-          </div>
-
-          {/* 팀원 */}
-          <div className="flex mb-2 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
-            <div className="md:w-48 w-32 bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
-              <span className="text-white font-bold">팀원</span>
-              <span className="text-point_light_yellow text-xs font-semibold mr-2 px-1.5 py-0.5 rounded">
-                {members?.length}
-              </span>
+          {/* 팀장, 팀원, 팀 깃 주소, 프로젝트 타입 */}
+          <>
+            {/* 팀장 */}
+            <div className="flex items-center mb-2 md:w-full w-[285px] h-fit bg-component_item_bg_dark rounded-md">
+              <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 h-full p-2 flex items-center rounded-bl-md rounded-tl-md">
+                팀장
+              </div>
+              <Leader teamLeaderNickname={leaderNickname} />
             </div>
 
-            <div className="flex md:flex-row flex-col justify-center items-center">
-              {members?.length === 0 && (
-                <div className="text-sm flex items-center py-2 pl-2">
-                  팀원을 추가
-                </div>
-              )}
-              {members?.map((member) => (
-                <Member
-                  key={`m${member.memberSeq}`}
-                  isLeader={leaderUid === uid}
-                  memberNickname={member.memberNickname}
-                  memberSeq={member.memberSeq}
-                  deleteMember={deleteMemberHandler}
-                />
-              ))}
-              <div className="flex flex-col items-center px-2 py-2">
-                {leaderUid === uid && (
-                  <div>
-                    <IoAdd
-                      className="text-white cursor-pointer text-lg hover:text-point_yellow hover:scale-125 transition"
-                      onClick={openModal}
-                      data-tip="팀원 추가"
-                    />
-                    <ReactTooltip place="right" />
+            {/* 팀원 */}
+            <div className="flex mb-2 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
+              <div className="md:w-48 w-32 bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
+                <span className="text-white font-bold">팀원</span>
+                <span className="text-point_light_yellow text-xs font-semibold mr-2 px-1.5 py-0.5 rounded">
+                  {members?.length}
+                </span>
+              </div>
+
+              <div className="flex md:flex-row flex-col justify-center items-center">
+                {members?.length === 0 && (
+                  <div className="text-sm flex items-center py-2 pl-2">
+                    팀원을 추가
                   </div>
                 )}
-              </div>
-            </div>
-          </div>
-
-          {/* 팀 깃 주소 */}
-          <div className="flex mb-2 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
-            <div className="md:w-48 w-32 min-w-[128px] text-white font-bold bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
-              깃 주소
-            </div>
-            <div className="flex">
-              <div className="text-white text-sm break-all p-2">
-                {teamGit ? teamGit : "-"}
-              </div>
-            </div>
-          </div>
-
-          {/* 프로젝트 타입 */}
-          <div className="flex mb-4 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
-            <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
-              프로젝트 타입
-            </div>
-            <div className="flex">
-              <div className="text-white text-sm p-2">
-                {!projectTypeInput && (
-                  <div className="flex items-center">
-                    <span>{projectType}</span>
-                    {leaderUid === uid && (
-                      <BsPencilFill
-                        className="ml-3 text-sm text-point_yellow_+2 cursor-pointer hover:text-point_yellow hover:scale-125 transition"
-                        onClick={() => setProjectTypeInput(true)}
-                        data-tip="프로젝트 타입 변경"
+                {members?.map((member) => (
+                  <Member
+                    key={`m${member.memberSeq}`}
+                    isLeader={leaderUid === uid}
+                    memberNickname={member.memberNickname}
+                    memberSeq={member.memberSeq}
+                    deleteMember={deleteMemberHandler}
+                  />
+                ))}
+                <div className="flex flex-col items-center px-2 py-2">
+                  {leaderUid === uid && (
+                    <div>
+                      <IoAdd
+                        className="text-white cursor-pointer text-lg hover:text-point_yellow hover:scale-125 transition"
+                        onClick={openModal}
+                        data-tip="팀원 추가"
                       />
-                    )}
-                  </div>
-                )}
-                {projectTypeInput && (
-                  <div className="w-full flex justify-start">
-                    <div className="md:w-72 w-[115px]">
-                      <ProjectTypeSelect
-                        selected={selected}
-                        onChange={listboxChangeHandler}
-                        pjtType={pjtType}
-                      />
+                      <ReactTooltip place="right" />
                     </div>
-                    <button className="ml-2" onClick={submitProjectTypeHandler}>
-                      <BsCheckLg className="text-point_light_yellow hover:text-point_yellow" />
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
+            {/* 팀 깃 주소 */}
+            <div className="flex mb-2 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
+              <div className="md:w-48 w-32 min-w-[128px] text-white font-bold bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
+                깃 주소
+              </div>
+              <div className="flex">
+                <div className="text-white text-sm break-all p-2">
+                  {teamGit ? teamGit : "-"}
+                </div>
+              </div>
+            </div>
+
+            {/* 프로젝트 타입 */}
+            <div className="flex mb-4 md:w-full w-[285px] bg-component_item_bg_dark rounded-md">
+              <div className="md:w-48 w-32 text-white font-bold bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
+                프로젝트 타입
+              </div>
+              <div className="flex">
+                <div className="text-white text-sm p-2">
+                  {!projectTypeInput && (
+                    <div className="flex items-center">
+                      <span>{projectType}</span>
+                      {leaderUid === uid && (
+                        <BsPencilFill
+                          className="ml-3 text-sm text-point_yellow_+2 cursor-pointer hover:text-point_yellow hover:scale-125 transition"
+                          onClick={() => setProjectTypeInput(true)}
+                          data-tip="프로젝트 타입 변경"
+                        />
+                      )}
+                    </div>
+                  )}
+                  {projectTypeInput && (
+                    <div className="w-full flex justify-start">
+                      <div className="md:w-72 w-[115px]">
+                        <ProjectTypeSelect
+                          selected={selected}
+                          onChange={listboxChangeHandler}
+                          pjtType={pjtType}
+                        />
+                      </div>
+                      <button
+                        className="ml-2"
+                        onClick={submitProjectTypeHandler}
+                      >
+                        <BsCheckLg className="text-point_light_yellow hover:text-point_yellow" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
+
+          {/* 버튼 2개 */}
           <div className="w-full flex justify-end gap-4">
             {/* 팀 목록 이동 버튼 */}
-            <TeamListButton onClick={goTeamListHandler}>팀 목록</TeamListButton>
+            <button
+              onClick={() => navigate("/teams")}
+              className="w-40 h-12 text-lg font-bold text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark hover:bg-component_item_bg_+2_dark hover:text-white rounded-md transition"
+            >
+              팀 목록
+            </button>
 
             {/* 프로젝트 이동 버튼 */}
             <button
-              onClick={goProjectHandler}
+              onClick={() => navigate(`/project/${teamUid}`)}
               className="w-40 h-12 text-lg font-bold bg-point_purple text-component_dark hover:bg-point_purple_-2 hover:text-white rounded-md transition"
             >
               프로젝트로 이동

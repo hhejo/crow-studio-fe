@@ -6,24 +6,22 @@ import withReactContent from "sweetalert2-react-content";
 
 import teamApi from "../../../api/teamApi";
 
-import TeamName from "./TeamName";
 import TeamNameUpdateInput from "./TeamNameUpdateInput";
-import RedButton from "./RedButton";
+
+import { BsPencilFill } from "react-icons/bs";
+import ReactTooltip from "react-tooltip";
 
 const TeamDetailHeader = (props) => {
-  const { teamName, isLeader, teamUid, setTeamName } = props;
+  const { teamName, isLeader, teamUid, modifyTeamName } = props;
   const navigate = useNavigate();
   const [showTeamNameUpdate, setShowTeamNameUpdate] = useState(false);
   const MySwal = withReactContent(Swal);
-
-  const openTeamNameUpdateHandler = () => setShowTeamNameUpdate(true);
-  const closeTeamNameUpdateHandler = () => setShowTeamNameUpdate(false);
 
   const submitTeamNameUpdateHandler = async (updatedTeamName) => {
     try {
       const teamNameData = { teamName: updatedTeamName };
       await teamApi.updateTeamName(teamUid, teamNameData);
-      setTeamName(updatedTeamName);
+      modifyTeamName(updatedTeamName);
       setShowTeamNameUpdate(false);
       toast.success("팀 이름 변경 성공");
     } catch (err) {
@@ -79,24 +77,37 @@ const TeamDetailHeader = (props) => {
   return (
     <div className="flex justify-between items-center w-full mb-5">
       {!showTeamNameUpdate ? (
-        <TeamName
-          openTeamNameUpdate={openTeamNameUpdateHandler}
-          isLeader={isLeader}
-        >
+        // 팀 이름
+        <h1 className="text-white text-xl font-bold flex items-center">
           {teamName}
-        </TeamName>
+          {isLeader && (
+            <div>
+              <BsPencilFill
+                data-tip="팀명 변경"
+                className="ml-3 mr-5 text-sm text-point_yellow_+2 cursor-pointer hover:text-point_yellow hover:scale-125 transition"
+                onClick={() => setShowTeamNameUpdate(true)}
+              />
+              <ReactTooltip place="right" />
+            </div>
+          )}
+        </h1>
       ) : (
+        // 팀 이름 변경 입력창
         <TeamNameUpdateInput
           initialTeamName={teamName}
           submitTeamNameUpdate={submitTeamNameUpdateHandler}
-          closeTeamNameUpdate={closeTeamNameUpdateHandler}
+          closeTeamNameUpdate={() => setShowTeamNameUpdate(false)}
         />
       )}
-      {/* 팀 목록 버튼, 팀 삭제(팀 탈퇴) 버튼 컨테이너 */}
+
+      {/* 팀 삭제(팀 탈퇴) 버튼 */}
       <div className="flex gap-2">
-        <RedButton onClick={isLeader ? deleteTeamHandler : resignTeamHandler}>
+        <button
+          onClick={isLeader ? deleteTeamHandler : resignTeamHandler}
+          className="px-2 py-1 md:text-sm text-[13px] font-bold text-component_dark bg-point_pink hover:bg-point_red hover:text-white rounded-md transition"
+        >
           {isLeader ? "팀 삭제" : "팀 탈퇴"}
-        </RedButton>
+        </button>
       </div>
     </div>
   );
