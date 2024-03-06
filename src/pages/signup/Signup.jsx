@@ -47,14 +47,19 @@ const Signup = () => {
 
   return (
     <div className="flex flex-col w-full h-full">
+      {/* 헤더 */}
       <Header />
+      {/* Section */}
       <section
         data-aos="fade-in"
         className="p-4 w-screen h-full flex flex-wrap justify-center items-center"
       >
         <div className="h-fit flex flex-col">
+          {/* 회원가입 제목 */}
           <SignupTitle />
-          <SignupForm signupHandler={signupHandler} />
+          {/* 회원가입 폼 */}
+          <SignupForm signup={signupHandler} />
+          {/* 로그인 링크 */}
           <Link
             to="/login"
             className="block w-full text-center hover:text-white transition"

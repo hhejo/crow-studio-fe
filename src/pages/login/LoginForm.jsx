@@ -1,6 +1,6 @@
 import { useState } from "react";
-import EmailForm from "../../components/forms/EmailForm";
-import PasswordForm from "../../components/forms/PasswordForm";
+import { EmailForm } from "../../components/forms/EmailForm";
+import { PasswordForm } from "../../components/forms/PasswordForm";
 import SubmitButton from "../../components/SubmitButton";
 
 // 이메일 정규표현식
@@ -19,7 +19,7 @@ const LoginForm = ({ onLogin }) => {
   const emailChangeHandler = (e) => setEmail(e.target.value);
   const passwordChangeHandler = (e) => setPassword(e.target.value);
 
-  const submitLoginHandler = (e) => {
+  const loginHandler = (e) => {
     e.preventDefault();
     let isValid = true;
     setEmailErrMsg("");
@@ -47,30 +47,31 @@ const LoginForm = ({ onLogin }) => {
   return (
     <form
       method="post"
-      onSubmit={submitLoginHandler}
+      onSubmit={loginHandler}
       className="flex flex-col items-center"
     >
       {/* 이메일 */}
       <EmailForm
         email={email}
-        emailChangeHandler={emailChangeHandler}
-        emailErrMsg={emailErrMsg}
+        onChangeHandler={emailChangeHandler}
+        errMsg={emailErrMsg}
+        placeholder="이메일을 입력하세요"
       />
 
       {/* 비밀번호 */}
       <PasswordForm
         password={password}
-        passwordChangeHandler={passwordChangeHandler}
-        passwordErrMsg={passwordErrMsg}
-        htmlFor={"password"}
-        labelContent={"비밀번호"}
-        id={"password"}
-        name={"password"}
-        placeholder={"비밀번호를 입력하세요"}
+        onChangeHandler={passwordChangeHandler}
+        errMsg={passwordErrMsg}
+        htmlFor="password"
+        labelContent="비밀번호"
+        id="password"
+        name="password"
+        placeholder="비밀번호를 입력하세요"
       />
 
       {/* 로그인 버튼 */}
-      <SubmitButton clickHandler={submitLoginHandler}>로그인</SubmitButton>
+      <SubmitButton onClickHandler={loginHandler}>로그인</SubmitButton>
     </form>
   );
 };
