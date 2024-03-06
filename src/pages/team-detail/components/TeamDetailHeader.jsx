@@ -1,82 +1,22 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-
-import teamApi from "../../../api/teamApi";
-
-import TeamNameUpdateInput from "./TeamNameUpdateInput";
-
-import { BsPencilFill } from "react-icons/bs";
 import ReactTooltip from "react-tooltip";
+import { IoClose } from "react-icons/io5";
+import { BsPencilFill } from "react-icons/bs";
 
 const TeamDetailHeader = (props) => {
-  const { teamName, isLeader, teamUid, modifyTeamName } = props;
-  const navigate = useNavigate();
-  const [showTeamNameUpdate, setShowTeamNameUpdate] = useState(false);
-  const MySwal = withReactContent(Swal);
-
-  const submitTeamNameUpdateHandler = async (updatedTeamName) => {
-    try {
-      const teamNameData = { teamName: updatedTeamName };
-      await teamApi.updateTeamName(teamUid, teamNameData);
-      modifyTeamName(updatedTeamName);
-      setShowTeamNameUpdate(false);
-      toast.success("팀 이름 변경 성공");
-    } catch (err) {
-      const errStatusCode = err.response.status;
-      if (errStatusCode === 409) {
-        toast.warning("이미 같은 팀 이름이 존재합니다");
-      } else {
-        toast.error("Error");
-      }
-    }
+  const { teamName, isLeader, modifyTeamName, deleteTeam, resignTeam } = props;
+  const { showModifyTeamNameInput, setShowModifyTeamNameInput } = props;
+  const [enteredTeamName, setEnteredTeamName] = useState(teamName);
+  const modifyTeamNameHandler = (e) => {
+    e.preventDefault();
+    modifyTeamName(enteredTeamName);
   };
-
-  const deleteTeamHandler = async () => {
-    const res = await MySwal.fire({
-      title: "정말로 팀을 삭제하시겠습니까?",
-      showCancelButton: true,
-      confirmButtonText: "네",
-      cancelButtonText: "아니오",
-      background: "#3C3C3C",
-    });
-    if (!res.isConfirmed) {
-      return;
-    }
-    try {
-      await teamApi.deleteTeam(teamUid);
-      navigate("/teams");
-      toast.success("팀 삭제 성공");
-    } catch (err) {
-      toast.error("Error");
-    }
-  };
-
-  const resignTeamHandler = async () => {
-    const res = await MySwal.fire({
-      title: "정말로 팀에서 탈퇴하시겠습니까?",
-      showCancelButton: true,
-      confirmButtonText: "네",
-      cancelButtonText: "아니오",
-      background: "#3C3C3C",
-    });
-    if (!res.isConfirmed) {
-      return;
-    }
-    try {
-      await teamApi.resignTeam(teamUid);
-      navigate("/teams");
-      toast.success("팀 탈퇴 성공");
-    } catch (err) {
-      toast.error("Error");
-    }
-  };
+  const clickDeleteTeamHandler = () => deleteTeam();
+  const clickResignTeamHandler = () => resignTeam();
 
   return (
     <div className="flex justify-between items-center w-full mb-5">
-      {!showTeamNameUpdate ? (
+      {!showModifyTeamNameInput ? (
         // 팀 이름
         <h1 className="text-white text-xl font-bold flex items-center">
           {teamName}
@@ -85,7 +25,7 @@ const TeamDetailHeader = (props) => {
               <BsPencilFill
                 data-tip="팀명 변경"
                 className="ml-3 mr-5 text-sm text-point_yellow_+2 cursor-pointer hover:text-point_yellow hover:scale-125 transition"
-                onClick={() => setShowTeamNameUpdate(true)}
+                onClick={() => setShowModifyTeamNameInput(true)}
               />
               <ReactTooltip place="right" />
             </div>
@@ -93,17 +33,28 @@ const TeamDetailHeader = (props) => {
         </h1>
       ) : (
         // 팀 이름 변경 입력창
-        <TeamNameUpdateInput
-          initialTeamName={teamName}
-          submitTeamNameUpdate={submitTeamNameUpdateHandler}
-          closeTeamNameUpdate={() => setShowTeamNameUpdate(false)}
-        />
+        <div data-aos="fade-in" className="flex items-center mr-2">
+          <form onSubmit={modifyTeamNameHandler}>
+            <input
+              type="text"
+              name="inputTeamName"
+              id="inputTeamName"
+              className="rounded-md bg-component_item_bg_+2_dark md:w-auto w-[140px] mr-1 px-4 py-1 text-sm font-medium text-white text-left appearance-none shadow-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
+              defaultValue={teamName}
+              onChange={(e) => setEnteredTeamName(e.target.value)}
+            />
+          </form>
+          <IoClose
+            className="cursor-pointer text-point_pink text-xl hover:text-point_red hover:scale-125 transition"
+            onClick={() => setShowModifyTeamNameInput(false)}
+          />
+        </div>
       )}
 
       {/* 팀 삭제(팀 탈퇴) 버튼 */}
       <div className="flex gap-2">
         <button
-          onClick={isLeader ? deleteTeamHandler : resignTeamHandler}
+          onClick={isLeader ? clickDeleteTeamHandler : clickResignTeamHandler}
           className="px-2 py-1 md:text-sm text-[13px] font-bold text-component_dark bg-point_pink hover:bg-point_red hover:text-white rounded-md transition"
         >
           {isLeader ? "팀 삭제" : "팀 탈퇴"}

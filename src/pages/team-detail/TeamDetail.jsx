@@ -21,7 +21,7 @@ import Modal from "react-modal";
 import { IoAdd, IoClose } from "react-icons/io5";
 import { BsPencilFill, BsCheckLg } from "react-icons/bs";
 
-import { doc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { firestore } from "../../firebase";
 
 import { ProjectTypeSelect } from "../../components/ProjectTypeSelect";
@@ -56,6 +56,14 @@ const pjtType = [
   { name: "FastAPI" },
 ];
 
+// MySwal.fire SweetAlert 옵션
+const alertOption = {
+  showCancelButton: true,
+  confirmButtonText: "네",
+  cancelButtonText: "아니오",
+  background: "#3C3C3C",
+};
+
 const TeamDetail = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
   const { teamUid } = useParams();
@@ -68,6 +76,8 @@ const TeamDetail = () => {
   const [modifiedProjectType, setModifiedProjectType] = useState(projectType);
   const [searchUserName, setSearchUserName] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+
+  const [showModifyTeamNameInput, setShowModifyTeamNameInput] = useState(false);
 
   useEffect(() => {
     async function fetchTeam() {
@@ -83,10 +93,51 @@ const TeamDetail = () => {
     fetchTeam();
   }, [teamUid]);
 
-  const setTeamNameHandler = (resTeamName) =>
-    setTeam((prev) => {
-      return { ...prev, teamName: resTeamName };
-    });
+  // 팀명 수정
+  const modifyTeamNameHandler = async (modifiedTeamName) => {
+    try {
+      const docRef = doc(firestore, "teams", teamUid);
+      await updateDoc(docRef, { teamName: modifiedTeamName });
+      const documentSnapshot = await getDoc(docRef);
+      setTeam(documentSnapshot.data());
+      setShowModifyTeamNameInput(false);
+      toast.success("팀명을 성공적으로 변경했습니다");
+    } catch (err) {
+      console.error(err);
+      // 409: 이미 같은 팀 이름이 존재합니다
+      // 404: navigate("/404", { replace: true })
+      // 403: navigate("/403", { replace: true })
+    }
+  };
+
+  // 팀 삭제
+  const deleteTeamHandler = async () => {
+    // 팀원 있으면 삭제 불가하게 하기 ?
+    const alertTitle = "정말로 팀을 삭제하시겠습니까?";
+    const res = await MySwal.fire({ ...alertOption, title: alertTitle });
+    if (!res.isConfirmed) return;
+    // try {
+    //   await teamApi.deleteTeam(teamUid);
+    //   navigate("/teams");
+    //   toast.success("팀 삭제 성공");
+    // } catch (err) {
+    //   toast.error("Error");
+    // }
+  };
+
+  // 팀 탈퇴
+  const resignTeamHandler = async () => {
+    const alertTitle = "정말로 팀에서 탈퇴하시겠습니까?";
+    const res = await MySwal.fire({ ...alertOption, title: alertTitle });
+    if (!res.isConfirmed) return;
+    // try {
+    //   await teamApi.resignTeam(teamUid);
+    //   navigate("/teams");
+    //   toast.success("팀 탈퇴 성공");
+    // } catch (err) {
+    //   toast.error("Error");
+    // }
+  };
 
   const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
 
@@ -103,13 +154,8 @@ const TeamDetail = () => {
   };
 
   const addUserHandler = async (addUserSeq, addUserName) => {
-    const res = await MySwal.fire({
-      title: `${addUserName}님을 팀원으로 추가할까요?`,
-      showCancelButton: true,
-      confirmButtonText: "네",
-      cancelButtonText: "아니오",
-      background: "#3C3C3C",
-    });
+    const alertTitle = `${addUserName}님을 팀원으로 추가할까요?`;
+    const res = await MySwal.fire({ ...alertOption, title: alertTitle });
     if (!res.isConfirmed) return;
     const addMemberData = { teamUid, memberSeq: addUserSeq };
     try {
@@ -125,15 +171,9 @@ const TeamDetail = () => {
   };
 
   const deleteMemberHandler = async (memberNickname, memberSeq) => {
-    const res = await MySwal.fire({
-      title: `${memberNickname}님을 팀에서 삭제하시겠습니까?`,
-      showCancelButton: true,
-      confirmButtonText: "네",
-      cancelButtonText: "아니오",
-      background: "#3C3C3C",
-    });
+    const alertTitle = `${memberNickname}님을 팀에서 삭제하시겠습니까?`;
+    const res = await MySwal.fire({ ...alertOption, title: alertTitle });
     if (!res.isConfirmed) {
-      // if (!window.confirm(`${memberNickname}님을 팀에서 삭제하시겠습니까?`)) {
       return;
     }
     const deleteMemberData = { teamUid, memberSeq };
@@ -165,18 +205,16 @@ const TeamDetail = () => {
 
   const listboxChangeHandler = (e) => {
     setSelected(e);
-    console.log(e);
     modifyProjectTypeHandler(e);
   };
 
   const modifyProjectTypeHandler = (e) => {
-    // setModifiedProjectType(e.target.value);
     setModifiedProjectType(e.name);
     submitProjectTypeHandler(e);
   };
 
   const submitProjectTypeHandler = (e) => {
-    // e.preventDefault();
+    e.preventDefault();
     const modifiedData = { projectType: modifiedProjectType };
     dispatch(modifyProjectType({ teamUid, modifiedData }))
       .unwrap()
@@ -265,8 +303,11 @@ const TeamDetail = () => {
           <TeamDetailHeader
             teamName={teamName}
             isLeader={leaderUid === uid}
-            teamUid={teamUid}
-            modifyTeamName={setTeamNameHandler}
+            modifyTeamName={modifyTeamNameHandler}
+            showModifyTeamNameInput={showModifyTeamNameInput}
+            setShowModifyTeamNameInput={setShowModifyTeamNameInput}
+            deleteTeam={deleteTeamHandler}
+            resignTeam={resignTeamHandler}
           />
 
           {/* 팀장, 팀원, 팀 깃 주소, 프로젝트 타입 */}
