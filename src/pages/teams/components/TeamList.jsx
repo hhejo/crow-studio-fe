@@ -1,5 +1,3 @@
-import React from "react";
-
 import TeamListItem from "./TeamListItem";
 
 const TeamList = ({ teams, clickTeam }) => {
@@ -8,7 +6,7 @@ const TeamList = ({ teams, clickTeam }) => {
       <div className="flex flex-col justify-center md:w-full w-[285px] gap-2">
         {teams?.map((team) => (
           <TeamListItem
-            key={`team${team.teamSeq}`}
+            key={`team${team.teamUid}`}
             clickTeam={clickTeam}
             team={team}
           />

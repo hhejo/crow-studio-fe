@@ -22,7 +22,7 @@ const Teams = () => {
       for (let teamUid of teams) {
         const documentSnapshot = await getDoc(doc(firestore, "teams", teamUid));
         const team = documentSnapshot.data();
-        setMyTeams((prev) => [...prev, team]);
+        setMyTeams((prev) => [...prev, { ...team, teamUid }]);
       }
     }
     fetchTeams();

@@ -3,14 +3,9 @@ import React from "react";
 import Member from "./Member";
 
 const TeamListItem = ({ team, clickTeam }) => {
-  const {
-    teamSeq,
-    teamName,
-    teamLeaderNickname,
-    memberDtoList: members,
-  } = team;
+  const { teamUid, teamName, leaderNickname, members } = team;
 
-  const clickTeamListItemHandler = () => clickTeam(teamSeq);
+  const clickTeamListItemHandler = () => clickTeam(teamUid);
 
   return (
     <div
@@ -22,16 +17,16 @@ const TeamListItem = ({ team, clickTeam }) => {
       </div>
       <div className="flex md:flex-row flex-col">
         {/* 팀장 */}
-        <Member isLeader={true} teamLeaderNickname={teamLeaderNickname} />
+        <Member isLeader={true} teamLeaderNickname={leaderNickname} />
         {/* 팀원들 */}
         <div className="flex md:flex-row flex-col">
-          {/* {members.map((member) => (
+          {members.map((member) => (
             <Member
               key={`member${member.memberSeq}`}
               isLeader={false}
               memberNickname={member.memberNickname}
             />
-          ))} */}
+          ))}
         </div>
       </div>
     </div>
