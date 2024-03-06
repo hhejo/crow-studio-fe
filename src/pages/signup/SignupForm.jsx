@@ -130,23 +130,23 @@ const SignupForm = ({ signup }) => {
         password={pw1}
         onChangeHandler={inputChangeHandler}
         errMsg={pw1ErrMsg}
-        htmlFor={"pw1"}
-        labelContent={"비밀번호"}
-        id={"pw1"}
-        name={"pw1"}
-        placeholder={"비밀번호를 입력하세요"}
+        htmlFor="pw1"
+        labelContent="비밀번호"
+        id="pw1"
+        name="pw1"
+        placeholder="비밀번호를 입력하세요"
       />
 
       {/* 비밀번호 2 */}
       <PasswordForm
         password={pw2}
-        passwordChangeHandler={inputChangeHandler}
-        passwordErrMsg={pw2ErrMsg}
-        htmlFor={"pw2"}
-        labelContent={"비밀번호 확인"}
-        id={"pw2"}
-        name={"pw2"}
-        placeholder={"비밀번호를 한 번 더 입력하세요"}
+        onChangeHandler={inputChangeHandler}
+        errMsg={pw2ErrMsg}
+        htmlFor="pw2"
+        labelContent="비밀번호 확인"
+        id="pw2"
+        name="pw2"
+        placeholder="비밀번호를 한 번 더 입력하세요"
       />
 
       {/* 회원가입 버튼 */}
