@@ -5,41 +5,27 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
-import { IoClose } from "react-icons/io5";
-
-import Modal from "react-modal";
-
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  collection,
+  updateDoc,
+  addDoc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  arrayUnion,
+} from "firebase/firestore";
 import { firestore } from "../../firebase";
 
-import { getTeamDetail, modifyProjectType } from "../../redux/teamSlice";
-import { searchUser } from "../../redux/user-slice";
+import { getTeamDetail } from "../../redux/teamSlice";
 
 import teamApi from "../../api/teamApi";
 
 import Header from "../../components/Header";
 import TeamDetailHeader from "./TeamDetailHeader";
 import TeamDetailMain from "./TeamDetailMain";
-
-// modal
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    width: "auto",
-    height: "auto",
-    marginRight: "-50%",
-    borderRadius: "10px",
-    backgroundColor: "#3C3C3C",
-    transform: "translate(-50%, -50%)",
-  },
-  overlay: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
-};
-
-// Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
-Modal.setAppElement("#root");
+import AddUserModal from "./components/AddUserModal";
 
 // MySwal.fire SweetAlert 옵션
 const alertOption = {
@@ -58,12 +44,16 @@ const TeamDetail = () => {
   const { teamName, leaderNickname, leaderUid, members, projectType, teamGit } =
     team;
 
-  const [searchUserName, setSearchUserName] = useState("");
+  // const [searchUserName, setSearchUserName] = useState("");
+  const [enteredUserNickname, setEnteredUserNickname] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
   const [showModifyProjectTypeSelect, setShowModifyProjectTypeSelect] =
     useState(false);
   const [showModifyTeamNameInput, setShowModifyTeamNameInput] = useState(false);
+
+  // Modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchTeam() {
@@ -136,35 +126,51 @@ const TeamDetail = () => {
     // }
   };
 
-  const searchUserChangeHandler = (e) => setSearchUserName(e.target.value);
-
-  const submitSearchUserHandler = (e) => {
-    e.preventDefault();
-    if (searchUserName.trim().length === 0) {
-      return;
-    }
-    const searchData = { searchWord: searchUserName };
-    dispatch(searchUser(searchData))
-      .unwrap()
-      .then(setSearchResults)
-      .catch(console.error);
+  const searchUserHandler = async (userNickname) => {
+    setSearchResults([]);
+    const documentRef = collection(firestore, "users");
+    const q = query(documentRef, where("nickname", "==", userNickname));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      const { uid, nickname } = doc.data();
+      const res = { uid, nickname, userDocId: doc.id };
+      setSearchResults((prev) => [...prev, res]);
+    });
   };
 
-  const addUserHandler = async (addUserSeq, addUserName) => {
-    const alertTitle = `${addUserName}님을 팀원으로 추가할까요?`;
+  const addUserHandler = async (addUserUid, addUserDocId, addUserNickname) => {
+    const alertTitle = `${addUserNickname}님을 팀원으로 추가할까요?`;
     const res = await MySwal.fire({ ...alertOption, title: alertTitle });
     if (!res.isConfirmed) return;
-    const addMemberData = { teamUid, memberSeq: addUserSeq };
+    console.log(team);
+    return;
     try {
-      await teamApi.addMember(addMemberData);
-      setSearchResults([]);
-      const res = await dispatch(getTeamDetail(teamUid)).unwrap();
-      setTeam(res);
-      toast.success("팀원 추가 성공");
+      // const { id: teamUid } = await addDoc(collection(firestore, "teams"), newTeam);
+      const updateField = { members: arrayUnion(addUserUid) };
+      await updateDoc(doc(firestore, "teams", teamUid), updateField);
+      const updateField2 = { teams: arrayUnion(addUserDocId) };
+      await updateDoc(doc(firestore, "users", addUserDocId), updateField2);
+      // const documentRef = collection(firestore, "users");
+      // const q = query(documentRef, where("uid", "==", addUserUid));
+      // const querySnapshot = await getDocs(q);
+      // querySnapshot.forEach((document) => {
+      //   const updateField2 = { teams: arrayUnion(teamUid) };
+      //   updateDoc(doc(firestore, "users", document.id), updateField2);
+      // });
     } catch (err) {
-      if (err.response.status === 409) toast.warning("이미 추가된 팀원입니다");
-      else toast.error("Error");
+      console.error(err);
     }
+    // const addMemberData = { teamUid, memberSeq: addUserSeq };
+    // try {
+    //   await teamApi.addMember(addMemberData);
+    //   setSearchResults([]);
+    //   const res = await dispatch(getTeamDetail(teamUid)).unwrap();
+    //   setTeam(res);
+    //   toast.success("팀원 추가 성공");
+    // } catch (err) {
+    //   if (err.response.status === 409) toast.warning("이미 추가된 팀원입니다");
+    //   else toast.error("Error");
+    // }
   };
 
   const deleteMemberHandler = async (memberNickname, memberSeq) => {
@@ -183,20 +189,6 @@ const TeamDetail = () => {
       toast.error("Error");
     }
   };
-
-  // Modal
-  let subtitle;
-  // const [modalIsOpen, setIsOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  function openModal() {
-    setIsModalOpen(true);
-  }
-  function afterOpenModal() {
-    subtitle.style.color = "#fff";
-  }
-  function closeModal() {
-    setIsModalOpen(false);
-  }
 
   // 프로젝트 타입 변경
   const modifyProjectType = async (modifiedProjectType) => {
@@ -226,56 +218,16 @@ const TeamDetail = () => {
       {/* 헤더 */}
       <Header />
 
-      {/* Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onAfterOpen={afterOpenModal}
-        onRequestClose={closeModal}
-        style={customStyles}
-        contentLabel="Example Modal"
-      >
-        <div className="flex justify-between items-center mb-4">
-          <h2
-            className="text-white font-bold"
-            ref={(_subtitle) => (subtitle = _subtitle)}
-          >
-            팀원 추가
-          </h2>
-          <IoClose
-            className="cursor-pointer text-primary_dark text-xl ml-2"
-            onClick={closeModal}
-          />
-        </div>
-        <div className="flex flex-col">
-          <div className="flex justify-between items-center mb-2">
-            <div className="text-sm mr-2">유저검색</div>
-            <form onSubmit={submitSearchUserHandler}>
-              <input
-                type="text"
-                name="searchUser"
-                id="searchUser"
-                onChange={searchUserChangeHandler}
-                value={searchUserName}
-                className="rounded-md bg-component_item_bg_+2_dark px-4 py-1 text-sm font-medium text-white text-left appearance-none shadow-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
-              />
-            </form>
-          </div>
-          <div>
-            <div className="text-point_purple_op20 text-xs ml-14 mb-1">
-              닉네임을 누르면 해당 유저가 팀에 추가됩니다.
-            </div>
-            {searchResults?.map((user) => (
-              <div
-                key={user.userId}
-                className="hover:cursor-pointer px-4 py-1 text-sm font-bold ml-14 rounded-md text-point_yellow hover:bg-point_yellow_+2 hover:text-black"
-                onClick={() => addUserHandler(user.userSeq, user.userNickname)}
-              >
-                {user.userNickname}
-              </div>
-            ))}
-          </div>
-        </div>
-      </Modal>
+      {/* 팀원 추가 모달 */}
+      <AddUserModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        enteredUserNickname={enteredUserNickname}
+        setEnteredUserNickname={setEnteredUserNickname}
+        searchUser={searchUserHandler}
+        searchResults={searchResults}
+        addUser={addUserHandler}
+      />
 
       {/* team detail */}
       <div
@@ -312,7 +264,7 @@ const TeamDetail = () => {
             modifyProjectType={modifyProjectType}
             //
             deleteMemberHandler={deleteMemberHandler}
-            openModal={openModal}
+            openModal={() => setIsModalOpen(true)}
           />
 
           {/* 팀 목록 이동 버튼, 프로젝트 이동 버튼 */}
