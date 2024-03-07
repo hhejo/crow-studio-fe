@@ -21,11 +21,11 @@ const Login = () => {
       toast.success("로그인 성공"); // 토스트 출력
       navigate("/teams"); // /temas로 이동
     } catch (error) {
-      const { code: errorCode, message: errorMessage } = error; // 로그인 에러
-      if (errorCode === "auth/invalid-credential")
+      const { code: errCode, message: errMessage } = error; // 로그인 에러
+      if (errCode === "auth/invalid-credential")
         toast.warning("유효하지 않은 이메일이나 비밀번호입니다."); // 409
       else toast.error("로그인 오류");
-      console.error(errorMessage);
+      console.error(errMessage);
     }
   };
 
