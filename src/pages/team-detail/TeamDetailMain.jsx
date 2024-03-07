@@ -1,10 +1,8 @@
 import { useState } from "react";
 import ReactTooltip from "react-tooltip";
-
 import { IoAdd } from "react-icons/io5";
 import { BsPencilFill, BsCheckLg } from "react-icons/bs";
-
-import Member from "./components/Member";
+import Teammate from "./components/Teammate";
 import { ProjectTypeSelect } from "../../components/ProjectTypeSelect";
 
 // headlist listbox items
@@ -16,10 +14,10 @@ const pjtType = [
 ];
 
 const TeamDetailMain = (props) => {
-  const { leaderNickname, isLeader, members, teamGit } = props;
+  const { leaderNickname, isLeader, teammateList, teamGit } = props;
   const { showModifyProjectTypeSelect, setShowModifyProjectTypeSelect } = props;
   const { projectType, modifyProjectType } = props;
-  const { deleteMemberHandler, openModal } = props;
+  const { removeTeammate, openModal } = props;
 
   const [selected, setSelected] = useState(pjtType[0]);
 
@@ -45,23 +43,23 @@ const TeamDetailMain = (props) => {
         <div className="md:w-48 w-32 bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
           <span className="text-white font-bold">팀원</span>
           <span className="text-point_light_yellow text-xs font-semibold mr-2 px-1.5 py-0.5 rounded">
-            {members?.length}
+            {teammateList?.length}
           </span>
         </div>
 
         <div className="flex md:flex-row flex-col justify-center items-center">
-          {members?.length === 0 && (
+          {teammateList?.length === 0 && (
             <div className="text-sm flex items-center py-2 pl-2">
               팀원을 추가
             </div>
           )}
-          {members?.map((member) => (
-            <Member
-              key={`m${member.memberSeq}`}
+          {teammateList?.map((teammate) => (
+            <Teammate
+              key={`m${teammate.teammateDocId}`}
               isLeader={isLeader}
-              memberNickname={member.memberNickname}
-              memberSeq={member.memberSeq}
-              deleteMember={deleteMemberHandler}
+              teammateNickname={teammate.teammateNickname}
+              teammateDocId={teammate.teammateDocId}
+              removeTeammate={removeTeammate}
             />
           ))}
           <div className="flex flex-col items-center px-2 py-2">

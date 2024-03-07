@@ -1,16 +1,13 @@
-import React from "react";
 import { IoClose } from "react-icons/io5";
 
-const Member = (props) => {
-  const { isLeader, memberNickname, memberSeq, deleteMember } = props;
-
-  const clickHandler = () => deleteMember(memberNickname, memberSeq);
+const Teammate = (props) => {
+  const { isLeader, teammateNickname, teammateDocId, removeTeammate } = props;
+  const clickHandler = () => removeTeammate(teammateNickname, teammateDocId);
 
   return (
     <div className="flex flex-col items-center p-2">
       <div className="text-white text-sm flex items-center">
-        {memberNickname}
-
+        {teammateNickname}
         {isLeader && (
           <IoClose
             className="cursor-pointer text-point_pink hover:text-point_red hover:scale-125 transition"
@@ -22,4 +19,4 @@ const Member = (props) => {
   );
 };
 
-export default Member;
+export default Teammate;

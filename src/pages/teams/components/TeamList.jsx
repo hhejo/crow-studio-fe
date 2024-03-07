@@ -6,7 +6,7 @@ const TeamList = ({ teams, clickTeam }) => {
       <div className="flex flex-col justify-center md:w-full w-[285px] gap-2">
         {teams?.map((team) => (
           <TeamListItem
-            key={`team${team.teamUid}`}
+            key={`team${team.teamDocId}`}
             clickTeam={clickTeam}
             team={team}
           />

@@ -22,18 +22,23 @@ const customStyles = {
   overlay: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
 };
 
-const AddUserModal = (props) => {
+const AddTeammateModal = (props) => {
   const { isModalOpen, setIsModalOpen } = props;
   const { enteredUserNickname, setEnteredUserNickname } = props;
-  const { searchUser, addUser } = props;
-  const { searchResults } = props;
+  const { findTeammate, addTeammate } = props;
+  const { findResults } = props;
 
   let subtitle; // modal
 
-  const searchUserHandler = (e) => {
+  const findUserHandler = (e) => {
     e.preventDefault();
     if (enteredUserNickname.trim().length === 0) return;
-    searchUser(enteredUserNickname);
+    findTeammate(enteredUserNickname);
+  };
+
+  const addTeammateHandler = (teammateToAdd) => {
+    const { teammateUid, teammateDocId, teammateNickname } = teammateToAdd;
+    addTeammate({ teammateUid, teammateDocId, teammateNickname });
   };
 
   return (
@@ -59,7 +64,7 @@ const AddUserModal = (props) => {
       <div className="flex flex-col">
         <div className="flex justify-between items-center mb-2">
           <div className="text-sm mr-2">유저검색</div>
-          <form onSubmit={searchUserHandler}>
+          <form onSubmit={findUserHandler}>
             <input
               type="text"
               name="searchUser"
@@ -74,13 +79,16 @@ const AddUserModal = (props) => {
           <div className="text-point_purple_op20 text-xs ml-14 mb-1">
             닉네임을 누르면 해당 유저가 팀에 추가됩니다.
           </div>
-          {searchResults?.map((user) => (
+          {findResults?.map((teammate) => (
             <div
-              key={user.uid}
+              key={teammate.teammateUid}
               className="hover:cursor-pointer px-4 py-1 text-sm font-bold ml-14 rounded-md text-point_yellow hover:bg-point_yellow_+2 hover:text-black"
-              onClick={() => addUser(user.uid, user.userDocId, user.nickname)}
+              onClick={() => addTeammateHandler(teammate)}
             >
-              {user.nickname}
+              {teammate.teammateNickname}
+              <span className="ml-2 text-sm text-white">
+                ({teammate.teammateEmail})
+              </span>
             </div>
           ))}
         </div>
@@ -89,4 +97,4 @@ const AddUserModal = (props) => {
   );
 };
 
-export default AddUserModal;
+export default AddTeammateModal;

@@ -63,7 +63,7 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: "/teams/:teamUid",
+    path: "/teams/:teamDocId",
     element: (
       <PrivateRoute>
         <WithLoading>

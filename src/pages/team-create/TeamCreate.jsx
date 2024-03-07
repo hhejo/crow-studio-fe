@@ -31,7 +31,7 @@ const TeamCreate = () => {
         leaderImageURL: imageURL,
         teamGit: newTeamData.teamGit,
         projectType: newTeamData.projectType,
-        members: [],
+        teammates: [],
       };
       const { id: teamUid } = await addDoc(
         collection(firestore, "teams"),

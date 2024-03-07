@@ -1,11 +1,9 @@
-import React from "react";
-
 import Member from "./Member";
 
 const TeamListItem = ({ team, clickTeam }) => {
-  const { teamUid, teamName, leaderNickname, members } = team;
+  const { teamDocId, teamName, leaderNickname, teammates } = team;
 
-  const clickTeamListItemHandler = () => clickTeam(teamUid);
+  const clickTeamListItemHandler = () => clickTeam(teamDocId);
 
   return (
     <div
@@ -20,11 +18,11 @@ const TeamListItem = ({ team, clickTeam }) => {
         <Member isLeader={true} teamLeaderNickname={leaderNickname} />
         {/* 팀원들 */}
         <div className="flex md:flex-row flex-col">
-          {members.map((member) => (
+          {teammates?.map((teammate) => (
             <Member
-              key={`member${member.memberSeq}`}
+              key={`teammate${teammate.memberSeq}`}
               isLeader={false}
-              memberNickname={member.memberNickname}
+              memberNickname={teammate.memberNickname}
             />
           ))}
         </div>

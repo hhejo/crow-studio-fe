@@ -13,16 +13,16 @@ const Teams = () => {
 
   const createTeamHandler = () => navigate("/teams/create");
 
-  const clickTeamHandler = (teamSeq) => navigate(`/teams/${teamSeq}`);
+  const clickTeamHandler = (teamDocId) => navigate(`/teams/${teamDocId}`);
 
   useEffect(() => {
     async function fetchTeams() {
       const documentSnapshot = await getDoc(doc(firestore, "users", docId));
       const { teams } = documentSnapshot.data();
-      for (let teamUid of teams) {
-        const documentSnapshot = await getDoc(doc(firestore, "teams", teamUid));
-        const team = documentSnapshot.data();
-        setMyTeams((prev) => [...prev, { ...team, teamUid }]);
+      for (let teamDocId of teams) {
+        const docSnapshot = await getDoc(doc(firestore, "teams", teamDocId));
+        const team = docSnapshot.data();
+        setMyTeams((prev) => [...prev, { ...team, teamDocId }]);
       }
     }
     fetchTeams();
