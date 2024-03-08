@@ -6,10 +6,8 @@ import { Button } from "../../components/Button";
 const emailRegEx =
   /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
 
-// const passwordRegEx = /^[A-Za-z0-9]{8,20}$/;
-
 // LoginForm
-const LoginForm = ({ onLogin }) => {
+const LoginForm = ({ login }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailErrMsg, setEmailErrMsg] = useState("");
@@ -47,7 +45,7 @@ const LoginForm = ({ onLogin }) => {
     setEmailErrMsg("");
     setPasswordErrMsg("");
     const loginData = { email, password };
-    onLogin(loginData);
+    login(loginData);
   };
 
   return (

@@ -5,14 +5,11 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import { setCurrentUser } from "../../redux/user-slice";
 import Header from "../../components/Header";
-import LoginTitle from "./LoginTitle";
 import LoginForm from "./LoginForm";
+import { TitleWithLogo } from "../../components/TitleWithLogo";
 
-// Login
 const Login = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
-
-  // loginHandler
   const loginHandler = async (loginData) => {
     try {
       const { email, password: pw } = loginData; // 입력한 email, password 가져오기
@@ -37,8 +34,8 @@ const Login = () => {
         className="p-4 w-screen h-full flex flex-wrap justify-center items-center"
       >
         <div className="h-fit flex flex-col">
-          <LoginTitle />
-          <LoginForm onLogin={loginHandler} />
+          <TitleWithLogo title="로그인" />
+          <LoginForm login={loginHandler} />
           <Link
             to="/signup"
             className="block w-full text-center hover:text-white transition"

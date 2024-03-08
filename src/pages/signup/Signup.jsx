@@ -6,12 +6,11 @@ import { collection, addDoc } from "firebase/firestore";
 import { auth, firestore } from "../../firebase";
 import { setCurrentUser } from "../../redux/user-slice";
 import Header from "../../components/Header";
-import SignupTitle from "./SignupTitle";
 import SignupForm from "./SignupForm";
+import { TitleWithLogo } from "../../components/TitleWithLogo";
 
 const Signup = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
-
   const signupHandler = async (signupData) => {
     const { email, password: pw, nickname } = signupData; // 입력한 email, password, nickname 가져오기
     try {
@@ -44,19 +43,14 @@ const Signup = () => {
 
   return (
     <div className="flex flex-col w-full h-full">
-      {/* 헤더 */}
       <Header />
-      {/* Section */}
       <section
         data-aos="fade-in"
         className="p-4 w-screen h-full flex flex-wrap justify-center items-center"
       >
         <div className="h-fit flex flex-col">
-          {/* 회원가입 제목 */}
-          <SignupTitle />
-          {/* 회원가입 폼 */}
+          <TitleWithLogo title="회원가입" />
           <SignupForm signup={signupHandler} />
-          {/* 로그인 링크 */}
           <Link
             to="/login"
             className="block w-full text-center hover:text-white transition"
