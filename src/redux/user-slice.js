@@ -16,7 +16,7 @@ const initialState = {
   },
 };
 
-// setCurrentUser: 로그인 된 현재 사용자 정보를 Redux에 설정
+// 로그인 된 현재 사용자 정보를 Redux에 설정
 export const setCurrentUser = createAsyncThunk(
   "user/setCurrentUser",
   async (user, { rejectWithValue }) => {
@@ -46,7 +46,6 @@ export const updateGitAuth = createAsyncThunk(
   }
 );
 
-// userSlice
 export const userSlice = createSlice({
   name: "user",
   initialState,

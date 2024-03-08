@@ -12,6 +12,7 @@ import { router } from "./router";
 
 function App() {
   const dispatch = useDispatch();
+  AOS.init();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {

@@ -1,8 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  value: { isLoading: false },
-};
+const initialState = { value: { isLoading: false } };
 
 export const globalSlice = createSlice({
   name: "global",
