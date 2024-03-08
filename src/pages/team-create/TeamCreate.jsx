@@ -10,9 +10,9 @@ import {
 } from "firebase/firestore";
 import { firestore } from "../../firebase";
 import { startLoading, endLoading } from "../../redux/global-slice";
-import Header from "../../components/Header";
 import Loading from "../../components/Loading";
 import TeamForms from "./TeamForms";
+import { Nav } from "../../components/Nav";
 
 const TeamCreate = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
@@ -55,8 +55,7 @@ const TeamCreate = () => {
       {isLoading && <Loading />}
       {!isLoading && (
         <div className="flex flex-col w-full h-full">
-          {/* 헤더 */}
-          <Header />
+          <Nav />
           {/*  */}
           <div className="h-full flex flex-wrap justify-center items-center">
             <div

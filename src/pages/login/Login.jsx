@@ -4,9 +4,9 @@ import { toast } from "react-toastify";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import { setCurrentUser } from "../../redux/user-slice";
-import Header from "../../components/Header";
 import LoginForm from "./LoginForm";
 import { TitleWithLogo } from "../../components/TitleWithLogo";
+import { Nav } from "../../components/Nav";
 
 const Login = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
@@ -36,7 +36,7 @@ const Login = () => {
 
   return (
     <div className="flex flex-col w-full h-full">
-      <Header />
+      <Nav />
       <section
         data-aos="fade-in"
         className="p-4 w-screen h-full flex flex-wrap justify-center items-center"

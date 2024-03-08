@@ -14,7 +14,6 @@ import fileApi from "../../api/fileApi";
 import editorApi from "../../api/editorApi";
 import api from "../../api/api";
 
-import Header from "../../components/Header";
 import Sidebar from "./components/sidebar/Sidebar";
 import Directory from "./components/sidebar/Directory";
 import Git from "./components/sidebar/Git";
@@ -25,6 +24,7 @@ import Settings from "./components/sidebar/Settings";
 import ConsoleTerminal from "./components/ConsoleTerminal";
 import userApi from "../../api/userApi";
 import { toast } from "react-toastify";
+import { Nav } from "../../components/Nav";
 
 const Project = () => {
   const dispatch = useDispatch();
@@ -250,7 +250,7 @@ const Project = () => {
   return (
     <React.Fragment>
       <div className="h-full w-full">
-        <Header />
+        <Nav />
         <div className="flex mx-3" style={{ height: "calc(100% - 80px)" }}>
           <div className="flex">
             <Sidebar

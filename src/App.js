@@ -9,6 +9,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, firestore } from "./firebase";
 import { setCurrentUser } from "./redux/user-slice";
 import { router } from "./router";
+import { Nav } from "./components/Nav";
 
 function App() {
   const dispatch = useDispatch();
@@ -46,6 +47,7 @@ function App() {
 
   return (
     <>
+      <Nav />
       <RouterProvider router={router} />
       <ToastContainer
         position="bottom-right"

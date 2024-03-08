@@ -19,10 +19,10 @@ import {
 } from "firebase/firestore";
 import { firestore } from "../../firebase";
 
-import Header from "../../components/Header";
 import TeamDetailHeader from "./TeamDetailHeader";
 import TeamDetailMain from "./TeamDetailMain";
 import AddTeammateModal from "./components/AddTeammateModal";
+import { Nav } from "../../components/Nav";
 
 // MySwal.fire SweetAlert 옵션
 const alertOption = {
@@ -249,8 +249,7 @@ const TeamDetail = () => {
 
   return (
     <div className="flex flex-col h-full w-full">
-      {/* 헤더 */}
-      <Header />
+      <Nav />
 
       {/* 팀원 추가 모달 */}
       <AddTeammateModal

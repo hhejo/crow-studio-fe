@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "../../firebase";
-import Header from "../../components/Header";
 import TeamList from "./components/TeamList";
+import { Nav } from "../../components/Nav";
 
 const Teams = () => {
   const navigate = useNavigate();
@@ -30,8 +30,7 @@ const Teams = () => {
 
   return (
     <div className="flex flex-col h-full w-full">
-      {/* 헤더 */}
-      <Header />
+      <Nav />
       {/*  */}
       <div
         data-aos="fade-in"

@@ -8,9 +8,9 @@ import { updateProfile } from "firebase/auth";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, firestore } from "../../firebase";
 import { logout, updateGitAuth, setCurrentUser } from "../../redux/user-slice";
-import Header from "../../components/Header";
 import Profile from "./Profile";
 import ModifyForms from "./ModifyForms";
+import { Nav } from "../../components/Nav";
 
 const Mypage = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
@@ -58,8 +58,7 @@ const Mypage = () => {
 
   return (
     <div className="flex flex-col h-full w-full">
-      {/* 헤더 */}
-      <Header />
+      <Nav />
 
       {/*  */}
       <section

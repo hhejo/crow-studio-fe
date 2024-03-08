@@ -7,7 +7,7 @@ import { logout } from "../redux/user-slice";
 
 const MENU_ID = "nav-menu-id";
 
-const Header = () => {
+export const Nav = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
   const { isLoggedIn, uid, nickname } = useSelector(
     (state) => state.user.value
@@ -95,5 +95,3 @@ const Header = () => {
     </>
   );
 };
-
-export default Header;

@@ -7,10 +7,10 @@ import SplitPane from "react-split-pane";
 import { TiArrowRightThick } from "react-icons/ti";
 import { toast } from "react-toastify";
 import userApi from "../../api/userApi";
-import Header from "../../components/Header";
 import Sidebar from "./components/sidebar/Sidebar";
 import VariableName from "./components/sidebar/VariableName";
 import ConsoleTerminal from "./components/ConsoleTerminal";
+import { Nav } from "../../components/Nav";
 
 const Intro = () => {
   const dispatch = useDispatch();
@@ -110,7 +110,7 @@ const Intro = () => {
   return (
     <>
       <div className="h-full w-full">
-        <Header />
+        <Nav />
         <div className="flex mx-3" style={{ height: "calc(100% - 80px)" }}>
           <div className="flex">
             <Sidebar

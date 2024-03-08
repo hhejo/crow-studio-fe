@@ -5,9 +5,9 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { auth, firestore } from "../../firebase";
 import { setCurrentUser } from "../../redux/user-slice";
-import Header from "../../components/Header";
 import SignupForm from "./SignupForm";
 import { TitleWithLogo } from "../../components/TitleWithLogo";
+import { Nav } from "../../components/Nav";
 
 const Signup = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
@@ -49,7 +49,7 @@ const Signup = () => {
 
   return (
     <div className="flex flex-col w-full h-full">
-      <Header />
+      <Nav />
       <section
         data-aos="fade-in"
         className="p-4 w-screen h-full flex flex-wrap justify-center items-center"
