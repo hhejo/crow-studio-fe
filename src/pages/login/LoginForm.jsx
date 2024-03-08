@@ -6,7 +6,6 @@ import { Button } from "../../components/Button";
 const emailRegEx =
   /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
 
-// LoginForm
 const LoginForm = ({ login }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,9 +24,10 @@ const LoginForm = ({ login }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    let isValid = true;
     setEmailErrMsg("");
     setPasswordErrMsg("");
+    let isValid = true;
+    // 이메일
     if (email.trim().length === 0) {
       setEmailErrMsg("이메일을 입력하세요");
       isValid = false;
@@ -35,13 +35,14 @@ const LoginForm = ({ login }) => {
       setEmailErrMsg("이메일 형식이 올바르지 않습니다");
       isValid = false;
     }
+    // 비밀번호
     if (password.trim().length === 0) {
       setPasswordErrMsg("비밀번호를 입력하세요");
       isValid = false;
     }
-
+    // 하나라도 유효하지 않으면 종료
     if (!isValid) return;
-
+    // 에러메시지 초기화하고 로그인 정보 전달
     setEmailErrMsg("");
     setPasswordErrMsg("");
     const loginData = { email, password };
@@ -66,7 +67,6 @@ const LoginForm = ({ login }) => {
         onChange={emailChangeHandler}
         errMsg={emailErrMsg}
       />
-
       {/* 비밀번호 */}
       <InputForm
         type="password"
@@ -79,7 +79,6 @@ const LoginForm = ({ login }) => {
         onChange={passwordChangeHandler}
         errMsg={passwordErrMsg}
       />
-
       {/* 로그인 버튼 */}
       <Button type="submit" onClick={submitHandler}>
         로그인

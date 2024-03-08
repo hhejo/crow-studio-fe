@@ -10,17 +10,25 @@ import { TitleWithLogo } from "../../components/TitleWithLogo";
 
 const Login = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
+
   const loginHandler = async (loginData) => {
+    // 입력한 email, password 가져오기
+    const { email, password: pw } = loginData;
     try {
-      const { email, password: pw } = loginData; // 입력한 email, password 가져오기
-      const { user } = await signInWithEmailAndPassword(auth, email, pw); // firebase에 email, password가 일치하는 유저 가져옴
-      dispatch(setCurrentUser(user)); // Redux에 user 정보 저장
-      toast.success("로그인 성공"); // 토스트 출력
-      navigate("/teams"); // /temas로 이동
+      // firebase에서 email, password가 일치하는 유저 가져오기
+      const { user } = await signInWithEmailAndPassword(auth, email, pw);
+      // Redux에 user 정보 저장
+      dispatch(setCurrentUser(user)); // docId는 없지만 어차피 App.js에서 작업
+      //
+      toast.success("로그인 성공");
+      navigate("/teams");
     } catch (error) {
-      const { code: errCode, message: errMessage } = error; // 로그인 에러
+      // 로그인 에러
+      const { code: errCode, message: errMessage } = error;
+      // 409
       if (errCode === "auth/invalid-credential")
-        toast.warning("유효하지 않은 이메일이나 비밀번호입니다."); // 409
+        toast.warning("유효하지 않은 이메일이나 비밀번호입니다.");
+      //
       else toast.error("로그인 오류");
       console.error(errMessage);
     }

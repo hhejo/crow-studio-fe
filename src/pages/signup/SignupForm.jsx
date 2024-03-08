@@ -2,9 +2,11 @@ import { useState } from "react";
 import { InputForm } from "../../components/forms/InputForm";
 import { Button } from "../../components/Button";
 
+// 이메일 정규표현식
+const emailRegEx =
+  /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
 // 초기 입력 상태
 const initialInputState = { email: "", nickname: "", pw1: "", pw2: "" };
-
 // 초기 에러 메시지 상태
 const initialErrState = {
   emailErrMsg: "",
@@ -13,11 +15,6 @@ const initialErrState = {
   pw2ErrMsg: "",
 };
 
-// 이메일 정규표현식
-const emailRegEx =
-  /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
-
-// SignupForm
 const SignupForm = ({ signup }) => {
   const [inputs, setInputs] = useState(initialInputState); // 초기 입력
   const [errMsgs, setErrMsgs] = useState(initialErrState); // 초기 에러메시지
@@ -101,9 +98,9 @@ const SignupForm = ({ signup }) => {
       });
       isValid = false;
     }
-
+    // 하나라도 유효하지 않으면 종료
     if (!isValid) return;
-
+    // 에러메시지 초기화하고 회원가입 정보 전달
     setErrMsgs(initialErrState);
     const signupData = { email: email, password: pw2, nickname: nickname };
     signup(signupData);
@@ -127,7 +124,6 @@ const SignupForm = ({ signup }) => {
         onChange={inputChangeHandler}
         errMsg={emailErrMsg}
       />
-
       {/* 닉네임 */}
       <InputForm
         type="text"
@@ -140,7 +136,6 @@ const SignupForm = ({ signup }) => {
         onChange={inputChangeHandler}
         errMsg={nicknameErrMsg}
       />
-
       {/* 비밀번호 1 */}
       <InputForm
         type="password"
@@ -153,7 +148,6 @@ const SignupForm = ({ signup }) => {
         onChange={inputChangeHandler}
         errMsg={pw1ErrMsg}
       />
-
       {/* 비밀번호 2 */}
       <InputForm
         type="password"
@@ -166,7 +160,6 @@ const SignupForm = ({ signup }) => {
         onChange={inputChangeHandler}
         errMsg={pw2ErrMsg}
       />
-
       {/* 회원가입 버튼 */}
       <Button type="submit" onClick={submitHandler}>
         회원가입

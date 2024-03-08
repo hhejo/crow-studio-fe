@@ -7,25 +7,18 @@ import { logout } from "../redux/user-slice";
 
 const MENU_ID = "nav-menu-id";
 
-// Header
 const Header = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
   const { isLoggedIn, uid, nickname } = useSelector(
     (state) => state.user.value
   );
   const { show } = useContextMenu({ id: MENU_ID });
-
-  // clickProfileHandler
-  const clickProfileHandler = (e) => displayMenu(e);
-
-  // logoutHandler
+  const clickNicknameHandler = (e) => displayMenu(e);
   const logoutHandler = () => {
     dispatch(logout());
     toast.success("로그아웃 성공");
     navigate("/", { replace: true });
   };
-
-  // displayMenu
   const displayMenu = (e) => {
     show({ event: e });
     return e;
@@ -71,11 +64,13 @@ const Header = () => {
             <div className="cursor-pointer mt-[3px]">
               {/* 로그인 O */}
               {isLoggedIn && (
-                <div className="hover:text-white" onClick={clickProfileHandler}>
+                <div
+                  className="hover:text-white"
+                  onClick={clickNicknameHandler}
+                >
                   {nickname}
                 </div>
               )}
-
               {/* 로그인 X */}
               {!isLoggedIn && (
                 <div className="flex justify-end items-center">

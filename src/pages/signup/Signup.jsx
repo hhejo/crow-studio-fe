@@ -11,31 +11,37 @@ import { TitleWithLogo } from "../../components/TitleWithLogo";
 
 const Signup = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
+
   const signupHandler = async (signupData) => {
-    const { email, password: pw, nickname } = signupData; // 입력한 email, password, nickname 가져오기
+    // 입력한 email, password, nickname 가져오기
+    const { email, password: pw, nickname } = signupData;
     try {
-      const { user } = await createUserWithEmailAndPassword(auth, email, pw); // firebase에 email, password를 가진 유저 생성
-      await updateProfile(user, { displayName: nickname }); // 닉네임 적용
-      const newUserToAdd = {
-        uid: user.uid,
-        email,
-        password: "",
-        nickname,
-        imageURL: "",
-        gitUsername: "",
-        gitToken: "",
-        teams: [],
-      };
-      const docRef = await addDoc(collection(firestore, "users"), newUserToAdd); // users 컬렉션에 유저 정보 삽입
-      dispatch(setCurrentUser({ ...user, docId: docRef.id })); // Redux에 user 정보 저장
+      // firebase에 회원가입 유저 생성
+      const { user } = await createUserWithEmailAndPassword(auth, email, pw);
+      // 닉네임도 적용
+      await updateProfile(user, { displayName: nickname });
+      // 회원가입 유저
+      const basic = { uid: user.uid, email, nickname, password: "" };
+      const extra = { imageURL: "", gitUsername: "", gitToken: "", teams: [] };
+      const userToAdd = { ...basic, ...extra };
+      // users 컬렉션에 회원가입 유저 추가
+      const docRef = await addDoc(collection(firestore, "users"), userToAdd);
+      // Redux에 회원가입한 유저 정보 저장. 현재 로그인한 유저가 됨
+      const currentUser = { ...user, docId: docRef.id };
+      dispatch(setCurrentUser(currentUser));
+      //
       toast.success("회원가입 성공");
       navigate("/teams");
     } catch (error) {
-      const { code: errCode, message: errMessage } = error; // 회원가입 에러
+      // 회원가입 에러
+      const { code: errCode, message: errMessage } = error;
+      //
       if (errCode === "auth/weak-password")
         toast.warning("비밀번호는 6자 이상이어야 합니다.");
+      // 409
       else if (errCode === "auth/email-already-in-use")
-        toast.warning("이미 사용중인 이메일입니다."); // 409
+        toast.warning("이미 사용중인 이메일입니다.");
+      //
       else toast.error("회원가입 오류");
       console.error(errMessage);
     }
