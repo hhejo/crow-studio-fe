@@ -1,18 +1,15 @@
-import { useEffect } from "react";
-import { RouterProvider } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import AOS from "aos";
-import "aos/dist/aos.css";
+import { Outlet } from "react-router-dom";
+import { Nav } from "./components/Nav";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, firestore } from "./firebase";
 import { setCurrentUser } from "./redux/user-slice";
-import { router } from "./router";
 
-function App() {
+const Root = () => {
   const dispatch = useDispatch();
-  AOS.init();
+  // const { isLoggedIn } = useSelector((state) => state.user.value);
+  const [flag, setFlag] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -36,7 +33,7 @@ function App() {
         // docId 가져오기
         const docId = querySnapshot.docs[0].id;
         // Redux에 로그인한 유저 정보 적용하기
-        dispatch(setCurrentUser({ ...user, docId }));
+        dispatch(setCurrentUser({ ...user, docId })).then(() => setFlag(true));
       }
       // fetchUser 실행
       fetchUser();
@@ -45,23 +42,11 @@ function App() {
   }, [dispatch]);
 
   return (
-    <>
-      <RouterProvider router={router} />
-      <ToastContainer
-        position="bottom-right"
-        autoClose={700}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss={false}
-        draggable
-        pauseOnHover={false}
-        theme="dark"
-        className="rounded-[10px] text-[16px]"
-      />
-    </>
+    <div className="flex flex-col h-full w-full">
+      <Nav />
+      {flag && <Outlet />}
+    </div>
   );
-}
+};
 
-export default App;
+export default Root;
