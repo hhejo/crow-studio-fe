@@ -108,74 +108,69 @@ const Intro = () => {
   };
 
   return (
-    <>
-      <div className="h-full w-full">
-        <Nav />
-        <div className="flex mx-3" style={{ height: "calc(100% - 80px)" }}>
-          <div className="flex">
-            <Sidebar
-              clickIcon={showComponentHandler}
-              showComponent={setting.lastSideBar}
-            />
-            {setting.lastSideBar && (
-              <SidebarItems>
-                {setting.lastSideBar === "Var" && <VariableName />}
-              </SidebarItems>
-            )}
-          </div>
-          <div
-            className="flex flex-col ml-[8px] h-full"
-            style={
-              setting.lastSideBar === ""
-                ? { width: "calc(100vw - 105px)" }
-                : { width: "calc(100vw - 400px)" }
-            }
-          >
-            <SplitPane
-              style={{ position: "static", height: "auto" }}
-              split="horizontal"
-              minSize={30}
-              maxSize={-30}
-              defaultSize={setting.horizonSplit + "%"}
-              className="vertical Pane1"
-              ref={editorheightRef}
-              onDragFinished={checkSize}
-            >
-              <div className="w-full">
-                <div className="text-sm flex items-center bg-component_item_bg_dark p-1 rounded-lg mb-1.5">
-                  <TiArrowRightThick className="text-point_yellow" />
-                  <div className="ml-2 break-all">
-                    {selectedFilePath?.split("/").slice(1).join("/")}
-                  </div>
-                </div>
-                <Editor
-                  style={{
-                    overflow: "auto",
-                  }}
-                  height={editorHeight}
-                  theme="vs-dark"
-                  defaultLanguage="python"
-                  defaultValue={firstEditorValue}
-                  onMount={(editor) => {
-                    editorRef.current = editor;
-                  }}
-                  options={editorOptions}
-                />
-              </div>
-              <ConsoleTerminal
-                teamSeq={teamSeq}
-                selectedFilePath={selectedFilePath}
-                consoleHeight={consoleHeight}
-                lintResultList={lintResultList}
-                setLintResultList={setLintResultList}
-                setting={setting.consoles}
-                editorRef={editorRef}
-              />
-            </SplitPane>
-          </div>
-        </div>
+    <main className="flex mx-3" style={{ height: "calc(100% - 80px)" }}>
+      <div className="flex">
+        <Sidebar
+          clickIcon={showComponentHandler}
+          showComponent={setting.lastSideBar}
+        />
+        {setting.lastSideBar && (
+          <SidebarItems>
+            {setting.lastSideBar === "Var" && <VariableName />}
+          </SidebarItems>
+        )}
       </div>
-    </>
+      <div
+        className="flex flex-col ml-[8px] h-full"
+        style={
+          setting.lastSideBar === ""
+            ? { width: "calc(100vw - 105px)" }
+            : { width: "calc(100vw - 400px)" }
+        }
+      >
+        <SplitPane
+          style={{ position: "static", height: "auto" }}
+          split="horizontal"
+          minSize={30}
+          maxSize={-30}
+          defaultSize={setting.horizonSplit + "%"}
+          className="vertical Pane1"
+          ref={editorheightRef}
+          onDragFinished={checkSize}
+        >
+          <div className="w-full">
+            <div className="text-sm flex items-center bg-component_item_bg_dark p-1 rounded-lg mb-1.5">
+              <TiArrowRightThick className="text-point_yellow" />
+              <div className="ml-2 break-all">
+                {selectedFilePath?.split("/").slice(1).join("/")}
+              </div>
+            </div>
+            <Editor
+              style={{
+                overflow: "auto",
+              }}
+              height={editorHeight}
+              theme="vs-dark"
+              defaultLanguage="python"
+              defaultValue={firstEditorValue}
+              onMount={(editor) => {
+                editorRef.current = editor;
+              }}
+              options={editorOptions}
+            />
+          </div>
+          <ConsoleTerminal
+            teamSeq={teamSeq}
+            selectedFilePath={selectedFilePath}
+            consoleHeight={consoleHeight}
+            lintResultList={lintResultList}
+            setLintResultList={setLintResultList}
+            setting={setting.consoles}
+            editorRef={editorRef}
+          />
+        </SplitPane>
+      </div>
+    </main>
   );
 };
 

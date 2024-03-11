@@ -14,6 +14,7 @@ const Root = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       // 유저가 로그인되어 있지 않으면 종료
+      console.log("flag:", flag);
       if (!user) return;
       // 현재 로그인한 user의 정보를 firestore의 users 컬렉션에서 가져오는 함수
       async function fetchUser() {
@@ -39,7 +40,7 @@ const Root = () => {
       fetchUser();
     });
     return () => unsubscribe();
-  }, [dispatch]);
+  }, [dispatch, flag]);
 
   return (
     <div className="flex flex-col h-full w-full">

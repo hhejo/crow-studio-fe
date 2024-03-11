@@ -35,24 +35,21 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full">
-      <Nav />
-      <section
-        data-aos="fade-in"
-        className="p-4 w-screen h-full flex flex-wrap justify-center items-center"
-      >
-        <div className="h-fit flex flex-col">
-          <TitleWithLogo title="로그인" />
-          <LoginForm login={loginHandler} />
-          <Link
-            to="/signup"
-            className="block w-full text-center hover:text-white transition"
-          >
-            회원가입
-          </Link>
-        </div>
-      </section>
-    </div>
+    <main
+      data-aos="fade-in"
+      className="p-4 w-screen h-full flex flex-wrap justify-center items-center"
+    >
+      <div className="h-fit flex flex-col">
+        <TitleWithLogo title="로그인" />
+        <LoginForm login={loginHandler} />
+        <Link
+          to="/signup"
+          className="block w-full text-center hover:text-white transition"
+        >
+          회원가입
+        </Link>
+      </div>
+    </main>
   );
 };
 

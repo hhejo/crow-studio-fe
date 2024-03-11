@@ -57,26 +57,20 @@ const Mypage = () => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full">
-      <Nav />
-
-      {/*  */}
-      <section
-        data-aos="fade-in"
-        className="flex md:flex-row flex-col h-full justify-center items-center m-3 mb-6 overflow-auto"
-      >
-        {/* 프로필 */}
-        <Profile isMe={isMe} mypageUid={mypageUid} currentUid={currentUid} />
-
-        {/* 회원정보수정 */}
-        {isMe && (
-          <ModifyForms
-            modifyNickname={modifyNicknameHandler}
-            resign={resignHandler}
-          />
-        )}
-      </section>
-    </div>
+    <main
+      data-aos="fade-in"
+      className="flex md:flex-row flex-col h-full justify-center items-center m-3 mb-6 overflow-auto"
+    >
+      {/* 프로필 */}
+      <Profile isMe={isMe} mypageUid={mypageUid} currentUid={currentUid} />
+      {/* 회원정보수정 */}
+      {isMe && (
+        <ModifyForms
+          modifyNickname={modifyNicknameHandler}
+          resign={resignHandler}
+        />
+      )}
+    </main>
   );
 };
 
