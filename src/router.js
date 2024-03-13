@@ -28,7 +28,7 @@ export const router = createBrowserRouter(
         <Route path="intro" element={<Intro />} />
         <Route path="signup" element={<Signup />} />
         <Route path="login" element={<Login />} />
-        {/* 마이페이지 */}
+        <Route path="mypage/:uid" element={<Mypage />} />
       </Route>
       {/* 로그인 O */}
       <Route element={<PrivateRoute />}>
