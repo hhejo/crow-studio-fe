@@ -28,10 +28,10 @@ export const router = createBrowserRouter(
         <Route path="intro" element={<Intro />} />
         <Route path="signup" element={<Signup />} />
         <Route path="login" element={<Login />} />
-        <Route path="mypage/:uid" element={<Mypage />} />
       </Route>
       {/* 로그인 O */}
       <Route element={<PrivateRoute />}>
+        <Route path="mypage/:uid" element={<Mypage />} />
         <Route path="teams" element={<Teams />} />
         <Route path="teams/:teamDocId" element={<TeamDetail />} />
         <Route path="teams/create" element={<TeamCreate />} />
