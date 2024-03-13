@@ -12,7 +12,6 @@ import { firestore } from "../../firebase";
 import { startLoading, endLoading } from "../../redux/global-slice";
 import Loading from "../../components/Loading";
 import TeamForms from "./TeamForms";
-import { Nav } from "../../components/Nav";
 
 const TeamCreate = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
@@ -54,28 +53,24 @@ const TeamCreate = () => {
     <>
       {isLoading && <Loading />}
       {!isLoading && (
-        <div className="flex flex-col w-full h-full">
-          <Nav />
-          {/*  */}
-          <div className="h-full flex flex-wrap justify-center items-center">
-            <div
-              data-aos="fade-in"
-              className="mb-2 mx-2 xs:px-16 px-10 py-12 flex flex-col w-fit h-fit justify-center items-center border border-primary_-2_dark rounded-md overflow-auto"
-            >
-              {/* 제목 */}
-              <div className="text-4xl font-bold text-white pb-2 mb-5">
-                팀 생성하기
-              </div>
-              {/* 팀 생성 폼 */}
-              <TeamForms createTeam={createTeamHandler} />
-              {/* 팀 목록 버튼 */}
-              <button
-                onClick={() => navigate("/teams")}
-                className="xs:w-80 w-[226.03px] px-10 py-2 text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark hover:bg-component_item_bg_+2_dark hover:text-white rounded-md transition"
-              >
-                팀 목록
-              </button>
+        <div className="h-full flex flex-wrap justify-center items-center">
+          <div
+            data-aos="fade-in"
+            className="mb-2 mx-2 xs:px-16 px-10 py-12 flex flex-col w-fit h-fit justify-center items-center border border-primary_-2_dark rounded-md overflow-auto"
+          >
+            {/* 제목 */}
+            <div className="text-4xl font-bold text-white pb-2 mb-5">
+              팀 생성하기
             </div>
+            {/* 팀 생성 폼 */}
+            <TeamForms createTeam={createTeamHandler} />
+            {/* 팀 목록 버튼 */}
+            <button
+              onClick={() => navigate("/teams")}
+              className="xs:w-80 w-[226.03px] px-10 py-2 text-primary_dark bg-component_item_bg_dark border border-primary_-2_dark hover:bg-component_item_bg_+2_dark hover:text-white rounded-md transition"
+            >
+              팀 목록
+            </button>
           </div>
         </div>
       )}

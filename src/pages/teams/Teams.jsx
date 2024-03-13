@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "../../firebase";
 import TeamList from "./components/TeamList";
-import { Nav } from "../../components/Nav";
 
 const Teams = () => {
   const navigate = useNavigate();

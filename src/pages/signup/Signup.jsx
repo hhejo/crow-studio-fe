@@ -7,7 +7,6 @@ import { auth, firestore } from "../../firebase";
 import { setCurrentUser } from "../../redux/user-slice";
 import SignupForm from "./SignupForm";
 import { TitleWithLogo } from "../../components/TitleWithLogo";
-import { Nav } from "../../components/Nav";
 
 const Signup = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];

@@ -6,7 +6,6 @@ import { auth } from "../../firebase";
 import { setCurrentUser } from "../../redux/user-slice";
 import LoginForm from "./LoginForm";
 import { TitleWithLogo } from "../../components/TitleWithLogo";
-import { Nav } from "../../components/Nav";
 
 const Login = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
