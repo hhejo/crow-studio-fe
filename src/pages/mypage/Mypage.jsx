@@ -10,7 +10,6 @@ import { auth, firestore } from "../../firebase";
 import { logout, updateGitAuth, setCurrentUser } from "../../redux/user-slice";
 import Profile from "./Profile";
 import ModifyForms from "./ModifyForms";
-import { Nav } from "../../components/Nav";
 
 const Mypage = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
