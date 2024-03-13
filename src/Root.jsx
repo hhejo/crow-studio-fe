@@ -9,12 +9,10 @@ import { setCurrentUser } from "./redux/user-slice";
 const Root = () => {
   const dispatch = useDispatch();
   // const { isLoggedIn } = useSelector((state) => state.user.value);
-  const [flag, setFlag] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       // 유저가 로그인되어 있지 않으면 종료
-      console.log("flag:", flag);
       if (!user) return;
       // 현재 로그인한 user의 정보를 firestore의 users 컬렉션에서 가져오는 함수
       async function fetchUser() {
@@ -34,18 +32,18 @@ const Root = () => {
         // docId 가져오기
         const docId = querySnapshot.docs[0].id;
         // Redux에 로그인한 유저 정보 적용하기
-        dispatch(setCurrentUser({ ...user, docId })).then(() => setFlag(true));
+        dispatch(setCurrentUser({ ...user, docId }));
       }
       // fetchUser 실행
       fetchUser();
     });
     return () => unsubscribe();
-  }, [dispatch, flag]);
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col h-full w-full">
       <Nav />
-      {flag && <Outlet />}
+      <Outlet />
     </div>
   );
 };
