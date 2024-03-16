@@ -5,18 +5,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, firestore } from "./firebase";
 import { setCurrentUser, setFetchedState } from "./redux/user-slice";
+import { startLoading, endLoading } from "./redux/global-slice";
 
 const Root = () => {
   const dispatch = useDispatch();
   // const { isLoggedIn } = useSelector((state) => state.user.value);
-  const { isFetched } = useSelector((state) => state.user.value);
+  const { isLoggedIn } = useSelector((state) => state.user.value);
+  const { isLoading } = useSelector((state) => state.global.value);
 
   useEffect(() => {
-    console.log("isFetched:", isFetched);
+    dispatch(startLoading());
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      dispatch(setFetchedState());
       // 유저가 로그인되어 있지 않으면 종료
-      if (!user) return;
+      if (!user) {
+        dispatch(endLoading());
+        return;
+      }
       // 현재 로그인한 user의 정보를 firestore의 users 컬렉션에서 가져오는 함수
       async function fetchUser() {
         // users 컬렉션에서 현재 로그인한 유저의 uid와 일치하는 유저 정보 가져오기
@@ -35,19 +39,20 @@ const Root = () => {
         // docId 가져오기
         const docId = querySnapshot.docs[0].id;
         // Redux에 로그인한 유저 정보 적용하기
-        dispatch(setCurrentUser({ ...user, docId }));
+        dispatch(setCurrentUser({ ...user, docId })).then(() =>
+          dispatch(endLoading())
+        );
       }
       // fetchUser 실행
       fetchUser();
     });
     return () => unsubscribe();
-  }, [dispatch, isFetched]);
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col h-full w-full">
       <Nav />
-      {`isFetched: ${isFetched}`}
-      {isFetched && <Outlet />}
+      {!isLoading && <Outlet context={{ isLoggedIn }} />}
     </div>
   );
 };

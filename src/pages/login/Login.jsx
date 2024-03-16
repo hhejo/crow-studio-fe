@@ -6,6 +6,7 @@ import { auth } from "../../firebase";
 import { setCurrentUser } from "../../redux/user-slice";
 import LoginForm from "./LoginForm";
 import { TitleWithLogo } from "../../components/TitleWithLogo";
+import { startLoading, endLoading } from "../../redux/global-slice";
 
 const Login = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
@@ -14,14 +15,16 @@ const Login = () => {
     // 입력한 email, password 가져오기
     const { email, password: pw } = loginData;
     try {
+      dispatch(startLoading());
       // firebase에서 email, password가 일치하는 유저 가져오기
       const { user } = await signInWithEmailAndPassword(auth, email, pw);
       // Redux에 user 정보 저장
-      dispatch(setCurrentUser(user)); // docId는 없지만 어차피 App.js에서 작업
+      dispatch(setCurrentUser(user)).then(() => dispatch(endLoading())); // docId는 없지만 어차피 App.js에서 작업
       //
       toast.success("로그인 성공");
       navigate("/teams");
     } catch (error) {
+      dispatch(endLoading());
       // 로그인 에러
       const { code: errCode, message: errMessage } = error;
       // 409

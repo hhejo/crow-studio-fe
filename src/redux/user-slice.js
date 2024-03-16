@@ -5,7 +5,6 @@ import userApi from "../api/userApi";
 // 초기 상태값
 const initialState = {
   value: {
-    isFetched: false,
     isLoggedIn: false,
     uid: "",
     docId: "",
@@ -56,7 +55,7 @@ export const userSlice = createSlice({
       state.value = initialState.value;
     },
     setFetchedState: (state) => {
-      state.value = { ...initialState.value, isFetched: true };
+      state.value = initialState.value;
     },
   },
   extraReducers: (builder) => {
@@ -64,16 +63,7 @@ export const userSlice = createSlice({
       .addCase(setCurrentUser.fulfilled, (state, action) => {
         const { uid, docId, email, nickname, imageURL } = action.payload;
         const isLoggedIn = true;
-        const isFetched = true;
-        state.value = {
-          isFetched,
-          isLoggedIn,
-          uid,
-          docId,
-          email,
-          nickname,
-          imageURL,
-        };
+        state.value = { isLoggedIn, uid, docId, email, nickname, imageURL };
       })
       .addCase(setCurrentUser.rejected, (state, action) => {
         state.value = initialState.value;
