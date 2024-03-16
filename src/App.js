@@ -37,6 +37,7 @@ function App() {
         const docId = querySnapshot.docs[0].id;
         // Redux에 로그인한 유저 정보 적용하기
         dispatch(setCurrentUser({ ...user, docId }));
+        console.log("App.js");
       }
       // fetchUser 실행
       fetchUser();
