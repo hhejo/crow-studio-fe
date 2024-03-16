@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AOS from "aos";
@@ -13,6 +13,8 @@ import { router } from "./router";
 function App() {
   const dispatch = useDispatch();
   AOS.init();
+
+  const { isFetched } = useSelector((state) => state.user.value);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -43,11 +45,11 @@ function App() {
       fetchUser();
     });
     return () => unsubscribe();
-  }, [dispatch]);
+  }, [dispatch, isFetched]);
 
   return (
     <>
-      <RouterProvider router={router} />
+      {isFetched && <RouterProvider router={router} />}
       <ToastContainer
         position="bottom-right"
         autoClose={700}
