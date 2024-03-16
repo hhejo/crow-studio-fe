@@ -4,14 +4,17 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, firestore } from "./firebase";
-import { setCurrentUser } from "./redux/user-slice";
+import { setCurrentUser, setFetchedState } from "./redux/user-slice";
 
 const Root = () => {
   const dispatch = useDispatch();
   // const { isLoggedIn } = useSelector((state) => state.user.value);
+  const { isFetched } = useSelector((state) => state.user.value);
 
   useEffect(() => {
+    console.log("isFetched:", isFetched);
     const unsubscribe = auth.onAuthStateChanged((user) => {
+      dispatch(setFetchedState());
       // 유저가 로그인되어 있지 않으면 종료
       if (!user) return;
       // 현재 로그인한 user의 정보를 firestore의 users 컬렉션에서 가져오는 함수
@@ -38,12 +41,13 @@ const Root = () => {
       fetchUser();
     });
     return () => unsubscribe();
-  }, [dispatch]);
+  }, [dispatch, isFetched]);
 
   return (
     <div className="flex flex-col h-full w-full">
       <Nav />
-      <Outlet />
+      {`isFetched: ${isFetched}`}
+      {isFetched && <Outlet />}
     </div>
   );
 };

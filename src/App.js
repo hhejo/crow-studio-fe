@@ -14,8 +14,6 @@ function App() {
   const dispatch = useDispatch();
   AOS.init();
 
-  const { isFetched } = useSelector((state) => state.user.value);
-
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       // 유저가 로그인되어 있지 않으면 종료
@@ -45,11 +43,11 @@ function App() {
       fetchUser();
     });
     return () => unsubscribe();
-  }, [dispatch, isFetched]);
+  }, [dispatch]);
 
   return (
     <>
-      {isFetched && <RouterProvider router={router} />}
+      <RouterProvider router={router} />
       <ToastContainer
         position="bottom-right"
         autoClose={700}

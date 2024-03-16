@@ -55,6 +55,9 @@ export const userSlice = createSlice({
       auth.signOut();
       state.value = initialState.value;
     },
+    setFetchedState: (state) => {
+      state.value = { ...initialState.value, isFetched: true };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -81,5 +84,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logout } = userSlice.actions;
+export const { logout, setFetchedState } = userSlice.actions;
 export default userSlice.reducer;

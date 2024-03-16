@@ -6,7 +6,7 @@ const PrivateRoute = () => {
   const { isFetched, isLoggedIn } = useSelector((state) => state.user.value);
   useEffect(() => {
     console.log(`Private Route, isLoggedIn:${isLoggedIn}`);
-  }, []);
+  }, [isFetched]);
   if (isLoggedIn) return <Outlet />;
   return <Navigate to="/" replace />;
 };
