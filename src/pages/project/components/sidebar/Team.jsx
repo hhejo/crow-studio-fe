@@ -19,16 +19,16 @@ import { getTeamDetail } from "../../../../redux/teamSlice";
 const Team = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { teamSeq } = useParams();
+  const { teamDocId } = useParams();
   const [team, setTeam] = useState({});
   const { teamName, teamLeaderNickname, memberDtoList: members } = team;
 
   useEffect(() => {
-    dispatch(getTeamDetail(teamSeq))
+    dispatch(getTeamDetail(teamDocId))
       .unwrap()
       .then(setTeam)
       .catch(() => toast.error("팀 불러오기 실패"));
-  }, [dispatch, teamSeq]);
+  }, [dispatch, teamDocId]);
 
   return (
     <React.Fragment>
@@ -133,7 +133,7 @@ const Team = () => {
             <div className="mb-4">
               <span
                 className="text-point_light_yellow text-2xl font-bold hover:text-point_yellow cursor-pointer mr-2 transition"
-                onClick={() => navigate(`/teams/${teamSeq}`)}
+                onClick={() => navigate(`/teams/${teamDocId}`)}
               >
                 {teamName}
               </span>

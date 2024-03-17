@@ -23,7 +23,7 @@ const ConsoleTerminal = (props) => {
   const [finalOutputDataList, setFinalOutputDataList] = useState([]);
 
   const {
-    teamSeq,
+    teamDocId,
     selectedFilePath,
     consoleHeight,
     lintResultList,
@@ -59,7 +59,7 @@ const ConsoleTerminal = (props) => {
   const stopCompileHandler = async () => {
     dispatch(stopLoading());
     // setLintResultList([]);
-    const teamData = { teamSeq, teamName };
+    const teamData = { teamDocId, teamName };
     try {
       await compileApi.stopCompile(teamData);
       setFinalOutputDataList([]);

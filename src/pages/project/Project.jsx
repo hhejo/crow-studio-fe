@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
@@ -24,11 +24,10 @@ import Settings from "./components/sidebar/Settings";
 import ConsoleTerminal from "./components/ConsoleTerminal";
 import userApi from "../../api/userApi";
 import { toast } from "react-toastify";
-import { Nav } from "../../components/Nav";
 
 const Project = () => {
   const dispatch = useDispatch();
-  const { teamSeq } = useParams();
+  const { teamDocId } = useParams();
   // const { teamGit } = useSelector((state) => state.team.value);
   const { selectedFileName, selectedFileType, selectedFilePath } = useSelector(
     (state) => state.team.value
@@ -72,7 +71,7 @@ const Project = () => {
 
   // 초기 팀 정보 가져옴
   useEffect(() => {
-    dispatch(getTeamDetail(teamSeq))
+    dispatch(getTeamDetail(teamDocId))
       .unwrap()
       .then(() => editorRef.current?.getModel().setValue(""))
       .catch((errStatusCode) => {
@@ -83,17 +82,17 @@ const Project = () => {
           navigate("/403", { replace: true });
         }
       });
-  }, [dispatch, teamSeq, navigate]);
+  }, [dispatch, teamDocId, navigate]);
 
   // 개인 환경 세팅 불러오기
   useEffect(() => {
     userApi
-      .getPersonalSetting(teamSeq)
+      .getPersonalSetting(teamDocId)
       .then((res) => {
         if (res.data.result.includes("SUCCESS")) {
           setSetting(() => res.data);
         } else {
-          userApi.setPersonalSetting(teamSeq, setting);
+          userApi.setPersonalSetting(teamDocId, setting);
         }
       })
       .catch((err) => {
@@ -104,7 +103,7 @@ const Project = () => {
   // 개인 환경 세팅 저장
   const saveSetting = async () => {
     userApi
-      .setPersonalSetting(teamSeq, setting)
+      .setPersonalSetting(teamDocId, setting)
       // .then(() => toast.success("저장되었습니다"))
       .catch(() => toast.error("오류가 발생했습니다"));
   };
@@ -165,7 +164,7 @@ const Project = () => {
         filePath: selectedFilePath,
         fileContent: res2.data.data,
       };
-      await fileApi.saveFileContent(teamSeq, fileContentData);
+      await fileApi.saveFileContent(teamDocId, fileContentData);
 
       // 린트
       setLintResultList([]);
@@ -238,7 +237,7 @@ const Project = () => {
     saveSetting();
     navigate("/project/code-share", {
       state: {
-        teamSeq,
+        teamDocId,
         options: setting.editors,
       },
       target: "_blank",
@@ -248,101 +247,96 @@ const Project = () => {
   };
 
   return (
-    <React.Fragment>
-      <div className="h-full w-full">
-        <Nav />
-        <div className="flex mx-3" style={{ height: "calc(100% - 80px)" }}>
-          <div className="flex">
-            <Sidebar
-              clickIcon={showComponentHandler}
-              showComponent={setting.lastSideBar}
-              goCodeShare={goCodeShare}
-            />
-            {setting.lastSideBar && setting.lastSideBar !== "Share" && (
-              <SidebarItems>
-                {setting.lastSideBar === "Dir" && (
-                  <Directory
-                    teamSeq={teamSeq}
-                    selectedFilePath={selectedFilePath}
-                    selectedFileName={selectedFileName}
-                    selectedFileType={selectedFileType}
-                    saveFileContent={saveFileContentHandler}
-                    loading={loading}
-                    editorRef={editorRef}
-                    goCodeShare={goCodeShare}
-                  />
-                )}
-                {setting.lastSideBar === "Git" && (
-                  <Git
-                    selectedFilePath={selectedFilePath}
-                    teamSeq={teamSeq}
-                    mySeq={mySeq}
-                  />
-                )}
-                {setting.lastSideBar === "Team" && <Team />}
-                {setting.lastSideBar === "Api" && <Api />}
-                {setting.lastSideBar === "Var" && <VariableName />}
-                {setting.lastSideBar === "Set" && (
-                  <Settings
-                    setting={setting}
-                    setSetting={setSetting}
-                    saveSetting={saveSetting}
-                  />
-                )}
-              </SidebarItems>
-            )}
-          </div>
-          <div
-            className="flex flex-col ml-[8px] h-full"
-            style={
-              setting.lastSideBar === ""
-                ? { width: "calc(100vw - 105px)" }
-                : { width: "calc(100vw - 400px)" }
-            }
-          >
-            <SplitPane
-              style={{ position: "static", height: "auto" }}
-              split="horizontal"
-              minSize={30}
-              maxSize={-30}
-              defaultSize={setting.horizonSplit + "%"}
-              className="vertical Pane1"
-              ref={editorheightRef}
-              onDragFinished={checkSize}
-            >
-              <div className="w-full">
-                <div className="text-sm flex items-center bg-component_item_bg_dark p-1 rounded-lg mb-1.5">
-                  <TiArrowRightThick className="text-point_yellow" />
-                  <div className="ml-2 break-all">
-                    {selectedFilePath?.split("/").slice(1).join("/")}
-                  </div>
-                </div>
-                <Editor
-                  style={{
-                    overflow: "auto",
-                  }}
-                  height={editorHeight}
-                  theme="vs-dark"
-                  defaultLanguage="python"
-                  onMount={(editor) => {
-                    editorRef.current = editor;
-                  }}
-                  options={editorOptions}
-                />
-              </div>
-              <ConsoleTerminal
-                teamSeq={teamSeq}
+    <div className="flex mx-3" style={{ height: "calc(100% - 80px)" }}>
+      <div className="flex">
+        <Sidebar
+          clickIcon={showComponentHandler}
+          showComponent={setting.lastSideBar}
+          goCodeShare={goCodeShare}
+        />
+        {setting.lastSideBar && setting.lastSideBar !== "Share" && (
+          <SidebarItems>
+            {setting.lastSideBar === "Dir" && (
+              <Directory
+                teamDocId={teamDocId}
                 selectedFilePath={selectedFilePath}
-                consoleHeight={consoleHeight}
-                lintResultList={lintResultList}
-                setLintResultList={setLintResultList}
-                setting={setting.consoles}
+                selectedFileName={selectedFileName}
+                selectedFileType={selectedFileType}
+                saveFileContent={saveFileContentHandler}
+                loading={loading}
+                editorRef={editorRef}
+                goCodeShare={goCodeShare}
               />
-            </SplitPane>
-          </div>
-        </div>
+            )}
+            {setting.lastSideBar === "Git" && (
+              <Git
+                selectedFilePath={selectedFilePath}
+                teamDocId={teamDocId}
+                mySeq={mySeq}
+              />
+            )}
+            {setting.lastSideBar === "Team" && <Team />}
+            {setting.lastSideBar === "Api" && <Api />}
+            {setting.lastSideBar === "Var" && <VariableName />}
+            {setting.lastSideBar === "Set" && (
+              <Settings
+                setting={setting}
+                setSetting={setSetting}
+                saveSetting={saveSetting}
+              />
+            )}
+          </SidebarItems>
+        )}
       </div>
-    </React.Fragment>
+      <div
+        className="flex flex-col ml-[8px] h-full"
+        style={
+          setting.lastSideBar === ""
+            ? { width: "calc(100vw - 105px)" }
+            : { width: "calc(100vw - 400px)" }
+        }
+      >
+        <SplitPane
+          style={{ position: "static", height: "auto" }}
+          split="horizontal"
+          minSize={30}
+          maxSize={-30}
+          defaultSize={setting.horizonSplit + "%"}
+          className="vertical Pane1"
+          ref={editorheightRef}
+          onDragFinished={checkSize}
+        >
+          <div className="w-full">
+            <div className="text-sm flex items-center bg-component_item_bg_dark p-1 rounded-lg mb-1.5">
+              <TiArrowRightThick className="text-point_yellow" />
+              <div className="ml-2 break-all">
+                {selectedFilePath?.split("/").slice(1).join("/")}
+              </div>
+            </div>
+            <Editor
+              style={{
+                overflow: "auto",
+              }}
+              height={editorHeight}
+              theme="vs-dark"
+              defaultLanguage="python"
+              onMount={(editor) => {
+                editorRef.current = editor;
+              }}
+              options={editorOptions}
+            />
+          </div>
+          <ConsoleTerminal
+            teamDocId={teamDocId}
+            selectedFilePath={selectedFilePath}
+            consoleHeight={consoleHeight}
+            lintResultList={lintResultList}
+            setLintResultList={setLintResultList}
+            setting={setting.consoles}
+          />
+        </SplitPane>
+      </div>
+    </div>
   );
 };
 

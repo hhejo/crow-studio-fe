@@ -17,20 +17,20 @@ const Git = (props) => {
   const [newBranchName, setNewBranchName] = useState("");
   const [callBell, setCallBell] = useState(0);
   const [nowBranch, setNowBranch] = useState("");
-  const { selectedFilePath, teamSeq, mySeq } = props;
+  const { selectedFilePath, teamDocId, mySeq } = props;
   // const seq = useSelector((state) => state.user.value.mySeq);
 
   useEffect(() => {
     const body = {
       gitPath: selectedFilePath,
     };
-    gitApi.gitBranch(teamSeq, 2, body).then((res) => {
+    gitApi.gitBranch(teamDocId, 2, body).then((res) => {
       setRepoBranch(() => res.data);
     });
-    gitApi.gitBranch(teamSeq, 1, body).then((res) => {
+    gitApi.gitBranch(teamDocId, 1, body).then((res) => {
       setLocalBranch(() => res.data);
     });
-  }, [callBell, selectedFilePath, teamSeq]);
+  }, [callBell, selectedFilePath, teamDocId]);
 
   const changeCommit = (e) => setCommitMessage(() => e.target.value);
 
@@ -44,7 +44,7 @@ const Git = (props) => {
       branchName: pureBranch,
     };
     gitApi
-      .gitSwitch(teamSeq, 1, gitData)
+      .gitSwitch(teamDocId, 1, gitData)
       .then(() => {
         setCallBell((prev) => prev + 1);
         setNowBranch(() => pureBranch);
@@ -60,7 +60,7 @@ const Git = (props) => {
       branchName: newBranchName,
     };
     gitApi
-      .gitSwitch(teamSeq, 2, gitData)
+      .gitSwitch(teamDocId, 2, gitData)
       .then(() => {
         setCallBell((prev) => prev + 1);
         toast.success("신규 브랜치 생성 완료");
@@ -75,7 +75,7 @@ const Git = (props) => {
       filePath: "all",
     };
     try {
-      await gitApi.gitCommit(teamSeq, body);
+      await gitApi.gitCommit(teamDocId, body);
       setCommitMessage(() => "");
       toast.success("커밋 성공");
     } catch (err) {
@@ -86,7 +86,7 @@ const Git = (props) => {
   const commitAndPush = () => {
     const body = {
       message: commitMessage,
-      teamSeq: teamSeq,
+      teamDocId: teamDocId,
       filePath: "all",
       branchName: nowBranch,
     };

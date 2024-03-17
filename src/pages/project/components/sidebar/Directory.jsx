@@ -86,7 +86,7 @@ const Directory = (props) => {
   const MySwal = withReactContent(Swal);
   const dispatch = useDispatch();
   const {
-    teamSeq,
+    teamDocId,
     selectedFilePath,
     selectedFileName,
     selectedFileType,
@@ -116,7 +116,7 @@ const Directory = (props) => {
   // 디렉터리 받기
   useEffect(() => {
     projectApi
-      .getAllFiles(teamSeq)
+      .getAllFiles(teamDocId)
       .then((res) => {
         setFilesDirectories(res.data);
         const payloadData = {
@@ -137,7 +137,7 @@ const Directory = (props) => {
       };
       dispatch(selectFile(resetPayloadData));
     };
-  }, [dispatch, teamSeq]);
+  }, [dispatch, teamDocId]);
 
   // 디렉터리 생성
   const createDirectoryHandler = async () => {
@@ -166,8 +166,8 @@ const Directory = (props) => {
       filePath: selectedFilePath,
     };
     try {
-      await fileApi.createFile(teamSeq, TYPE_FOLDER, fileInfoData);
-      const res = await projectApi.getAllFiles(teamSeq);
+      await fileApi.createFile(teamDocId, TYPE_FOLDER, fileInfoData);
+      const res = await projectApi.getAllFiles(teamDocId);
       setFilesDirectories(res.data);
       toast.success("폴더 생성 성공");
     } catch (err) {
@@ -202,8 +202,8 @@ const Directory = (props) => {
       filePath: selectedFilePath,
     };
     try {
-      await fileApi.createFile(teamSeq, TYPE_FILE, fileInfoData);
-      const res = await projectApi.getAllFiles(teamSeq);
+      await fileApi.createFile(teamDocId, TYPE_FILE, fileInfoData);
+      const res = await projectApi.getAllFiles(teamDocId);
       setFilesDirectories(res.data);
       toast.success("파일 생성 성공");
     } catch (err) {
@@ -242,8 +242,8 @@ const Directory = (props) => {
       fileTitle: newName.value,
     };
     try {
-      await fileApi.renameFile(teamSeq, renameData);
-      const res = await projectApi.getAllFiles(teamSeq);
+      await fileApi.renameFile(teamDocId, renameData);
+      const res = await projectApi.getAllFiles(teamDocId);
       setFilesDirectories(res.data);
       toast.success("이름 변경 성공");
     } catch (err) {
@@ -266,11 +266,11 @@ const Directory = (props) => {
     const filePathData = { filePath: selectedFilePath };
     try {
       await fileApi.deleteFile(
-        teamSeq,
+        teamDocId,
         selectedFileType === "folder" ? TYPE_FOLDER : TYPE_FILE,
         filePathData
       );
-      const res = await projectApi.getAllFiles(teamSeq);
+      const res = await projectApi.getAllFiles(teamDocId);
       setFilesDirectories(res.data);
       const resetPayloadData = {
         type: "",
