@@ -17,12 +17,11 @@ import NotFound from "./pages/not-found/NotFound";
 import Forbidden from "./pages/forbidden/Forbidden";
 import YMonaco from "./pages/code-share/YMonaco";
 // import Redirect from "./pages/redirect/Redirect";
-import WithLoading from "./components/WithLoading";
-import Root from "./Root";
+import Layout from "./Layout";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<Root />}>
+    <Route path="/" element={<Layout />}>
       {/* 로그인 X */}
       <Route element={<ProtectedRoute />}>
         <Route path="intro" element={<Intro />} />

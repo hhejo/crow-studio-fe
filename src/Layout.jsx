@@ -1,16 +1,16 @@
 import { Outlet } from "react-router-dom";
-import { Nav } from "./components/Nav";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, firestore } from "./firebase";
-import { setCurrentUser, setFetchedState } from "./redux/user-slice";
-import { startLoading, endLoading } from "./redux/global-slice";
+import { setCurrentUser } from "./redux/user-slice";
+import { startLoading, stopLoading } from "./redux/global-slice";
+import { Nav } from "./components/Nav";
+import { LoadingScreen } from "./components/LoadingScreen";
 
-const Root = () => {
+const Layout = () => {
   const dispatch = useDispatch();
-  // const { isLoggedIn } = useSelector((state) => state.user.value);
-  const { isLoggedIn } = useSelector((state) => state.user.value);
+  const { loggedIn } = useSelector((state) => state.user.value);
   const { isLoading } = useSelector((state) => state.global.value);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const Root = () => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       // 유저가 로그인되어 있지 않으면 종료
       if (!user) {
-        dispatch(endLoading());
+        dispatch(stopLoading());
         return;
       }
       // 현재 로그인한 user의 정보를 firestore의 users 컬렉션에서 가져오는 함수
@@ -40,7 +40,7 @@ const Root = () => {
         const docId = querySnapshot.docs[0].id;
         // Redux에 로그인한 유저 정보 적용하기
         dispatch(setCurrentUser({ ...user, docId })).then(() =>
-          dispatch(endLoading())
+          dispatch(stopLoading())
         );
       }
       // fetchUser 실행
@@ -51,10 +51,11 @@ const Root = () => {
 
   return (
     <div className="flex flex-col h-full w-full">
-      <Nav />
-      {!isLoading && <Outlet context={{ isLoggedIn }} />}
+      {isLoading && <LoadingScreen />}
+      {!isLoading && <Nav />}
+      {!isLoading && <Outlet context={{ loggedIn }} />}
     </div>
   );
 };
 
-export default Root;
+export default Layout;
