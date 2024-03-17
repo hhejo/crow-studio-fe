@@ -27,6 +27,10 @@ import { toast } from "react-toastify";
 const Project = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
   const { teamDocId } = useParams();
+  // 컴파일 출력 결과, 컴파일 로딩
+  const [compiledOutputList, setCompiledOutputList] = useState([]);
+  const [loadingCompile, setLoadingCompile] = useState(false);
+
   // const { teamGit } = useSelector((state) => state.team.value);
   const { selectedFileName, selectedFileType, selectedFilePath } = useSelector(
     (state) => state.team.value
@@ -122,6 +126,7 @@ const Project = () => {
     selectedFileType,
     selectedFilePath,
     lintResultList,
+    compiledOutputList,
   ]);
 
   // 사이드바 아이콘 눌러서 해당 컴포넌트 보여주기
@@ -165,6 +170,10 @@ const Project = () => {
       setLintResultList(
         warnings.map((warning, i) => `Line ${indexes[i]}: ${warning}`)
       );
+      // 여기도!!
+      setCompiledOutputList(
+        warnings.map((warning, i) => `Line ${indexes[i]}: ${warning}`)
+      ); // 여기도!!
 
       // 4. 파일 내용 가져오기
       const filePathData = { filePath: selectedFilePath };
@@ -210,10 +219,7 @@ const Project = () => {
     const tempSize = editorheightRef.current.state.pane1Size;
     const offsetSize = editorheightRef.current.splitPane.clientHeight;
     setSetting((prev) => {
-      return {
-        ...prev,
-        horizonSplit: parseInt((tempSize / offsetSize) * 100),
-      };
+      return { ...prev, horizonSplit: parseInt((tempSize / offsetSize) * 100) };
     });
     const tempSize1 = editorheightRef.current.pane1.clientHeight - 34;
     setEditorHeight(tempSize1);
@@ -226,18 +232,42 @@ const Project = () => {
   const goCodeShare = () => {
     saveSetting();
     navigate("/project/code-share", {
-      state: {
-        teamDocId,
-        options: setting.editors,
-      },
+      state: { teamDocId, options: setting.editors },
       target: "_blank",
       rel: "noopener noreferrer",
     });
     window.location.reload();
   };
 
+  // 코드 실행 버튼 클릭
+  const startCompile = async (enteredInput) => {
+    setLoadingCompile(true);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setCompiledOutputList(enteredInput.split("\n"));
+    setLoadingCompile(false);
+    // setLintResultList([]);
+    // const dataToCompile = { type: projectType, filePath: selectedFilePath, input: enteredInput };
+  };
+
+  // 코드 실행 멈춤 버튼 클릭
+  const stopCompile = async () => {
+    setLoadingCompile(false);
+    setCompiledOutputList([]);
+    // setLintResultList([]);
+  };
+
+  // 출력창 문자열 클릭
+  const toGoogle = (searchQuery) => {
+    if (searchQuery.includes("k7d207.p.ssafy.io")) {
+      window.open(`http://${searchQuery}`, "_blank");
+    } else {
+      window.open(`https://www.google.com/search?q=${searchQuery}`, "_blank");
+    }
+  };
+
   return (
     <div className="flex mx-3" style={{ height: "calc(100% - 80px)" }}>
+      {/* 왼쪽 */}
       <div className="flex">
         <Sidebar
           clickIcon={showComponentHandler}
@@ -278,6 +308,7 @@ const Project = () => {
           </SidebarItems>
         )}
       </div>
+      {/* 오른쪽 */}
       <div
         className="flex flex-col ml-[8px] h-full"
         style={
@@ -286,6 +317,7 @@ const Project = () => {
             : { width: "calc(100vw - 400px)" }
         }
       >
+        {/* 화면 분할: 위, 아래 */}
         <SplitPane
           style={{ position: "static", height: "auto" }}
           split="horizontal"
@@ -296,17 +328,18 @@ const Project = () => {
           ref={editorheightRef}
           onDragFinished={checkSize}
         >
+          {/* 위: 파일 경로, 코드 에디터 */}
           <div className="w-full">
+            {/* 파일 경로 표시 박스 */}
             <div className="text-sm flex items-center bg-component_item_bg_dark p-1 rounded-lg mb-1.5">
               <TiArrowRightThick className="text-point_yellow" />
               <div className="ml-2 break-all">
                 {selectedFilePath?.split("/").slice(1).join("/")}
               </div>
             </div>
+            {/* 코드 에디터 */}
             <Editor
-              style={{
-                overflow: "auto",
-              }}
+              style={{ overflow: "auto" }}
               height={editorHeight}
               theme="vs-dark"
               defaultLanguage="python"
@@ -316,13 +349,15 @@ const Project = () => {
               options={editorOptions}
             />
           </div>
+          {/* 아래: 콘솔 터미널 */}
           <ConsoleTerminal
-            teamDocId={teamDocId}
-            selectedFilePath={selectedFilePath}
             consoleHeight={consoleHeight}
-            lintResultList={lintResultList}
-            setLintResultList={setLintResultList}
-            setting={setting.consoles}
+            consoleSetting={setting.consoles}
+            loadingCompile={loadingCompile} // 컴파일 미니 로딩
+            compiledOutputList={compiledOutputList}
+            startCompile={startCompile}
+            stopCompile={stopCompile}
+            toGoogle={toGoogle}
           />
         </SplitPane>
       </div>

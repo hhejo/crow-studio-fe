@@ -13,7 +13,7 @@ import { BsPlayFill } from "react-icons/bs";
 import { BsStopFill } from "react-icons/bs";
 import { TbTerminal } from "react-icons/tb";
 
-import LoadingMini from "../../../components/LoadingMini";
+import { LoadingMini } from "../../../components/LoadingMini";
 
 const ConsoleTerminal = (props) => {
   const dispatch = useDispatch();

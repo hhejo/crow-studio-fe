@@ -1,114 +1,42 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-
-import compileApi from "../../../api/compileApi";
-
-import { startLoading, stopLoading } from "../../../redux/global-slice";
-
-import { BsPlayFill } from "react-icons/bs";
-import { BsStopFill } from "react-icons/bs";
+import { useState } from "react";
+import { BsPlayFill, BsStopFill } from "react-icons/bs";
 import { TbTerminal } from "react-icons/tb";
-
-import LoadingMini from "../../../components/LoadingMini";
+import { LoadingMini } from "../../../components/LoadingMini";
 
 const ConsoleTerminal = (props) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const loading = useSelector((state) => state.global.value.loading);
-  const { teamName, projectType } = useSelector((state) => state.team.value);
-  const [inputData, setInputData] = useState("");
-  const [outputData, setOutputData] = useState("");
-  const [finalOutputDataList, setFinalOutputDataList] = useState([]);
+  const { consoleHeight, consoleSetting, loadingCompile } = props;
+  const { compiledOutputList, startCompile, stopCompile, toGoogle } = props;
+  const [enteredInput, setEnteredInput] = useState("");
 
-  const {
-    teamDocId,
-    selectedFilePath,
-    consoleHeight,
-    lintResultList,
-    setLintResultList,
-    setting,
-  } = props;
+  const startCompileHandler = () => startCompile(enteredInput);
 
-  useEffect(() => {
-    setFinalOutputDataList(lintResultList);
-  }, [lintResultList]);
+  const stopCompileHandler = () => stopCompile();
 
-  const changeInputData = (e) => setInputData(e.target.value);
-
-  const startCompileHandler = async () => {
-    dispatch(startLoading());
-    // setLintResultList([]);
-    const compileData = {
-      type: projectType,
-      filePath: selectedFilePath,
-      input: inputData,
-    };
-    try {
-      const res = await compileApi.getCompileResult(compileData);
-      // setOutputData(res.data.response);
-      setFinalOutputDataList(res.data.response.split("\n"));
-      dispatch(stopLoading());
-    } catch (err) {
-      dispatch(stopLoading());
-      toast.error("컴파일 오류");
-    }
-  };
-
-  const stopCompileHandler = async () => {
-    dispatch(stopLoading());
-    // setLintResultList([]);
-    const teamData = { teamDocId, teamName };
-    try {
-      await compileApi.stopCompile(teamData);
-      setFinalOutputDataList([]);
-    } catch (err) {
-      dispatch(stopLoading());
-      toast.error("컴파일 오류");
-    }
-  };
-
-  const inputChangeHandler = (e) => changeInputData(e);
-
-  const consoleHeightReal = consoleHeight - 8;
-  const boxHeight = consoleHeight - 88;
-
-  const toGoogleHandler = (searchQuery) => {
-    if (searchQuery.includes("k7d207.p.ssafy.io")) {
-      // navigate("/redirect/server", {
-      //   state: { url: `http://${searchQuery}` },
-      // });
-      window.open(`http://${searchQuery}`, "_blank");
-    } else {
-      // navigate("/redirect", {
-      //   state: { url: `https://www.google.com/search?q=${searchQuery}` },
-      // });
-      window.open(`https://www.google.com/search?q=${searchQuery}`, "_blank");
-    }
-  };
+  const toGoogleHandler = (searchQuery) => toGoogle(searchQuery);
 
   return (
     <div
       className="mt-[8px] px-3 rounded-[10px] bg-component_-2_dark"
-      style={{ height: consoleHeightReal }}
+      style={{ height: consoleHeight - 8 }}
     >
-      {/* console 상단 */}
+      {/* console 상단: 코드 실행, 멈춤 버튼 */}
       <div className="flex justify-between items-center mx-[5px] py-1.5">
         <div className="flex items-center text-white font-bold text-[14px]">
           <TbTerminal className="mr-1" />
           Console
         </div>
+        {/* 코드 실행, 멈춤 버튼 */}
         <div className="flex items-center">
-          {/* btns */}
+          {/* 코드 실행 버튼 */}
           <BsPlayFill
             onClick={startCompileHandler}
             className={`mr-[10px] cursor-pointer hover:text-point_purple hover:scale-110 transition ${
-              loading && "animate-pulse"
+              loadingCompile && "animate-pulse"
             }`}
             size="27"
             data-tip="코드 실행"
           />
+          {/* 실행 멈춤 버튼 */}
           <BsStopFill
             className="cursor-pointer hover:text-point_purple hover:scale-110 transition"
             size="27"
@@ -117,69 +45,68 @@ const ConsoleTerminal = (props) => {
           />
         </div>
       </div>
-      {/* console 하단 */}
-      <div className="flex justify-between" style={{ height: boxHeight }}>
-        {/* input */}
+      {/* console 하단: Input, Output */}
+      <div
+        className="flex justify-between"
+        style={{ height: consoleHeight - 88 }}
+      >
+        {/* Input */}
         <div className="w-1/2 mr-1">
+          {/* Input 라벨 */}
           <div className="flex items-center sm:w-[138px] w-full h-[31px] px-3 text-sm text-white bg-component_item_bg_dark rounded-t-[10px] border-b-2 border-point_purple">
             <div className="flex items-center truncate overflow-hidden">
               <TbTerminal className="mr-1" />
               Input
             </div>
           </div>
+          {/* Input 입력창 */}
           <textarea
             name="input"
-            value={inputData}
-            onChange={inputChangeHandler}
+            value={enteredInput}
+            onChange={(e) => setEnteredInput(e.target.value)}
             placeholder="Input here"
             className="resize-none w-full h-full p-[10px] bg-component_item_bg_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white text-left break-all appearance-none shadow-xs focus:outline-none focus:ring-2 focus:ring-point_purple focus:border-none placeholder:text-primary_dark overflow-auto"
             style={{
-              fontSize: parseInt(setting.fontSize),
-              fontFamily: setting.font,
+              fontSize: parseInt(consoleSetting.fontSize),
+              fontFamily: consoleSetting.font,
             }}
           ></textarea>
         </div>
-        {/* output */}
+        {/* Output */}
         <div className="w-1/2 ml-1">
+          {/* Output 라벨 */}
           <div className="flex items-center sm:w-[138px] w-full h-[31px] px-3 text-sm text-white bg-component_item_bg_+2_dark rounded-t-[10px] border-b-2 border-point_purple">
             <div className="flex items-center truncate overflow-hidden">
               <TbTerminal className="mr-1" />
               Output
             </div>
           </div>
+          {/* Output 출력창 */}
           <div
             className={`w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white overflow-auto ${
-              loading && "flex items-center justify-center"
+              loadingCompile && "flex items-center justify-center"
             }`}
             style={{
-              fontSize: parseInt(setting.fontSize),
-              fontFamily: setting.font,
+              fontSize: parseInt(consoleSetting.fontSize),
+              fontFamily: consoleSetting.font,
               whiteSpace: "pre-wrap",
             }}
           >
-            {loading && (
+            {loadingCompile ? (
               <div className="flex justify-center items-center overflow-x-hidden h-full">
                 <LoadingMini />
               </div>
-            )}
-            {/* {!isLoading && lintResultList.length === 0 && outputData}
-            {!isLoading &&
-              lintResultList.length > 0 &&
-              lintResultList.map((lintResult, i) => (
-                <div className="cursor-pointer" key={i}>
-                  {lintResult}
-                </div>
-              ))} */}
-            {!loading &&
-              finalOutputDataList.map((el, i) => (
+            ) : (
+              compiledOutputList.map((outputString, idx) => (
                 <div
-                  key={i}
+                  key={idx}
                   className="cursor-pointer hover:text-point_purple transition break-all"
-                  onClick={() => toGoogleHandler(el)}
+                  onClick={() => toGoogleHandler(outputString)}
                 >
-                  {el}
+                  {outputString}
                 </div>
-              ))}
+              ))
+            )}
           </div>
         </div>
       </div>
