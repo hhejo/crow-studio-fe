@@ -9,8 +9,8 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 import { firestore } from "../../firebase";
-import { startLoading, endLoading } from "../../redux/global-slice";
-import Loading from "../../components/Loading";
+import { startLoading, stopLoading } from "../../redux/global-slice";
+import { LoadingScreen } from "../../components/LoadingScreen";
 import TeamForms from "./TeamForms";
 
 const TeamCreate = () => {
@@ -38,7 +38,7 @@ const TeamCreate = () => {
       );
       const updateField = { teams: arrayUnion(teamUid) };
       await updateDoc(doc(firestore, "users", docId), updateField);
-      dispatch(endLoading());
+      dispatch(stopLoading());
       toast.success("팀 생성 완료");
       navigate("/teams", { replace: true });
     } catch (e) {
@@ -51,7 +51,7 @@ const TeamCreate = () => {
 
   return (
     <>
-      {isLoading && <Loading />}
+      {isLoading && <LoadingScreen />}
       {!isLoading && (
         <div className="h-full flex flex-wrap justify-center items-center">
           <div

@@ -5,7 +5,7 @@ import userApi from "../api/userApi";
 // 초기 상태값
 const initialState = {
   value: {
-    isLoggedIn: false,
+    loggedIn: false,
     uid: "",
     docId: "",
     email: "",
@@ -54,16 +54,12 @@ export const userSlice = createSlice({
       auth.signOut();
       state.value = initialState.value;
     },
-    setFetchedState: (state) => {
-      state.value = initialState.value;
-    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(setCurrentUser.fulfilled, (state, action) => {
         const { uid, docId, email, nickname, imageURL } = action.payload;
-        const isLoggedIn = true;
-        state.value = { isLoggedIn, uid, docId, email, nickname, imageURL };
+        state.value = { loggedIn: true, uid, docId, email, nickname, imageURL };
       })
       .addCase(setCurrentUser.rejected, (state, action) => {
         state.value = initialState.value;
@@ -74,5 +70,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logout, setFetchedState } = userSlice.actions;
+export const { logout } = userSlice.actions;
 export default userSlice.reducer;

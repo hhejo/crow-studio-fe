@@ -11,7 +11,6 @@ import { setCurrentUser } from "./redux/user-slice";
 import { router } from "./router";
 
 function App() {
-  const dispatch = useDispatch();
   AOS.init();
 
   // useEffect(() => {

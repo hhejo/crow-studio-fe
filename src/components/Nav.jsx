@@ -4,20 +4,22 @@ import { toast } from "react-toastify";
 import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 import { logout } from "../redux/user-slice";
+import { startLoading, stopLoading } from "../redux/global-slice";
 
 const MENU_ID = "nav-menu-id";
 
 export const Nav = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
-  const { isLoggedIn, uid, nickname } = useSelector(
-    (state) => state.user.value
-  );
+  const { loggedIn, uid, nickname } = useSelector((state) => state.user.value);
+
   const { show } = useContextMenu({ id: MENU_ID });
   const clickNicknameHandler = (e) => displayMenu(e);
-  const logoutHandler = () => {
-    dispatch(logout());
+  const logoutHandler = async () => {
+    await dispatch(startLoading());
+    await dispatch(logout());
+    await dispatch(stopLoading());
     toast.success("로그아웃 성공");
-    navigate("/", { replace: true });
+    navigate("/intro", { replace: true });
   };
   const displayMenu = (e) => {
     show({ event: e });
@@ -26,18 +28,6 @@ export const Nav = () => {
 
   return (
     <>
-      {/* Context Menu */}
-      <Menu id={MENU_ID} className="contexify-crow-nav">
-        {isLoggedIn && (
-          <>
-            <Item onClick={() => navigate(`/teams`)}>나의 팀 목록</Item>
-            <Item onClick={() => navigate(`/mypage/${uid}`)}>
-              회원정보 수정
-            </Item>
-            <Item onClick={logoutHandler}>로그아웃</Item>
-          </>
-        )}
-      </Menu>
       {/* Nav */}
       <nav className="flex flex-wrap items-center justify-center px-2 py-1 bg-component_item_bg_dark m-3 rounded-lg">
         <div className="w-full flex relative px-12 justify-between">
@@ -63,7 +53,7 @@ export const Nav = () => {
           <div className="flex item-center mt-2.5">
             <div className="cursor-pointer mt-[3px]">
               {/* 로그인 O */}
-              {isLoggedIn && (
+              {loggedIn && (
                 <div
                   className="hover:text-white"
                   onClick={clickNicknameHandler}
@@ -72,7 +62,7 @@ export const Nav = () => {
                 </div>
               )}
               {/* 로그인 X */}
-              {!isLoggedIn && (
+              {!loggedIn && (
                 <div className="flex justify-end items-center">
                   <div
                     className="hover:text-white mr-4 transition"
@@ -92,6 +82,14 @@ export const Nav = () => {
           </div>
         </div>
       </nav>
+      {/* Context Menu */}
+      {loggedIn && (
+        <Menu id={MENU_ID} className="contexify-crow-nav">
+          <Item onClick={() => navigate(`/teams`)}>나의 팀 목록</Item>
+          <Item onClick={() => navigate(`/mypage/${uid}`)}>회원정보 수정</Item>
+          <Item onClick={logoutHandler}>로그아웃</Item>
+        </Menu>
+      )}
     </>
   );
 };
