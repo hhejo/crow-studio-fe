@@ -11,7 +11,7 @@ import { LoadingScreen } from "./components/LoadingScreen";
 const Layout = () => {
   const dispatch = useDispatch();
   const { loggedIn } = useSelector((state) => state.user.value);
-  const { isLoading } = useSelector((state) => state.global.value);
+  const { loading } = useSelector((state) => state.global.value);
 
   useEffect(() => {
     dispatch(startLoading());
@@ -39,9 +39,8 @@ const Layout = () => {
         // docId 가져오기
         const docId = querySnapshot.docs[0].id;
         // Redux에 로그인한 유저 정보 적용하기
-        dispatch(setCurrentUser({ ...user, docId })).then(() =>
-          dispatch(stopLoading())
-        );
+        await dispatch(setCurrentUser({ ...user, docId }));
+        await dispatch(stopLoading());
       }
       // fetchUser 실행
       fetchUser();
@@ -51,9 +50,14 @@ const Layout = () => {
 
   return (
     <div className="flex flex-col h-full w-full">
-      {isLoading && <LoadingScreen />}
-      {!isLoading && <Nav />}
-      {!isLoading && <Outlet context={{ loggedIn }} />}
+      {loading ? (
+        <LoadingScreen />
+      ) : (
+        <>
+          <Nav />
+          <Outlet context={{ loggedIn }} />
+        </>
+      )}
     </div>
   );
 };

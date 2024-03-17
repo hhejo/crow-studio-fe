@@ -22,7 +22,7 @@ const TeamCreate = () => {
 
   const createTeamHandler = async (newTeamData) => {
     try {
-      dispatch(startLoading());
+      await dispatch(startLoading());
       const newTeam = {
         teamName: newTeamData.teamName,
         leaderUid: uid,
@@ -38,7 +38,6 @@ const TeamCreate = () => {
       );
       const updateField = { teams: arrayUnion(teamUid) };
       await updateDoc(doc(firestore, "users", docId), updateField);
-      dispatch(stopLoading());
       toast.success("팀 생성 완료");
       navigate("/teams", { replace: true });
     } catch (e) {
@@ -46,6 +45,8 @@ const TeamCreate = () => {
       // 409: 이미 해당 이름으로 생성된 팀이 있습니다
       // 404: 해당 깃 주소가 유효하지 않습니다
       // 403: 깃 계정과 연결되어 있지 않습니다
+    } finally {
+      await dispatch(stopLoading());
     }
   };
 

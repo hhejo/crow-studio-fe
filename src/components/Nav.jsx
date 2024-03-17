@@ -13,7 +13,6 @@ export const Nav = () => {
   const { loggedIn, uid, nickname } = useSelector((state) => state.user.value);
 
   const { show } = useContextMenu({ id: MENU_ID });
-  const clickNicknameHandler = (e) => displayMenu(e);
   const logoutHandler = async () => {
     await dispatch(startLoading());
     await dispatch(logout());
@@ -21,67 +20,61 @@ export const Nav = () => {
     toast.success("로그아웃 성공");
     navigate("/intro", { replace: true });
   };
-  const displayMenu = (e) => {
-    show({ event: e });
-    return e;
-  };
 
   return (
-    <>
-      {/* Nav */}
-      <nav className="flex flex-wrap items-center justify-center px-2 py-1 bg-component_item_bg_dark m-3 rounded-lg">
-        <div className="w-full flex relative px-12 justify-between">
-          {/* 로고, 아이콘 */}
-          <div className="relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
-            <div className="flex items-center">
-              <Link
-                className="text-xl font-bold leading-relaxed inline-block mr-16 py-2 whitespace-nowrap uppercase text-white"
-                to="/"
-              >
-                <div className="flex w-fit">
-                  <img
-                    className="w-8 rounded-full mr-2"
-                    src={require("../assets/images/logo.png")}
-                    alt="logo-img"
-                  />
-                  <span className="tracking-wide">까마귀공방</span>
-                </div>
-              </Link>
-            </div>
-          </div>
-          {/* 프로필 */}
-          <div className="flex item-center mt-2.5">
-            <div className="cursor-pointer mt-[3px]">
-              {/* 로그인 O */}
-              {loggedIn && (
-                <div
-                  className="hover:text-white"
-                  onClick={clickNicknameHandler}
-                >
-                  {nickname}
-                </div>
-              )}
-              {/* 로그인 X */}
-              {!loggedIn && (
-                <div className="flex justify-end items-center">
-                  <div
-                    className="hover:text-white mr-4 transition"
-                    onClick={() => navigate("/login")}
-                  >
-                    로그인
-                  </div>
-                  <div
-                    className="hover:text-white transition"
-                    onClick={() => navigate("/signup")}
-                  >
-                    회원가입
-                  </div>
-                </div>
-              )}
-            </div>
+    <nav className="flex flex-wrap items-center justify-center px-2 py-1 bg-component_item_bg_dark m-3 rounded-lg">
+      {/* NavBar */}
+      <div className="w-full flex relative px-12 justify-between">
+        {/* 로고, 아이콘 */}
+        <div className="relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
+          <div className="flex items-center">
+            <Link
+              className="text-xl font-bold leading-relaxed inline-block mr-16 py-2 whitespace-nowrap uppercase text-white"
+              to="/"
+            >
+              <div className="flex w-fit">
+                <img
+                  className="w-8 rounded-full mr-2"
+                  src={require("../assets/images/logo.png")}
+                  alt="logo-img"
+                />
+                <span className="tracking-wide">까마귀공방</span>
+              </div>
+            </Link>
           </div>
         </div>
-      </nav>
+        {/* 프로필 */}
+        <div className="flex item-center mt-2.5">
+          <div className="cursor-pointer mt-[3px]">
+            {/* 로그인 O */}
+            {loggedIn && (
+              <div
+                className="hover:text-white"
+                onClick={(e) => show({ event: e })}
+              >
+                {nickname}
+              </div>
+            )}
+            {/* 로그인 X */}
+            {!loggedIn && (
+              <div className="flex justify-end items-center">
+                <div
+                  className="hover:text-white mr-4 transition"
+                  onClick={() => navigate("/login")}
+                >
+                  로그인
+                </div>
+                <div
+                  className="hover:text-white transition"
+                  onClick={() => navigate("/signup")}
+                >
+                  회원가입
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
       {/* Context Menu */}
       {loggedIn && (
         <Menu id={MENU_ID} className="contexify-crow-nav">
@@ -90,6 +83,6 @@ export const Nav = () => {
           <Item onClick={logoutHandler}>로그아웃</Item>
         </Menu>
       )}
-    </>
+    </nav>
   );
 };
