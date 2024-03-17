@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 import compileApi from "../../../api/compileApi";
 
-import { startLoading, endLoading } from "../../../redux/global-slice";
+import { startLoading, stopLoading } from "../../../redux/global-slice";
 
 import { BsPlayFill } from "react-icons/bs";
 import { BsStopFill } from "react-icons/bs";
@@ -16,7 +16,7 @@ import LoadingMini from "../../../components/LoadingMini";
 const ConsoleTerminal = (props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isLoading = useSelector((state) => state.global.value.isLoading);
+  const loading = useSelector((state) => state.global.value.loading);
   const { teamName, projectType } = useSelector((state) => state.team.value);
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
@@ -49,22 +49,22 @@ const ConsoleTerminal = (props) => {
       const res = await compileApi.getCompileResult(compileData);
       // setOutputData(res.data.response);
       setFinalOutputDataList(res.data.response.split("\n"));
-      dispatch(endLoading());
+      dispatch(stopLoading());
     } catch (err) {
-      dispatch(endLoading());
+      dispatch(stopLoading());
       toast.error("컴파일 오류");
     }
   };
 
   const stopCompileHandler = async () => {
-    dispatch(endLoading());
+    dispatch(stopLoading());
     // setLintResultList([]);
     const teamData = { teamSeq, teamName };
     try {
       await compileApi.stopCompile(teamData);
       setFinalOutputDataList([]);
     } catch (err) {
-      dispatch(endLoading());
+      dispatch(stopLoading());
       toast.error("컴파일 오류");
     }
   };
@@ -104,7 +104,7 @@ const ConsoleTerminal = (props) => {
           <BsPlayFill
             onClick={startCompileHandler}
             className={`mr-[10px] cursor-pointer hover:text-point_purple hover:scale-110 transition ${
-              isLoading && "animate-pulse"
+              loading && "animate-pulse"
             }`}
             size="27"
             data-tip="코드 실행"
@@ -149,7 +149,7 @@ const ConsoleTerminal = (props) => {
           </div>
           <div
             className={`w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white overflow-auto ${
-              isLoading && "flex items-center justify-center"
+              loading && "flex items-center justify-center"
             }`}
             style={{
               fontSize: parseInt(setting.fontSize),
@@ -157,7 +157,7 @@ const ConsoleTerminal = (props) => {
               whiteSpace: "pre-wrap",
             }}
           >
-            {isLoading && (
+            {loading && (
               <div className="flex justify-center items-center overflow-x-hidden h-full">
                 <LoadingMini />
               </div>
@@ -170,7 +170,7 @@ const ConsoleTerminal = (props) => {
                   {lintResult}
                 </div>
               ))} */}
-            {!isLoading &&
+            {!loading &&
               finalOutputDataList.map((el, i) => (
                 <div
                   key={i}

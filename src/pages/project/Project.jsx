@@ -8,7 +8,7 @@ import SplitPane from "react-split-pane";
 import { TiArrowRightThick } from "react-icons/ti";
 
 import { getTeamDetail } from "../../redux/teamSlice";
-import { startLoading, endLoading } from "../../redux/global-slice";
+import { startLoading, stopLoading } from "../../redux/global-slice";
 
 import fileApi from "../../api/fileApi";
 import editorApi from "../../api/editorApi";
@@ -34,7 +34,7 @@ const Project = () => {
     (state) => state.team.value
   );
   const { mySeq } = useSelector((state) => state.user.value);
-  const isLoading = useSelector((state) => state.global.value.isLoading);
+  const loading = useSelector((state) => state.global.value.loading);
   // const [showComponent, setShowComponent] = useState("Dir");
   const [lintResultList, setLintResultList] = useState([]);
 
@@ -181,10 +181,10 @@ const Project = () => {
       const filePathData = { filePath: selectedFilePath };
       const res3 = await fileApi.getFileContent(filePathData);
       editorRef.current.getModel().setValue(res3.data.fileContent);
-      dispatch(endLoading());
+      dispatch(stopLoading());
       toast.success("파일 저장 성공");
     } catch (err) {
-      dispatch(endLoading());
+      dispatch(stopLoading());
       toast.error("파일 저장 실패");
     }
   };
@@ -267,7 +267,7 @@ const Project = () => {
                     selectedFileName={selectedFileName}
                     selectedFileType={selectedFileType}
                     saveFileContent={saveFileContentHandler}
-                    isLoading={isLoading}
+                    loading={loading}
                     editorRef={editorRef}
                     goCodeShare={goCodeShare}
                   />
