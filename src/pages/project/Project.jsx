@@ -12,7 +12,6 @@ import { startLoading, stopLoading } from "../../redux/global-slice";
 
 import fileApi from "../../api/fileApi";
 import editorApi from "../../api/editorApi";
-import api from "../../api/api";
 
 import Sidebar from "./components/sidebar/Sidebar";
 import Directory from "./components/sidebar/Directory";
@@ -26,13 +25,13 @@ import userApi from "../../api/userApi";
 import { toast } from "react-toastify";
 
 const Project = () => {
-  const dispatch = useDispatch();
+  const [dispatch, navigate] = [useDispatch(), useNavigate()];
   const { teamDocId } = useParams();
   // const { teamGit } = useSelector((state) => state.team.value);
   const { selectedFileName, selectedFileType, selectedFilePath } = useSelector(
     (state) => state.team.value
   );
-  const { mySeq } = useSelector((state) => state.user.value);
+  const { docId } = useSelector((state) => state.user.value);
   const loading = useSelector((state) => state.global.value.loading);
   // const [showComponent, setShowComponent] = useState("Dir");
   const [lintResultList, setLintResultList] = useState([]);
@@ -46,15 +45,8 @@ const Project = () => {
     horizonSplit: 50,
     lastTab: [],
     lastSideBar: "Dir",
-    editors: {
-      fontSize: 14,
-      font: "Monospace",
-      autoLine: true,
-    },
-    consoles: {
-      fontSize: 14,
-      font: "Monospace",
-    },
+    editors: { fontSize: 14, font: "Monospace", autoLine: true },
+    consoles: { fontSize: 14, font: "Monospace" },
   });
 
   const editorOptions = {
@@ -66,8 +58,6 @@ const Project = () => {
     automaticLayout: true,
     wordWrap: setting.editors.autoLine,
   };
-
-  const navigate = useNavigate();
 
   // 초기 팀 정보 가져옴
   useEffect(() => {
@@ -272,7 +262,7 @@ const Project = () => {
               <Git
                 selectedFilePath={selectedFilePath}
                 teamDocId={teamDocId}
-                mySeq={mySeq}
+                docId={docId}
               />
             )}
             {setting.lastSideBar === "Team" && <Team />}

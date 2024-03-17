@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import gitApi from "../../../../api/gitApi";
@@ -17,7 +17,7 @@ const Git = (props) => {
   const [newBranchName, setNewBranchName] = useState("");
   const [callBell, setCallBell] = useState(0);
   const [nowBranch, setNowBranch] = useState("");
-  const { selectedFilePath, teamDocId, mySeq } = props;
+  const { selectedFilePath, teamDocId, docId } = props;
   // const seq = useSelector((state) => state.user.value.mySeq);
 
   useEffect(() => {
@@ -91,7 +91,7 @@ const Git = (props) => {
       branchName: nowBranch,
     };
     gitApi
-      .gitPush(mySeq, body)
+      .gitPush(docId, body)
       .then(() => {
         setCommitMessage("");
         toast.success("커밋&푸시 성공");
