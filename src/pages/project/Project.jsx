@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import SplitPane from "react-split-pane";
@@ -18,37 +18,32 @@ import ConsoleTerminal from "./components/ConsoleTerminal";
 
 import { startLoading, stopLoading } from "../../redux/global-slice";
 
-import fileApi from "../../api/fileApi";
-import editorApi from "../../api/editorApi";
-
 const initialSetting = {
   horizonSplit: 50,
-  lastTab: [],
-  lastSideBar: "Dir",
   editors: { fontSize: 14, font: "Monospace", autoLine: true },
   consoles: { fontSize: 14, font: "Monospace" },
+  lastTab: [],
+  // lastSideBar: "Dir",
 };
 
 const initialSelected = { fileName: "", fileType: "", filePath: "" };
 
 const Project = () => {
-  const [dispatch, navigate] = [useDispatch(), useNavigate()];
+  const navigate = useNavigate();
   const { teamDocId } = useParams();
-  // 컴파일 출력 결과, 컴파일 로딩
-  const [compiledOutputList, setCompiledOutputList] = useState([]);
-  const [loadingCompile, setLoadingCompile] = useState(false);
+  const [compiledOutputList, setCompiledOutputList] = useState([]); // 컴파일 출력 결과
+  const [loadingCompile, setLoadingCompile] = useState(false); // 컴파일 로딩
   const editorHeightRef = useRef(); // 에디터 높이 Ref
   const [editorHeight, setEditorHeight] = useState(); // 에디터 높이
   const [consoleHeight, setConsoleHeight] = useState(""); // 콘솔 높이
   const [selected, setSelected] = useState(initialSelected); // 디렉토리에서 선택된 파일이나 폴더
+  const [lastClickedSidebarIcon, setLastClickedSidebarIcon] = useState("Dir"); // 마지막으로 선택된 사이드바 아이콘
 
+  const editorRef = useRef(null); // 에디터 내용
   // const { teamGit } = useSelector((state) => state.team.value);
-  // const { selectedFileName, selectedFileType, selectedFilePath } = useSelector((state) => state.team.value);
   const { docId } = useSelector((state) => state.user.value);
   const { loading } = useSelector((state) => state.global.value);
-
-  const [lintResultList, setLintResultList] = useState([]);
-
+  // const [lintResultList, setLintResultList] = useState([]);
   const [setting, setSetting] = useState(initialSetting);
 
   const editorOptions = {
@@ -60,8 +55,6 @@ const Project = () => {
     automaticLayout: true,
     wordWrap: setting.editors.autoLine,
   };
-
-  const editorRef = useRef(null); // 에디터 내용
 
   useEffect(() => {
     // // 초기 팀 정보 가져옴
@@ -100,9 +93,7 @@ const Project = () => {
     const tempSize = editorHeightRef.current.state.pane1Size;
     const offsetSize = editorHeightRef.current.splitPane.clientHeight;
     const horizonSplit = parseInt((tempSize / offsetSize) * 100);
-    setSetting((prev) => {
-      return { ...prev, horizonSplit };
-    });
+    setSetting((prev) => ({ ...prev, horizonSplit }));
     setEditorHeight(editorHeightRef.current.pane1.clientHeight - 34);
     setConsoleHeight(editorHeightRef.current.pane2.clientHeight - 0.5);
   };
@@ -135,9 +126,7 @@ const Project = () => {
 
   // 사이드바 아이콘 눌러서 해당 아이콘 내용 보여주고 활성화된 아이콘 한 번 더 누르면 해당 아이콘의 내용 접기
   const showIconContentHandler = (clickedIconName) => {
-    setSetting((prev) => {
-      return { ...prev, lastSideBar: clickedIconName };
-    });
+    setLastClickedSidebarIcon(clickedIconName);
     saveSetting();
   };
 
@@ -229,13 +218,13 @@ const Project = () => {
         {/* 사이드바 아이콘 모음 */}
         <SidebarIconsContainer
           clickIcon={showIconContentHandler}
-          showingContent={setting.lastSideBar}
+          lastClickedSidebarIcon={lastClickedSidebarIcon}
           goCodeShare={goCodeShare}
         />
         {/* 아이콘 클릭 시 내용 */}
-        {setting.lastSideBar && setting.lastSideBar !== "Share" && (
+        {lastClickedSidebarIcon && lastClickedSidebarIcon !== "Share" && (
           <div style={{ width: "292px", height: "100%", marginLeft: "3px" }}>
-            {setting.lastSideBar === "Dir" && (
+            {lastClickedSidebarIcon === "Dir" && (
               <Directory
                 teamDocId={teamDocId}
                 selected={selected}
@@ -245,7 +234,7 @@ const Project = () => {
                 editorRef={editorRef}
               />
             )}
-            {setting.lastSideBar === "Git" && (
+            {lastClickedSidebarIcon === "Git" && (
               <Git
                 // selectedFilePath={selectedFilePath}
                 // selectedFilePath={selectedFile.filePath}
@@ -253,10 +242,10 @@ const Project = () => {
                 docId={docId}
               />
             )}
-            {setting.lastSideBar === "Team" && <Team />}
-            {setting.lastSideBar === "Api" && <Api />}
-            {setting.lastSideBar === "Var" && <VariableName />}
-            {setting.lastSideBar === "Set" && (
+            {lastClickedSidebarIcon === "Team" && <Team />}
+            {lastClickedSidebarIcon === "Api" && <Api />}
+            {lastClickedSidebarIcon === "Var" && <VariableName />}
+            {lastClickedSidebarIcon === "Set" && (
               <Settings
                 setting={setting}
                 setSetting={setSetting}
@@ -270,7 +259,7 @@ const Project = () => {
       <div
         className="flex flex-col ml-[8px] h-full"
         style={
-          setting.lastSideBar === ""
+          lastClickedSidebarIcon === ""
             ? { width: "calc(100vw - 105px)" }
             : { width: "calc(100vw - 400px)" }
         }
@@ -291,10 +280,7 @@ const Project = () => {
             {/* 파일 경로 표시 박스 */}
             <div className="text-sm flex items-center bg-component_item_bg_dark p-1 rounded-lg mb-1.5">
               <TiArrowRightThick className="text-point_yellow" />
-              <div className="ml-2 break-all">
-                {/* {selectedFile.filePath?.split("/").slice(1).join("/")} */}
-                {selected.filePath}
-              </div>
+              <div className="ml-2 break-all">{selected.filePath}</div>
             </div>
             {/* 코드 에디터 */}
             <Editor
