@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
 import TreeView from "@mui/lab/TreeView";
@@ -8,7 +7,6 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { styled as muiStyled } from "@mui/material/styles";
 import PropTypes from "prop-types";
-import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
@@ -29,12 +27,8 @@ import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.
 import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 
-import projectApi from "../../../../api/projectApi";
-import fileApi from "../../../../api/fileApi";
-
-import { selectFile } from "../../../../redux/teamSlice";
-
-const [TYPE_FOLDER, TYPE_FILE, MENU_ID] = ["1", "2", "menu-id"];
+const MENU_ID = "menu-id";
+// const [TYPE_FOLDER, TYPE_FILE] = ["1", "2"];
 
 // MySwal.fire SweetAlert 옵션
 const alertOption = {
@@ -44,9 +38,29 @@ const alertOption = {
   background: "#3C3C3C",
 };
 
+// 파일, 폴더 임시 더미 데이터
+const dummyFilesDirectories = {
+  id: "src",
+  name: "src",
+  children: [
+    {
+      id: "src/pages",
+      name: "pages",
+      children: [
+        { id: "src/pages/haha", name: "haha" },
+        { id: "src/pages/yaho", name: "yaho" },
+        { id: "src/pages/c.py", name: "c.py" },
+      ],
+    },
+    { id: "src/app.py", name: "app.py" },
+    { id: "src/b.md", name: " b.md" },
+  ],
+};
+
 // filePath(nodeIds)를 받아 확장자가 무엇인지 확인하고 해당 파일 타입을 리턴
 const getFileType = (filePath) => {
   const extension = filePath.split(".")[1] ?? null;
+  // 맵으로 변경하기
   if (extension === "py") return "python";
   else if (extension === "md") return "text";
   else if (extension === "html") return "html";
@@ -59,68 +73,25 @@ const getFileType = (filePath) => {
 // filePath(nodeIds)를 받아 해당 파일이나 폴더의 이름을 리턴
 const getFileName = (filePath) => {
   const name = filePath.split("/").slice(-1)[0];
-  // 파일인 경우
-  if (filePath.includes(".")) return name.split(".")[0];
-  // 폴더인 경우
-  return name;
+  if (filePath.includes(".")) return name.split(".")[0]; // 파일인 경우
+  return name; // 폴더인 경우
 };
 
 const Directory = (props) => {
-  const dispatch = useDispatch();
-  const { teamDocId, isLoading, editorRef, saveFileContent } = props;
+  const { teamDocId, loading, editorRef, saveFileContent } = props;
   // const { selectedFilePath, selectedFileName, selectedFileType } = props;
-  // const { goCodeShare } = props;
+  const MySwal = withReactContent(Swal);
+  const { show } = useContextMenu({ id: MENU_ID });
   const [filesDirectories, setFilesDirectories] = useState({});
   const [selectedFileName, setSelectedFileName] = useState("");
   const [selectedFileType, setSelectedFileType] = useState("");
   const [selectedFilePath, setSelectedFilePath] = useState("");
 
-  const MySwal = withReactContent(Swal);
-  const { show } = useContextMenu({ id: MENU_ID });
-
-  // 디렉터리 받기
+  // 프로젝트 파일, 폴더 구조 받아서 화면에 표시하기
   useEffect(() => {
-    const testData = {
-      id: "src",
-      name: "src-folder",
-      children: [
-        {
-          id: "src/pages",
-          name: "pages-folder",
-          children: [
-            { id: "src/pages/haha", name: "haha" },
-            { id: "src/pages/yaho", name: "yaho" },
-            { id: "src/pages/c.py", name: "c.py" },
-          ],
-        },
-        { id: "src/app.py", name: "app.py" },
-        { id: "src/b.md", name: " b.md" },
-      ],
-    };
-    setFilesDirectories(testData);
-    // projectApi
-    //   .getAllFiles(teamDocId)
-    //   .then((res) => {
-    //     setFilesDirectories(res.data);
-    //     const payloadData = {
-    //       type: res.data.type,
-    //       name: res.data.name,
-    //       path: res.data.id,
-    //     };
-    //     if (res.data.type !== "folder") {
-    //       dispatch(selectFile(payloadData));
-    //     }
-    //   })
-    //   .catch(() => toast.error("디렉터리 로드 실패"));
-    // return () => {
-    //   const resetPayloadData = {
-    //     type: "",
-    //     name: "",
-    //     path: "",
-    //   };
-    //   dispatch(selectFile(resetPayloadData));
-    // };
-  }, [dispatch, teamDocId]);
+    setFilesDirectories(dummyFilesDirectories);
+    return () => setFilesDirectories({});
+  }, []);
 
   // 디렉터리 생성
   const createDirectoryHandler = async () => {
@@ -264,10 +235,9 @@ const Directory = (props) => {
     setSelectedFileName(getFileName(nodeIds));
     setSelectedFileType(getFileType(nodeIds));
     setSelectedFilePath(nodeIds);
-    // const payloadData = { type: getFileType(nodeIds), name: getFileName(nodeIds), path: nodeIds };
-    // dispatch(selectFile(payloadData));
   };
 
+  // StyledTreeItemRoot
   const StyledTreeItemRoot = muiStyled(TreeItem)(({ theme }) => ({
     color: theme.palette.text.secondary,
     [`& .${treeItemClasses.content}`]: {
@@ -295,29 +265,15 @@ const Directory = (props) => {
     [`& .${treeItemClasses.group}`]: {},
   }));
 
+  // 파일, 폴더 아이콘 각 하나를 나타내는 스타일 적용된 트리 아이템
   function StyledTreeItem(props) {
-    const {
-      bgColor,
-      color,
-      labelIcon: LabelIcon,
-      labelInfo,
-      labelText,
-      ...other
-    } = props;
-
+    const { bgColor, color, labelIcon, labelInfo, labelText, ...other } = props;
     return (
       <StyledTreeItemRoot
         label={
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              p: 0.5,
-              pr: 0,
-            }}
-          >
+          <Box sx={{ display: "flex", alignItems: "center", p: 0.5, pr: 0 }}>
             <Box
-              component={LabelIcon}
+              component={labelIcon}
               color="inherit"
               sx={{ mr: 1, width: 20, height: "auto" }}
             />
@@ -343,17 +299,13 @@ const Directory = (props) => {
     );
   }
 
-  // const displayMenu = (e) => {
-  //   show({ event: e });
-  //   return e;
-  // };
-  const treeItemContextMenuHandler = (e, nodeIds) => {
+  // 파일, 폴더 아이콘 오른쪽 클릭 컨텍스트 메뉴
+  const contextMenuHandler = (e) => {
     e.preventDefault();
-    // displayMenu(e);
     show({ event: e });
   };
 
-  // 트리 생성 with 스타일
+  // 스타일 적용된 트리 생성 함수
   const renderTree = (nodes) => (
     <StyledTreeItem
       key={nodes.id}
@@ -366,10 +318,7 @@ const Directory = (props) => {
             : DescriptionIcon
           : FolderIcon
       }
-      // color="#1a73e8"
-      // bgColor="#e8f0fe"
-      // onClick={treeItemClickHandler}
-      onContextMenu={treeItemContextMenuHandler}
+      onContextMenu={contextMenuHandler}
       collapseIcon={nodes?.id?.includes(".") ? null : <ExpandMoreIcon />}
       expandIcon={nodes?.id?.includes(".") ? null : <ChevronRightIcon />}
     >
@@ -379,6 +328,7 @@ const Directory = (props) => {
     </StyledTreeItem>
   );
 
+  // propTypes
   StyledTreeItem.propTypes = {
     bgColor: PropTypes.string,
     color: PropTypes.string,
@@ -388,54 +338,44 @@ const Directory = (props) => {
   };
 
   return (
-    <>
-      {/* DirectoryContainer */}
-      <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto">
-        <div className="justify-between items-center" style={{ padding: 15 }}>
-          <div className="flex items-center justify-between gap-4">
-            <div className="text-xl font-bold text-white">Directory</div>
-            <div className="mt-1 flex items-center">
-              {/* 새 파일 생성 버튼 */}
-              <IcSpan onClick={createFileHandler} data-tip="새 파일">
-                <IcNewFile alt="IcNewFile" />
-              </IcSpan>
-              {/* 새 폴더 생성 버튼 */}
-              <IcSpan onClick={createDirectoryHandler} data-tip="새 폴더">
-                <IcNewDir className="mt-0.5" alt="IcNewDir" />
-              </IcSpan>
-              {/* 파일 저장 버튼 */}
-              <IcSpan onClick={saveHandler} data-tip="파일 저장">
-                <SaveIcon
-                  className={isLoading && `animate-spin`}
-                  sx={{ fontSize: 20 }}
-                />
-              </IcSpan>
-            </div>
+    <div className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto h-full rounded-r-lg">
+      {/* 디렉터리, 파일 생성 버튼튼 폴더 생성 버튼, 저장 버튼 */}
+      <div className="justify-between items-center" style={{ padding: 15 }}>
+        <div className="flex items-center justify-between gap-4">
+          <div className="text-xl font-bold text-white">Directory</div>
+          <div className="mt-1 flex items-center">
+            {/* 새 파일 생성 버튼 */}
+            <IcSpan onClick={createFileHandler} data-tip="새 파일">
+              <IcNewFile alt="IcNewFile" />
+            </IcSpan>
+            {/* 새 폴더 생성 버튼 */}
+            <IcSpan onClick={createDirectoryHandler} data-tip="새 폴더">
+              <IcNewDir className="mt-0.5" alt="IcNewDir" />
+            </IcSpan>
+            {/* 파일 저장 버튼 */}
+            <IcSpan onClick={saveHandler} data-tip="파일 저장">
+              <SaveIcon
+                className={loading && `animate-spin`}
+                sx={{ fontSize: 20 }}
+              />
+            </IcSpan>
           </div>
         </div>
-        {/* stroke */}
-        <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
-        {/* 디렉터리 파일, 폴더 모음 트리 뷰 */}
-        <div className="text-xs" style={{ padding: 15 }}>
-          <TreeView
-            aria-label="files and directories"
-            defaultExpanded={["root"]}
-            defaultEndIcon={<div style={{ width: 24 }} />}
-            sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
-            onNodeSelect={nodeSelectHandler}
-            // defaultCollapseIcon={<ExpandMoreIcon />}
-            // defaultExpandIcon={<ChevronRightIcon />}
-            // onContextMenu={(e) => e.target.click()}
-          >
-            {renderTree(filesDirectories)}
-          </TreeView>
-          <div>
-            <div>선택된 파일 이름: {selectedFileName}</div>
-            <div>선택된 파일 타입: {selectedFileType}</div>
-            <div>선택된 파일 경로: {selectedFilePath}</div>
-          </div>
-        </div>
-      </DirectoryContainer>
+      </div>
+      {/* stroke */}
+      <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
+      {/* 디렉터리 파일, 폴더 모음 트리 뷰 */}
+      <div className="text-xs" style={{ padding: 15 }}>
+        <TreeView
+          aria-label="files and directories"
+          defaultExpanded={["root"]}
+          defaultEndIcon={<div style={{ width: 24 }} />}
+          sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
+          onNodeSelect={nodeSelectHandler}
+        >
+          {renderTree(filesDirectories)}
+        </TreeView>
+      </div>
       {/* Context Menu */}
       <Menu id={MENU_ID} className="contexify-crow">
         <Item onClick={renameHandler}>
@@ -443,16 +383,11 @@ const Directory = (props) => {
         </Item>
         <Item onClick={deleteHandler}>삭제 ⌫</Item>
       </Menu>
-    </>
+    </div>
   );
 };
 
 export default Directory;
-
-const DirectoryContainer = styled.div`
-  border-radius: 0 10px 10px 0;
-  height: 100%;
-`;
 
 const IcSpan = styled.span`
   width: 34px;

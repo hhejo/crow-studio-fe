@@ -284,13 +284,12 @@ const Project = () => {
             {setting.lastSideBar === "Dir" && (
               <Directory
                 teamDocId={teamDocId}
-                selectedFilePath={selectedFilePath}
-                selectedFileName={selectedFileName}
-                selectedFileType={selectedFileType}
+                // selectedFilePath={selectedFilePath}
+                // selectedFileName={selectedFileName}
+                // selectedFileType={selectedFileType}
                 saveFileContent={saveFileContentHandler}
                 loading={loading}
                 editorRef={editorRef}
-                goCodeShare={goCodeShare}
               />
             )}
             {setting.lastSideBar === "Git" && (
