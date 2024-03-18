@@ -13,7 +13,8 @@ import { startLoading, stopLoading } from "../../redux/global-slice";
 import fileApi from "../../api/fileApi";
 import editorApi from "../../api/editorApi";
 
-import Sidebar from "./components/sidebar/Sidebar";
+import SidebarIconsContainer from "./components/sidebar/SidebarIconsContainer";
+
 import Directory from "./components/sidebar/Directory";
 import Git from "./components/sidebar/Git";
 import Team from "./components/sidebar/Team";
@@ -23,6 +24,14 @@ import Settings from "./components/sidebar/Settings";
 import ConsoleTerminal from "./components/ConsoleTerminal";
 import userApi from "../../api/userApi";
 import { toast } from "react-toastify";
+
+const initialSetting = {
+  horizonSplit: 50,
+  lastTab: [],
+  lastSideBar: "Dir",
+  editors: { fontSize: 14, font: "Monospace", autoLine: true },
+  consoles: { fontSize: 14, font: "Monospace" },
+};
 
 const Project = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
@@ -37,21 +46,10 @@ const Project = () => {
   );
   const { docId } = useSelector((state) => state.user.value);
   const loading = useSelector((state) => state.global.value.loading);
-  // const [showComponent, setShowComponent] = useState("Dir");
+
   const [lintResultList, setLintResultList] = useState([]);
 
-  const editorRef = useRef(null); // 에디터 내용
-  const editorheightRef = useRef(); // 에디터 높이
-  const [editorHeight, setEditorHeight] = useState();
-  const [consoleHeight, setConsoleHeight] = useState("");
-
-  const [setting, setSetting] = useState({
-    horizonSplit: 50,
-    lastTab: [],
-    lastSideBar: "Dir",
-    editors: { fontSize: 14, font: "Monospace", autoLine: true },
-    consoles: { fontSize: 14, font: "Monospace" },
-  });
+  const [setting, setSetting] = useState(initialSetting);
 
   const editorOptions = {
     scrollBeyondLastLine: false,
@@ -62,6 +60,11 @@ const Project = () => {
     automaticLayout: true,
     wordWrap: setting.editors.autoLine,
   };
+
+  const editorRef = useRef(null); // 에디터 내용
+  const editorheightRef = useRef(); // 에디터 높이
+  const [editorHeight, setEditorHeight] = useState();
+  const [consoleHeight, setConsoleHeight] = useState("");
 
   // 초기 팀 정보 가져옴
   useEffect(() => {
@@ -95,11 +98,12 @@ const Project = () => {
   }, []);
 
   // 개인 환경 세팅 저장
-  const saveSetting = async () => {
-    userApi
-      .setPersonalSetting(teamDocId, setting)
-      // .then(() => toast.success("저장되었습니다"))
-      .catch(() => toast.error("오류가 발생했습니다"));
+  const saveSetting = () => {
+    console.log("saveSetting");
+    // userApi
+    //   .setPersonalSetting(teamDocId, setting)
+    //   .then(() => toast.success("저장되었습니다"))
+    //   .catch(() => toast.error("!! 오류가 발생했습니다"));
   };
 
   // 파일, 폴더 클릭할 때마다 리렌더링, 파일이면 해당 내용 서버에서 받아와 에디터에 출력
@@ -129,10 +133,10 @@ const Project = () => {
     compiledOutputList,
   ]);
 
-  // 사이드바 아이콘 눌러서 해당 컴포넌트 보여주기
-  const showComponentHandler = (componentName) => {
+  // 사이드바 아이콘 눌러서 해당 아이콘 내용 보여주고 활성화된 아이콘 한 번 더 누르면 해당 아이콘의 내용 접기
+  const showIconContent = (clickedIconName) => {
     setSetting((prev) => {
-      return { ...prev, lastSideBar: componentName };
+      return { ...prev, lastSideBar: clickedIconName };
     });
     saveSetting();
   };
@@ -258,22 +262,23 @@ const Project = () => {
 
   // 출력창 문자열 클릭
   const toGoogle = (searchQuery) => {
-    if (searchQuery.includes("k7d207.p.ssafy.io")) {
+    if (searchQuery.includes("k7d207.p.ssafy.io"))
       window.open(`http://${searchQuery}`, "_blank");
-    } else {
+    else
       window.open(`https://www.google.com/search?q=${searchQuery}`, "_blank");
-    }
   };
 
   return (
     <div className="flex mx-3" style={{ height: "calc(100% - 80px)" }}>
       {/* 왼쪽 */}
       <div className="flex">
-        <Sidebar
-          clickIcon={showComponentHandler}
-          showComponent={setting.lastSideBar}
+        {/* 사이드바 아이콘 모음 */}
+        <SidebarIconsContainer
+          clickIcon={showIconContent}
+          showingContent={setting.lastSideBar}
           goCodeShare={goCodeShare}
         />
+        {/* 아이콘 클릭 시 내용 */}
         {setting.lastSideBar && setting.lastSideBar !== "Share" && (
           <SidebarItems>
             {setting.lastSideBar === "Dir" && (
