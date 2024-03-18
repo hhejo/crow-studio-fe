@@ -21,23 +21,13 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import SaveIcon from "@mui/icons-material/Save";
 import { IoLogoPython } from "react-icons/io5";
 import { BsPencilFill } from "react-icons/bs";
-// import { TiArrowRightThick } from "react-icons/ti";
 
-// import { ReactComponent as IcCodeShare } from "../../../../assets/icons/ic_code_share.svg";
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
 // import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
-import {
-  Menu,
-  Item,
-  // Separator,
-  // Submenu,
-  useContextMenu,
-} from "react-contexify";
+import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
-
-// import * as iconsi from "react-icons/io5";
 
 import projectApi from "../../../../api/projectApi";
 import fileApi from "../../../../api/fileApi";
@@ -46,58 +36,65 @@ import { selectFile } from "../../../../redux/teamSlice";
 
 const [TYPE_FOLDER, TYPE_FILE, MENU_ID] = ["1", "2", "menu-id"];
 
-// filePath를 받아 확장자가 무엇인지 확인하고 해당 파일 타입을 리턴
+// MySwal.fire SweetAlert 옵션
+const alertOption = {
+  showCancelButton: true,
+  confirmButtonText: "네",
+  cancelButtonText: "아니오",
+  background: "#3C3C3C",
+};
+
+// filePath(nodeIds)를 받아 확장자가 무엇인지 확인하고 해당 파일 타입을 리턴
 const getFileType = (filePath) => {
-  const filenameExtension = filePath.split(".")[1] ?? null;
-  if (filenameExtension === "py") return "python";
-  else if (filenameExtension === "md") return "text";
-  else if (filenameExtension === "html") return "html";
-  else if (filenameExtension === "js") return "js";
-  else if (filenameExtension === "css") return "css";
-  else if (filenameExtension === null) return "folder";
+  const extension = filePath.split(".")[1] ?? null;
+  if (extension === "py") return "python";
+  else if (extension === "md") return "text";
+  else if (extension === "html") return "html";
+  else if (extension === "js") return "js";
+  else if (extension === "css") return "css";
+  else if (extension === null) return "folder";
   else return null;
 };
 
-// filePath를 받아 해당 파일이나 폴더의 이름을 리턴
+// filePath(nodeIds)를 받아 해당 파일이나 폴더의 이름을 리턴
 const getFileName = (filePath) => {
-  if (filePath.includes("."))
-    return filePath.split("/").slice(-1)[0].split(".")[0];
-  else return filePath.split("/").slice(-1)[0];
+  const name = filePath.split("/").slice(-1)[0];
+  // 파일인 경우
+  if (filePath.includes(".")) return name.split(".")[0];
+  // 폴더인 경우
+  return name;
 };
 
 const Directory = (props) => {
   const dispatch = useDispatch();
   const { teamDocId, isLoading, editorRef, saveFileContent } = props;
-  const { selectedFilePath, selectedFileName, selectedFileType } = props;
+  // const { selectedFilePath, selectedFileName, selectedFileType } = props;
   // const { goCodeShare } = props;
   const [filesDirectories, setFilesDirectories] = useState({});
+  const [selectedFileName, setSelectedFileName] = useState("");
+  const [selectedFileType, setSelectedFileType] = useState("");
+  const [selectedFilePath, setSelectedFilePath] = useState("");
+
   const MySwal = withReactContent(Swal);
   const { show } = useContextMenu({ id: MENU_ID });
 
   // 디렉터리 받기
   useEffect(() => {
     const testData = {
-      id: "1",
-      name: "Parent Node",
+      id: "src",
+      name: "src-folder",
       children: [
         {
-          id: "2",
-          name: "Child Node 1",
+          id: "src/pages",
+          name: "pages-folder",
           children: [
-            {
-              id: "4",
-              name: "Grandchild Node 1",
-            },
-            {
-              id: "5",
-              name: "Grandchild Node 2",
-            },
+            { id: "src/pages/haha", name: "haha" },
+            { id: "src/pages/yaho", name: "yaho" },
+            { id: "src/pages/c.py", name: "c.py" },
           ],
         },
-        {
-          id: "3.",
-          name: "app.py",
-        },
+        { id: "src/app.py", name: "app.py" },
+        { id: "src/b.md", name: " b.md" },
       ],
     };
     setFilesDirectories(testData);
@@ -127,183 +124,149 @@ const Directory = (props) => {
 
   // 디렉터리 생성
   const createDirectoryHandler = async () => {
-    // const newDirectoryName = prompt("생성할 폴더 이름을 입력하세요");
     const newDirectoryName = await MySwal.fire({
+      ...alertOption,
       title: "생성할 폴더 이름을 입력하세요",
       input: "text",
-      showCancelButton: true,
-      confirmButtonText: "네",
-      cancelButtonText: "아니오",
-      background: "#3C3C3C",
     });
-    if (!newDirectoryName.isConfirmed) {
-      return;
-    }
-    if (newDirectoryName.value.length === 0) {
-      toast.warning("폴더 이름을 입력해야합니다");
-      return;
-    }
-    if (newDirectoryName.value.includes(".")) {
-      toast.warning("폴더 이름에 .을 넣을 수 없습니다");
-      return;
-    }
-    const fileInfoData = {
-      fileTitle: newDirectoryName.value,
-      filePath: selectedFilePath,
-    };
-    try {
-      await fileApi.createFile(teamDocId, TYPE_FOLDER, fileInfoData);
-      const res = await projectApi.getAllFiles(teamDocId);
-      setFilesDirectories(res.data);
-      toast.success("폴더 생성 성공");
-    } catch (err) {
-      toast.error("폴더 생성 실패");
-    }
+    // if (!newDirectoryName.isConfirmed) {
+    //   return;
+    // }
+    // if (newDirectoryName.value.length === 0) {
+    //   toast.warning("폴더 이름을 입력해야합니다");
+    //   return;
+    // }
+    // if (newDirectoryName.value.includes(".")) {
+    //   toast.warning("폴더 이름에 .을 넣을 수 없습니다");
+    //   return;
+    // }
+    // const fileInfoData = {
+    //   fileTitle: newDirectoryName.value,
+    //   filePath: selectedFilePath,
+    // };
+    // try {
+    //   await fileApi.createFile(teamDocId, TYPE_FOLDER, fileInfoData);
+    //   const res = await projectApi.getAllFiles(teamDocId);
+    //   setFilesDirectories(res.data);
+    //   toast.success("폴더 생성 성공");
+    // } catch (err) {
+    //   toast.error("폴더 생성 실패");
+    // }
   };
 
   // 파일 생성
   const createFileHandler = async () => {
-    // const newFileName = prompt("생성할 파일 이름(확장자까지)을 입력하세요");
     const newFileName = await MySwal.fire({
+      ...alertOption,
       title: "생성할 파일 이름(확장자까지)을 입력하세요",
       input: "text",
-      showCancelButton: true,
-      confirmButtonText: "네",
-      cancelButtonText: "아니오",
-      // background: "#3C3C3C",
     });
-    if (!newFileName.isConfirmed) {
-      return;
-    }
-    if (newFileName.value.length === 0) {
-      toast.warning("파일 이름을 입력해야합니다");
-      return;
-    }
-    if (!newFileName.value.includes(".")) {
-      toast.warning("확장자까지 유효하게 입력해야 합니다");
-      return;
-    }
-    const fileInfoData = {
-      fileTitle: newFileName.value,
-      filePath: selectedFilePath,
-    };
-    try {
-      await fileApi.createFile(teamDocId, TYPE_FILE, fileInfoData);
-      const res = await projectApi.getAllFiles(teamDocId);
-      setFilesDirectories(res.data);
-      toast.success("파일 생성 성공");
-    } catch (err) {
-      toast.error("파일 생성 실패");
-    }
+    // if (!newFileName.isConfirmed) {
+    //   return;
+    // }
+    // if (newFileName.value.length === 0) {
+    //   toast.warning("파일 이름을 입력해야합니다");
+    //   return;
+    // }
+    // if (!newFileName.value.includes(".")) {
+    //   toast.warning("확장자까지 유효하게 입력해야 합니다");
+    //   return;
+    // }
+    // const fileInfoData = {
+    //   fileTitle: newFileName.value,
+    //   filePath: selectedFilePath,
+    // };
+    // try {
+    //   await fileApi.createFile(teamDocId, TYPE_FILE, fileInfoData);
+    //   const res = await projectApi.getAllFiles(teamDocId);
+    //   setFilesDirectories(res.data);
+    //   toast.success("파일 생성 성공");
+    // } catch (err) {
+    //   toast.error("파일 생성 실패");
+    // }
   };
 
   // 이름 변경
   const renameHandler = async () => {
-    const oldFileName = selectedFilePath.split("/").slice(-1)[0];
-    // const newName = prompt("변경할 이름 입력", oldFileName);
+    const oldFileName = "";
+    // const oldFileName = selectedFilePath.split("/").slice(-1)[0];
     const newName = await Swal.fire({
+      ...alertOption,
       title: "이름 변경",
       input: "text",
       inputValue: oldFileName,
-      showCancelButton: true,
-      confirmButtonText: "네",
-      cancelButtonText: "아니오",
-      background: "#3C3C3C",
     });
-    if (!newName.isConfirmed) {
-      return;
-    }
-    if (newName.value.length === 0) {
-      toast.warning("변경할 이름을 입력해야합니다");
-      return;
-    }
-    if (newName === oldFileName) {
-      return;
-    } else if (!newName) {
-      return;
-    }
-    const renameData = {
-      filePath: selectedFilePath,
-      oldFileName,
-      fileTitle: newName.value,
-    };
-    try {
-      await fileApi.renameFile(teamDocId, renameData);
-      const res = await projectApi.getAllFiles(teamDocId);
-      setFilesDirectories(res.data);
-      toast.success("이름 변경 성공");
-    } catch (err) {
-      toast.error("이름 변경 실패");
-    }
+    // if (!newName.isConfirmed) {
+    //   return;
+    // }
+    // if (newName.value.length === 0) {
+    //   toast.warning("변경할 이름을 입력해야합니다");
+    //   return;
+    // }
+    // if (newName === oldFileName) {
+    //   return;
+    // } else if (!newName) {
+    //   return;
+    // }
+    // const renameData = {
+    //   filePath: selectedFilePath,
+    //   oldFileName,
+    //   fileTitle: newName.value,
+    // };
+    // try {
+    //   await fileApi.renameFile(teamDocId, renameData);
+    //   const res = await projectApi.getAllFiles(teamDocId);
+    //   setFilesDirectories(res.data);
+    //   toast.success("이름 변경 성공");
+    // } catch (err) {
+    //   toast.error("이름 변경 실패");
+    // }
   };
 
   // 삭제
   const deleteHandler = async () => {
+    const selectedFileName = "테스트테스트";
     const res = await MySwal.fire({
+      ...alertOption,
       title: `${selectedFileName}을(를) 삭제하시겠습니까?`,
-      showCancelButton: true,
-      confirmButtonText: "네",
-      cancelButtonText: "아니오",
-      background: "#3C3C3C",
     });
-    if (!res.isConfirmed) {
-      return;
-    }
-    const filePathData = { filePath: selectedFilePath };
-    try {
-      await fileApi.deleteFile(
-        teamDocId,
-        selectedFileType === "folder" ? TYPE_FOLDER : TYPE_FILE,
-        filePathData
-      );
-      const res = await projectApi.getAllFiles(teamDocId);
-      setFilesDirectories(res.data);
-      const resetPayloadData = {
-        type: "",
-        name: "",
-        path: "",
-      };
-      dispatch(selectFile(resetPayloadData));
-      editorRef.current.getModel().setValue("");
-      toast.success("파일 삭제 성공");
-    } catch (err) {
-      console.error(err);
-      toast.error("파일 삭제 실패");
-    }
+    // if (!res.isConfirmed) {
+    //   return;
+    // }
+    // const filePathData = { filePath: selectedFilePath };
+    // try {
+    //   await fileApi.deleteFile(
+    //     teamDocId,
+    //     selectedFileType === "folder" ? TYPE_FOLDER : TYPE_FILE,
+    //     filePathData
+    //   );
+    //   const res = await projectApi.getAllFiles(teamDocId);
+    //   setFilesDirectories(res.data);
+    //   const resetPayloadData = {
+    //     type: "",
+    //     name: "",
+    //     path: "",
+    //   };
+    //   dispatch(selectFile(resetPayloadData));
+    //   editorRef.current.getModel().setValue("");
+    //   toast.success("파일 삭제 성공");
+    // } catch (err) {
+    //   console.error(err);
+    //   toast.error("파일 삭제 실패");
+    // }
   };
 
   // 저장
   const saveHandler = () => saveFileContent();
 
-  // 노드 선택
+  // 노드 선택 (폴더, 파일 아이콘 선택)
   const nodeSelectHandler = (e, nodeIds) => {
-    const payloadData = {
-      type: getFileType(nodeIds),
-      name: getFileName(nodeIds),
-      path: nodeIds,
-    };
-    dispatch(selectFile(payloadData));
+    setSelectedFileName(getFileName(nodeIds));
+    setSelectedFileType(getFileType(nodeIds));
+    setSelectedFilePath(nodeIds);
+    // const payloadData = { type: getFileType(nodeIds), name: getFileName(nodeIds), path: nodeIds };
+    // dispatch(selectFile(payloadData));
   };
-
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
 
   const StyledTreeItemRoot = muiStyled(TreeItem)(({ theme }) => ({
     color: theme.palette.text.secondary,
@@ -316,36 +279,20 @@ const Directory = (props) => {
       borderBottomLeftRadius: theme.spacing(1),
       paddingLeft: theme.spacing(0),
       fontWeight: theme.typography.fontWeightMedium,
-
-      // "&.Mui-expanded": {
-      //   backgroundColor: "#786f7b",
-      //   color: "white",
-      //   // fontWeight: theme.typography.fontWeightRegular,
-      // },
-      "&:hover": {
-        backgroundColor: "white",
-        color: "#D4A8E3",
-      },
+      "&:hover": { backgroundColor: "white", color: "#D4A8E3" },
       "&.Mui-selected": {
         backgroundColor: "#786f7b",
         color: "white",
         fontWeight: "bold",
       },
-      "&.Mui-selected:hover": {
-        backgroundColor: "#D4A8E3",
-      },
+      "&.Mui-selected:hover": { backgroundColor: "#D4A8E3" },
       [`& .${treeItemClasses.label}`]: {
         fontWeight: "inherit",
         color: "inherit",
       },
       [`& .${treeItemClasses.iconContainer}`]: {},
     },
-    [`& .${treeItemClasses.group}`]: {
-      // marginLeft: 0,
-      // [`& .${treeItemClasses.content}`]: {
-      //   paddingLeft: theme.spacing(2),
-      // },
-    },
+    [`& .${treeItemClasses.group}`]: {},
   }));
 
   function StyledTreeItem(props) {
@@ -396,14 +343,14 @@ const Directory = (props) => {
     );
   }
 
-  const displayMenu = (e) => {
-    show({ event: e });
-    return e;
-  };
-
+  // const displayMenu = (e) => {
+  //   show({ event: e });
+  //   return e;
+  // };
   const treeItemContextMenuHandler = (e, nodeIds) => {
     e.preventDefault();
-    displayMenu(e);
+    // displayMenu(e);
+    show({ event: e });
   };
 
   // 트리 생성 with 스타일
@@ -472,16 +419,21 @@ const Directory = (props) => {
         <div className="text-xs" style={{ padding: 15 }}>
           <TreeView
             aria-label="files and directories"
-            // defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpanded={["root"]}
-            // defaultExpandIcon={<ChevronRightIcon />}
             defaultEndIcon={<div style={{ width: 24 }} />}
             sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
             onNodeSelect={nodeSelectHandler}
+            // defaultCollapseIcon={<ExpandMoreIcon />}
+            // defaultExpandIcon={<ChevronRightIcon />}
             // onContextMenu={(e) => e.target.click()}
           >
             {renderTree(filesDirectories)}
           </TreeView>
+          <div>
+            <div>선택된 파일 이름: {selectedFileName}</div>
+            <div>선택된 파일 타입: {selectedFileType}</div>
+            <div>선택된 파일 경로: {selectedFilePath}</div>
+          </div>
         </div>
       </DirectoryContainer>
       {/* Context Menu */}
