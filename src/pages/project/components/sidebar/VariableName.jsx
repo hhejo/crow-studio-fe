@@ -1,14 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
-import styled from "styled-components";
-
 import editorApi from "../../../../api/editorApi";
-
-// styled
-const VariableNameContainer = styled.div`
-  border-radius: 0 10px 10px 0;
-  height: 100%;
-`;
 
 const VariableName = () => {
   const [variable, setVariable] = useState("");
@@ -43,9 +35,7 @@ const VariableName = () => {
 
   const sendWord = (e) => {
     e.preventDefault();
-    const body = JSON.stringify({
-      data: variable,
-    });
+    const body = JSON.stringify({ data: variable });
     editorApi
       .variableRecommend(body)
       .then((res) => {
@@ -59,44 +49,44 @@ const VariableName = () => {
   };
 
   return (
-    <React.Fragment>
-      <VariableNameContainer className="mb-3 bg-component_item_bg_dark flex flex-col  overflow-auto">
-        <div
-          className="flex justify-between items-center"
-          style={{ padding: 15 }}
-        >
-          <div className="text-xl font-bold text-white my-1">변수명 추천</div>
-        </div>
-        <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
-        <div style={{ padding: 15 }}>
-          <div className="pl-1">
-            <div className="text-primary_dark text-sm font-bold">
-              <form
-                onSubmit={sendWord}
-                className="flex justify-items-center items-center mb-3"
+    <div className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto h-full rounded-r-lg">
+      <div
+        className="flex justify-between items-center"
+        style={{ padding: 15 }}
+      >
+        <div className="text-xl font-bold text-white my-1">변수명 추천</div>
+      </div>
+      {/* 줄 */}
+      <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
+      {/*  */}
+      <div style={{ padding: 15 }}>
+        <div className="pl-1">
+          <div className="text-primary_dark text-sm font-bold">
+            <form
+              onSubmit={sendWord}
+              className="flex justify-items-center items-center mb-3"
+            >
+              <input
+                type="text"
+                name="variable"
+                value={variable}
+                onChange={(e) => update(e)}
+                className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
+                placeholder="추천받고 싶은 단어 입력"
+                style={{ height: 28, width: 200 }}
+              />
+              <button
+                onClick={sendWord}
+                className="ml-2 w-[45px] h-[26px] bg-point_purple hover:bg-point_purple_-2 rounded-md text-white text-sm transition"
               >
-                <input
-                  type="text"
-                  name="variable"
-                  value={variable}
-                  onChange={(e) => update(e)}
-                  className="rounded-md bg-component_item_bg_+2_dark px-4 py-2 text-sm font-medium text-white text-left appearance-none shadow-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
-                  placeholder="추천받고 싶은 단어 입력"
-                  style={{ height: 28, width: 200 }}
-                />
-                <button
-                  onClick={sendWord}
-                  className="ml-2 w-[45px] h-[26px] bg-point_purple hover:bg-point_purple_-2 rounded-md text-white text-sm transition"
-                >
-                  추천
-                </button>
-              </form>
-              {resultActive && rendering()}
-            </div>
+                추천
+              </button>
+            </form>
+            {resultActive && rendering()}
           </div>
         </div>
-      </VariableNameContainer>
-    </React.Fragment>
+      </div>
+    </div>
   );
 };
 
