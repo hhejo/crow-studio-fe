@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
+import { toast } from "react-toastify";
 
 import TreeView from "@mui/lab/TreeView";
 import TreeItem, { treeItemClasses } from "@mui/lab/TreeItem";
@@ -95,26 +96,23 @@ const Directory = (props) => {
 
   // 디렉터리 생성
   const createDirectoryHandler = async () => {
-    const newDirectoryName = await MySwal.fire({
+    const alertResult = await MySwal.fire({
       ...alertOption,
       title: "생성할 폴더 이름을 입력하세요",
       input: "text",
     });
-    // if (!newDirectoryName.isConfirmed) {
-    //   return;
-    // }
-    // if (newDirectoryName.value.length === 0) {
-    //   toast.warning("폴더 이름을 입력해야합니다");
-    //   return;
-    // }
-    // if (newDirectoryName.value.includes(".")) {
-    //   toast.warning("폴더 이름에 .을 넣을 수 없습니다");
-    //   return;
-    // }
-    // const fileInfoData = {
-    //   fileTitle: newDirectoryName.value,
-    //   filePath: selectedFilePath,
-    // };
+    if (!alertResult.isConfirmed) return;
+    const { value: newDirectoryName } = alertResult;
+    if (newDirectoryName.length === 0) {
+      toast.warning("폴더 이름을 입력해야합니다");
+      return;
+    }
+    if (newDirectoryName.includes(".")) {
+      toast.warning("폴더 이름에 점(.)을 넣을 수 없습니다");
+      return;
+    }
+    console.log("newDirectoryName:", newDirectoryName);
+    // const fileInfoData = { fileTitle: newDirectoryName.value, filePath: selectedFilePath };
     // try {
     //   await fileApi.createFile(teamDocId, TYPE_FOLDER, fileInfoData);
     //   const res = await projectApi.getAllFiles(teamDocId);
@@ -127,26 +125,23 @@ const Directory = (props) => {
 
   // 파일 생성
   const createFileHandler = async () => {
-    const newFileName = await MySwal.fire({
+    const alertResult = await MySwal.fire({
       ...alertOption,
       title: "생성할 파일 이름(확장자까지)을 입력하세요",
       input: "text",
     });
-    // if (!newFileName.isConfirmed) {
-    //   return;
-    // }
-    // if (newFileName.value.length === 0) {
-    //   toast.warning("파일 이름을 입력해야합니다");
-    //   return;
-    // }
-    // if (!newFileName.value.includes(".")) {
-    //   toast.warning("확장자까지 유효하게 입력해야 합니다");
-    //   return;
-    // }
-    // const fileInfoData = {
-    //   fileTitle: newFileName.value,
-    //   filePath: selectedFilePath,
-    // };
+    if (!alertResult.isConfirmed) return;
+    const { value: newFileName } = alertResult;
+    if (newFileName.length === 0) {
+      toast.warning("파일 이름을 입력해야합니다");
+      return;
+    }
+    if (!newFileName.includes(".")) {
+      toast.warning("확장자까지 유효하게 입력해야 합니다");
+      return;
+    }
+    console.log("newFileName:", newFileName);
+    // const fileInfoData = { fileTitle: newFileName.value, filePath: selectedFilePath };
     // try {
     //   await fileApi.createFile(teamDocId, TYPE_FILE, fileInfoData);
     //   const res = await projectApi.getAllFiles(teamDocId);
@@ -159,31 +154,23 @@ const Directory = (props) => {
 
   // 이름 변경
   const renameHandler = async () => {
-    const oldFileName = "";
     // const oldFileName = selectedFilePath.split("/").slice(-1)[0];
-    const newName = await Swal.fire({
+    const alertResult = await Swal.fire({
       ...alertOption,
       title: "이름 변경",
       input: "text",
-      inputValue: oldFileName,
+      inputValue: selectedFileName,
     });
-    // if (!newName.isConfirmed) {
-    //   return;
-    // }
-    // if (newName.value.length === 0) {
-    //   toast.warning("변경할 이름을 입력해야합니다");
-    //   return;
-    // }
-    // if (newName === oldFileName) {
-    //   return;
-    // } else if (!newName) {
-    //   return;
-    // }
-    // const renameData = {
-    //   filePath: selectedFilePath,
-    //   oldFileName,
-    //   fileTitle: newName.value,
-    // };
+    if (!alertResult.isConfirmed) return;
+    const { value: newName } = alertResult;
+    if (newName.length === 0) {
+      toast.warning("변경할 이름을 입력해야합니다");
+      return;
+    }
+    if (newName === selectedFileName) return;
+    else if (!newName) return;
+    console.log("newName:", newName);
+    // const renameData = { filePath: selectedFilePath, oldFileName, fileTitle: newName.value };
     // try {
     //   await fileApi.renameFile(teamDocId, renameData);
     //   const res = await projectApi.getAllFiles(teamDocId);
@@ -196,14 +183,11 @@ const Directory = (props) => {
 
   // 삭제
   const deleteHandler = async () => {
-    const selectedFileName = "테스트테스트";
-    const res = await MySwal.fire({
+    const alertResult = await MySwal.fire({
       ...alertOption,
       title: `${selectedFileName}을(를) 삭제하시겠습니까?`,
     });
-    // if (!res.isConfirmed) {
-    //   return;
-    // }
+    if (!alertResult.isConfirmed) return;
     // const filePathData = { filePath: selectedFilePath };
     // try {
     //   await fileApi.deleteFile(
@@ -213,11 +197,7 @@ const Directory = (props) => {
     //   );
     //   const res = await projectApi.getAllFiles(teamDocId);
     //   setFilesDirectories(res.data);
-    //   const resetPayloadData = {
-    //     type: "",
-    //     name: "",
-    //     path: "",
-    //   };
+    //   const resetPayloadData = { type: "", name: "", path: "" };
     //   dispatch(selectFile(resetPayloadData));
     //   editorRef.current.getModel().setValue("");
     //   toast.success("파일 삭제 성공");
