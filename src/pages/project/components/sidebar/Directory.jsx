@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
@@ -23,7 +23,7 @@ import { IoLogoPython } from "react-icons/io5";
 import { BsPencilFill } from "react-icons/bs";
 // import { TiArrowRightThick } from "react-icons/ti";
 
-import { ReactComponent as IcCodeShare } from "../../../../assets/icons/ic_code_share.svg";
+// import { ReactComponent as IcCodeShare } from "../../../../assets/icons/ic_code_share.svg";
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
 // import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
@@ -40,103 +40,89 @@ import "react-contexify/dist/ReactContexify.css";
 // import * as iconsi from "react-icons/io5";
 
 import projectApi from "../../../../api/projectApi";
-
-import { selectFile } from "../../../../redux/teamSlice";
 import fileApi from "../../../../api/fileApi";
 
-const TYPE_FOLDER = "1";
-const TYPE_FILE = "2";
+import { selectFile } from "../../../../redux/teamSlice";
 
-const MENU_ID = "menu-id";
+const [TYPE_FOLDER, TYPE_FILE, MENU_ID] = ["1", "2", "menu-id"];
 
 // filePath를 받아 확장자가 무엇인지 확인하고 해당 파일 타입을 리턴
 const getFileType = (filePath) => {
   const filenameExtension = filePath.split(".")[1] ?? null;
-  switch (filenameExtension) {
-    case "py":
-      return "python";
-    case "md":
-      return "text";
-    case "html":
-      return "html";
-    case "js":
-      return "js";
-    case "css":
-      return "css";
-    case null:
-      // return "directory";
-      return "folder";
-    default:
-      return null;
-  }
+  if (filenameExtension === "py") return "python";
+  else if (filenameExtension === "md") return "text";
+  else if (filenameExtension === "html") return "html";
+  else if (filenameExtension === "js") return "js";
+  else if (filenameExtension === "css") return "css";
+  else if (filenameExtension === null) return "folder";
+  else return null;
 };
 
 // filePath를 받아 해당 파일이나 폴더의 이름을 리턴
 const getFileName = (filePath) => {
-  if (filePath.includes(".")) {
+  if (filePath.includes("."))
     return filePath.split("/").slice(-1)[0].split(".")[0];
-  } else {
-    return filePath.split("/").slice(-1)[0];
-  }
+  else return filePath.split("/").slice(-1)[0];
 };
 
-//
-
 const Directory = (props) => {
-  const MySwal = withReactContent(Swal);
   const dispatch = useDispatch();
-  const {
-    teamDocId,
-    selectedFilePath,
-    selectedFileName,
-    selectedFileType,
-    saveFileContent,
-    isLoading,
-    editorRef,
-    goCodeShare,
-  } = props;
-
+  const { teamDocId, isLoading, editorRef, saveFileContent } = props;
+  const { selectedFilePath, selectedFileName, selectedFileType } = props;
+  // const { goCodeShare } = props;
   const [filesDirectories, setFilesDirectories] = useState({});
-
-  const { show } = useContextMenu({
-    id: MENU_ID,
-  });
-
-  // const handleItemClick = ({ event, props, triggerEvent, data }) => {
-  //   console.log(event, props, triggerEvent, data);
-  // };
-
-  const displayMenu = (e) => {
-    show({
-      event: e,
-    });
-    return e;
-  };
+  const MySwal = withReactContent(Swal);
+  const { show } = useContextMenu({ id: MENU_ID });
 
   // 디렉터리 받기
   useEffect(() => {
-    projectApi
-      .getAllFiles(teamDocId)
-      .then((res) => {
-        setFilesDirectories(res.data);
-        const payloadData = {
-          type: res.data.type,
-          name: res.data.name,
-          path: res.data.id,
-        };
-        if (res.data.type !== "folder") {
-          dispatch(selectFile(payloadData));
-        }
-      })
-      .catch(() => toast.error("디렉터리 로드 실패"));
-    return () => {
-      const resetPayloadData = {
-        type: "",
-        name: "",
-        path: "",
-      };
-      dispatch(selectFile(resetPayloadData));
+    const testData = {
+      id: "1",
+      name: "Parent Node",
+      children: [
+        {
+          id: "2",
+          name: "Child Node 1",
+          children: [
+            {
+              id: "4",
+              name: "Grandchild Node 1",
+            },
+            {
+              id: "5",
+              name: "Grandchild Node 2",
+            },
+          ],
+        },
+        {
+          id: "3.",
+          name: "app.py",
+        },
+      ],
     };
+    setFilesDirectories(testData);
+    // projectApi
+    //   .getAllFiles(teamDocId)
+    //   .then((res) => {
+    //     setFilesDirectories(res.data);
+    //     const payloadData = {
+    //       type: res.data.type,
+    //       name: res.data.name,
+    //       path: res.data.id,
+    //     };
+    //     if (res.data.type !== "folder") {
+    //       dispatch(selectFile(payloadData));
+    //     }
+    //   })
+    //   .catch(() => toast.error("디렉터리 로드 실패"));
+    // return () => {
+    //   const resetPayloadData = {
+    //     type: "",
+    //     name: "",
+    //     path: "",
+    //   };
+    //   dispatch(selectFile(resetPayloadData));
+    // };
   }, [dispatch, teamDocId]);
 
   // 디렉터리 생성
@@ -404,16 +390,17 @@ const Directory = (props) => {
             </Typography>
           </Box>
         }
-        style={{
-          "--tree-view-color": color,
-          "--tree-view-bg-color": bgColor,
-        }}
+        style={{ "--tree-view-color": color, "--tree-view-bg-color": bgColor }}
         {...other}
       />
     );
   }
 
-  // const treeItemClickHandler = (e) => console.log(e);
+  const displayMenu = (e) => {
+    show({ event: e });
+    return e;
+  };
+
   const treeItemContextMenuHandler = (e, nodeIds) => {
     e.preventDefault();
     displayMenu(e);
@@ -454,74 +441,35 @@ const Directory = (props) => {
   };
 
   return (
-    <React.Fragment>
-      {/* Context Menu */}
-      <Menu
-        id={MENU_ID}
-        // disableBoundariesCheck={false}
-        className="contexify-crow"
-      >
-        <Item onClick={renameHandler}>
-          이름 변경 <BsPencilFill className="ml-1" />
-        </Item>
-        <Item onClick={deleteHandler}>삭제 ⌫</Item>
-      </Menu>
-
+    <>
+      {/* DirectoryContainer */}
       <DirectoryContainer className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto">
         <div className="justify-between items-center" style={{ padding: 15 }}>
           <div className="flex items-center justify-between gap-4">
             <div className="text-xl font-bold text-white">Directory</div>
             <div className="mt-1 flex items-center">
+              {/* 새 파일 생성 버튼 */}
               <IcSpan onClick={createFileHandler} data-tip="새 파일">
                 <IcNewFile alt="IcNewFile" />
               </IcSpan>
+              {/* 새 폴더 생성 버튼 */}
               <IcSpan onClick={createDirectoryHandler} data-tip="새 폴더">
                 <IcNewDir className="mt-0.5" alt="IcNewDir" />
               </IcSpan>
-              {/* <IcSpan>
-              <BsPencilFill
-                className="h-[16px] text-primary_-2_dark"
-                onClick={renameHandler}
-              />
-            </IcSpan>
-            <IcSpan className="text-primary_-2_dark hover:text-component_dark">
-              <div className="text-xs" onClick={deleteHandler}>
-                ⌫
-              </div>
-            </IcSpan> */}
+              {/* 파일 저장 버튼 */}
               <IcSpan onClick={saveHandler} data-tip="파일 저장">
                 <SaveIcon
                   className={isLoading && `animate-spin`}
                   sx={{ fontSize: 20 }}
                 />
               </IcSpan>
-              {/* <IcSpan
-                style={
-                  selectedFilePath.includes(".py")
-                    ? {}
-                    : { pointerEvents: "none", opacity: 0.3 }
-                }
-                onClick={goCodeShare}
-                data-tip="동시 편집"
-              >
-                <IcCodeShare className="h-[16px]" />
-              </IcSpan> */}
             </div>
           </div>
         </div>
-
         {/* stroke */}
         <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
-
+        {/* 디렉터리 파일, 폴더 모음 트리 뷰 */}
         <div className="text-xs" style={{ padding: 15 }}>
-          {/* 경로 표시 */}
-          {/* <div className="text-sm flex ml-0.5 mb-2">
-            <TiArrowRightThick className="text-point_yellow" />
-            <div className="ml-3 break-all">
-              {selectedFilePath?.split("/").slice(1).join("/")}
-            </div>
-          </div> */}
-          {/* 디렉터리 파일, 폴더 모음 */}
           <TreeView
             aria-label="files and directories"
             // defaultCollapseIcon={<ExpandMoreIcon />}
@@ -536,7 +484,14 @@ const Directory = (props) => {
           </TreeView>
         </div>
       </DirectoryContainer>
-    </React.Fragment>
+      {/* Context Menu */}
+      <Menu id={MENU_ID} className="contexify-crow">
+        <Item onClick={renameHandler}>
+          이름 변경 <BsPencilFill className="ml-1" />
+        </Item>
+        <Item onClick={deleteHandler}>삭제 ⌫</Item>
+      </Menu>
+    </>
   );
 };
 
@@ -547,7 +502,6 @@ const DirectoryContainer = styled.div`
   height: 100%;
 `;
 
-// padding: 0.5rem;
 const IcSpan = styled.span`
   width: 34px;
   height: 32px;
@@ -556,11 +510,9 @@ const IcSpan = styled.span`
   justify-content: center;
   align-items: center;
   color: #bbbbbb;
-
   &:hover {
     background-color: #d9d9d9;
     border-radius: 5px;
-
     & svg {
       & path {
         fill: #2b2c2b;
