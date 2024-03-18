@@ -23,7 +23,6 @@ import { BsPencilFill } from "react-icons/bs";
 
 import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
-// import { ReactComponent as IcToggle } from "../../../../assets/icons/ic_toggle.svg";
 
 import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
@@ -80,13 +79,10 @@ const getFileName = (filePath) => {
 
 const Directory = (props) => {
   const { teamDocId, loading, editorRef, saveFileContent } = props;
-  // const { selectedFilePath, selectedFileName, selectedFileType } = props;
+  const { selected, setSelected } = props;
   const MySwal = withReactContent(Swal);
   const { show } = useContextMenu({ id: MENU_ID });
   const [filesDirectories, setFilesDirectories] = useState({});
-  const [selectedFileName, setSelectedFileName] = useState("");
-  const [selectedFileType, setSelectedFileType] = useState("");
-  const [selectedFilePath, setSelectedFilePath] = useState("");
 
   // 프로젝트 파일, 폴더 구조 받아서 화면에 표시하기
   useEffect(() => {
@@ -153,13 +149,12 @@ const Directory = (props) => {
   };
 
   // 이름 변경
-  const renameHandler = async () => {
-    // const oldFileName = selectedFilePath.split("/").slice(-1)[0];
+  const renameFileHandler = async () => {
     const alertResult = await Swal.fire({
       ...alertOption,
       title: "이름 변경",
       input: "text",
-      inputValue: selectedFileName,
+      inputValue: selected.fileName,
     });
     if (!alertResult.isConfirmed) return;
     const { value: newName } = alertResult;
@@ -167,7 +162,7 @@ const Directory = (props) => {
       toast.warning("변경할 이름을 입력해야합니다");
       return;
     }
-    if (newName === selectedFileName) return;
+    if (newName === selected.fileName) return;
     else if (!newName) return;
     console.log("newName:", newName);
     // const renameData = { filePath: selectedFilePath, oldFileName, fileTitle: newName.value };
@@ -185,7 +180,7 @@ const Directory = (props) => {
   const deleteHandler = async () => {
     const alertResult = await MySwal.fire({
       ...alertOption,
-      title: `${selectedFileName}을(를) 삭제하시겠습니까?`,
+      title: `${selected.fileName}을(를) 삭제하시겠습니까?`,
     });
     if (!alertResult.isConfirmed) return;
     // const filePathData = { filePath: selectedFilePath };
@@ -207,14 +202,17 @@ const Directory = (props) => {
     // }
   };
 
-  // 저장
-  const saveHandler = () => saveFileContent();
+  // 파일 내용 저장
+  const saveFileContentHandler = () => saveFileContent();
 
   // 노드 선택 (폴더, 파일 아이콘 선택)
   const nodeSelectHandler = (e, nodeIds) => {
-    setSelectedFileName(getFileName(nodeIds));
-    setSelectedFileType(getFileType(nodeIds));
-    setSelectedFilePath(nodeIds);
+    const changeTo = {
+      fileName: getFileName(nodeIds),
+      fileType: getFileType(nodeIds),
+      filePath: nodeIds,
+    };
+    setSelected(changeTo);
   };
 
   // StyledTreeItemRoot
@@ -333,7 +331,7 @@ const Directory = (props) => {
               <IcNewDir className="mt-0.5" alt="IcNewDir" />
             </IcSpan>
             {/* 파일 저장 버튼 */}
-            <IcSpan onClick={saveHandler} data-tip="파일 저장">
+            <IcSpan onClick={saveFileContentHandler} data-tip="파일 저장">
               <SaveIcon
                 className={loading && `animate-spin`}
                 sx={{ fontSize: 20 }}
@@ -358,7 +356,7 @@ const Directory = (props) => {
       </div>
       {/* Context Menu */}
       <Menu id={MENU_ID} className="contexify-crow">
-        <Item onClick={renameHandler}>
+        <Item onClick={renameFileHandler}>
           이름 변경 <BsPencilFill className="ml-1" />
         </Item>
         <Item onClick={deleteHandler}>삭제 ⌫</Item>
