@@ -118,6 +118,7 @@ export const SignupForm = (props) => {
         onChange={inputChangeHandler}
         errMsg={emailErrMsg}
       />
+
       {/* 닉네임 */}
       <InputForm
         type="text"
@@ -130,6 +131,7 @@ export const SignupForm = (props) => {
         onChange={inputChangeHandler}
         errMsg={nicknameErrMsg}
       />
+
       {/* 비밀번호 1 */}
       <InputForm
         type="password"
@@ -142,6 +144,7 @@ export const SignupForm = (props) => {
         onChange={inputChangeHandler}
         errMsg={password1ErrMsg}
       />
+
       {/* 비밀번호 2 */}
       <InputForm
         type="password"
@@ -154,6 +157,7 @@ export const SignupForm = (props) => {
         onChange={inputChangeHandler}
         errMsg={password2ErrMsg}
       />
+
       {/* 회원가입 버튼 */}
       <Button type="submit" onClick={submitHandler}>
         회원가입

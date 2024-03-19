@@ -1,38 +1,38 @@
-import { Link, useNavigate } from "react-router-dom";
+// React-Router, Redux
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+// Firebase
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
+// Slice
 import { setCurrentUser } from "../../redux/user-slice";
-import LoginForm from "./LoginForm";
-import { TitleWithLogo } from "../../components/TitleWithLogo";
 import { startLoading, stopLoading } from "../../redux/global-slice";
+// Toast
+import { toast } from "react-toastify";
+// Components
+import { LoginForm } from "./LoginForm";
+import { TitleWithLogo } from "../../components/TitleWithLogo";
 
 const Login = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
 
+  // 로그인 핸들러
   const loginHandler = async (loginData) => {
-    // 입력한 email, password 가져오기
-    const { email, password: pw } = loginData;
+    const { email, password: pw } = loginData; // 로그인 폼에 입력한 email, password
+    dispatch(startLoading()); // 로딩 화면 시작
     try {
-      await dispatch(startLoading());
-      // firebase에서 email, password가 일치하는 유저 가져오기
-      const { user } = await signInWithEmailAndPassword(auth, email, pw);
-      // Redux에 user 정보 저장
-      await dispatch(setCurrentUser(user)); // docId는 없지만 어차피 App.js에서 작업
-      //
-      toast.success("로그인 성공");
-      navigate("/teams");
+      const { user } = await signInWithEmailAndPassword(auth, email, pw); // 1. firebase authentication에서 email, password가 일치하는 유저 정보 가져오기
+      dispatch(setCurrentUser(user)); // 2. Redux에 로그인 유저 정보 저장. 현재 로그인한 유저가 됨. docId는 없지만 어차피 App.js에서 작업
+      toast.success("로그인 성공"); // 로그인 성공 토스트
+      navigate("/teams", { replace: true }); // /teams로 리다이렉트하고 뒤로가기 방지
     } catch (error) {
-      await dispatch(stopLoading());
-      // 로그인 에러
-      const { code: errCode, message: errMessage } = error;
-      // 409
-      if (errCode === "auth/invalid-credential")
-        toast.warning("유효하지 않은 이메일이나 비밀번호입니다.");
-      //
-      else toast.error("로그인 오류");
-      console.error(errMessage);
+      const { code, message } = error; // 로그인 에러
+      if (code === "auth/invalid-credential")
+        toast.warning("유효하지 않은 이메일이나 비밀번호입니다");
+      else toast.error("로그인 오류"); // 기타 에러
+      console.error(message);
+    } finally {
+      dispatch(stopLoading()); // 로딩 화면 종료
     }
   };
 
@@ -42,8 +42,13 @@ const Login = () => {
       className="p-4 w-screen h-full flex flex-wrap justify-center items-center"
     >
       <div className="h-fit flex flex-col">
+        {/* 까마귀공방 로고, 로그인 타이틀 */}
         <TitleWithLogo title="로그인" />
+
+        {/* 로그인 폼 */}
         <LoginForm login={loginHandler} />
+
+        {/* 회원가입하기 버튼 */}
         <Link
           to="/signup"
           className="block w-full text-center hover:text-white transition"
