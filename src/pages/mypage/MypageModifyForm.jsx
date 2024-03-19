@@ -3,8 +3,8 @@ import { useState } from "react";
 // Components
 import { InputForm } from "../../components/forms/InputForm";
 import { Button } from "../../components/Button";
-// import PasswordForm from "./components/PasswordForm";
-// import GitForm from "./components/GitForm";
+import PasswordForm from "./components/PasswordForm";
+import GitForm from "./components/GitForm";
 
 export const MypageModifyForm = (props) => {
   const { modifyNickname, resign } = props;
@@ -91,32 +91,31 @@ export const MypageModifyForm = (props) => {
           변경하기
         </Button>
       </form>
-      <hr className="border-primary_-2_dark mb-5" />
-      {/* <PasswordForm updatePassword={submitPasswordHandler} /> */}
-      {/* <PasswordForm /> */}
-      <hr className="border-primary_-2_dark mb-5" />
-      {/* <GitForm
-      initialGitUsername={myGitUsername}
-      updateGitAuth={updateGitAuthHandler}
-      /> */}
 
-      {/* 회원 탈퇴 */}
+      <hr className="border-primary_-2_dark mb-5" />
+
+      {/* 비밀번호 변경 폼 */}
+      <PasswordForm
+      // updatePassword={submitPasswordHandler}
+      />
+
+      <hr className="border-primary_-2_dark mb-5" />
+
+      {/* 깃 변경 폼 */}
+      <GitForm
+      // initialGitUsername={myGitUsername}
+      // updateGitAuth={updateGitAuthHandler}
+      />
+
+      {/* 회원 탈퇴 버튼 */}
       <div className="flex flex-col items-center">
         <button
-          type="submit"
-          className="w-80 text-md font-bold text-component_dark bg-point_pink hover:bg-point_red hover:text-white py-2 px-6 rounded-md transition"
+          type="button"
+          className="w-80 text-lg font-bold text-component_dark bg-point_pink hover:bg-point_red hover:text-white py-2 px-6 rounded-md mb-4 transition"
           onClick={resignHandler}
         >
           탈퇴하기
         </button>
-
-        {/* <button
-          type={type}
-          className="w-80 text-lg font-bold text-component_dark bg-point_light_yellow hover:bg-point_yellow py-2 px-6 rounded-md transition mb-4"
-          onClick={onClick}
-        >
-          {children}
-        </button> */}
       </div>
     </section>
   );
