@@ -14,8 +14,8 @@ import TeamCreate from "./pages/team-create";
 import TeamDetail from "./pages/team-detail";
 import Project from "./pages/project/Project";
 import NotFound from "./pages/not-found/NotFound";
-import Forbidden from "./pages/forbidden/Forbidden";
-import YMonaco from "./pages/code-share/YMonaco";
+// import Forbidden from "./pages/forbidden/Forbidden";
+// import YMonaco from "./pages/code-share/YMonaco";
 // import Redirect from "./pages/redirect/Redirect";
 import Layout from "./Layout";
 
@@ -30,12 +30,14 @@ export const router = createBrowserRouter(
       </Route>
       {/* 로그인 O */}
       <Route element={<PrivateRoute />}>
-        <Route path="mypage/:uid" element={<Mypage />} />
+        <Route path="mypage" element={<Mypage />} />
         <Route path="teams" element={<Teams />} />
         <Route path="teams/:teamDocId" element={<TeamDetail />} />
         <Route path="teams/create" element={<TeamCreate />} />
         <Route path="project/:teamDocId" element={<Project />} />
       </Route>
+      {/* 404 */}
+      <Route path="*" element={<NotFound />} />
     </Route>
   )
 );
