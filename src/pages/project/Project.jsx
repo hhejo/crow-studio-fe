@@ -1,10 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import Editor from "@monaco-editor/react";
-import SplitPane from "react-split-pane";
 import { toast } from "react-toastify";
-import { TiArrowRightThick } from "react-icons/ti";
 
 import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "../../firebase";
@@ -17,7 +14,8 @@ import Team from "./components/sidebar/Team";
 import Api from "./components/sidebar/Api";
 import VariableName from "./components/sidebar/VariableName";
 import Settings from "./components/sidebar/Settings";
-import ConsoleTerminal from "./components/ConsoleTerminal";
+
+import EditorAndConsoleTerminal from "./EditorAndConsoleTerminal";
 
 import { startLoading, stopLoading } from "../../redux/global-slice";
 
@@ -34,33 +32,17 @@ const initialSelected = { fileName: "", fileType: "", filePath: "" };
 const Project = () => {
   const navigate = useNavigate();
   const { teamDocId } = useParams();
-  const [compiledOutputList, setCompiledOutputList] = useState([]); // 컴파일 출력 결과
-  const [loadingCompile, setLoadingCompile] = useState(false); // 컴파일 로딩
-  const editorHeightRef = useRef(); // 에디터 높이 Ref
-  const [editorHeight, setEditorHeight] = useState(); // 에디터 높이
-  const [consoleHeight, setConsoleHeight] = useState(""); // 콘솔 높이
   const [selected, setSelected] = useState(initialSelected); // 디렉토리에서 선택된 파일이나 폴더
   const [lastClickedSidebarIcon, setLastClickedSidebarIcon] = useState("Dir"); // 마지막으로 선택된 사이드바 아이콘
   const [team, setTeam] = useState({}); // 현재 팀 정보
   const [teammateList, setTeammateList] = useState([]); // 현재 팀의 팀원 리스트
   // const { teamName, leaderNickname, leaderUid, teammates, projectType, teamGit } = team;
 
-  const editorRef = useRef(null); // 에디터 내용
   // const { teamGit } = useSelector((state) => state.team.value);
   const { docId } = useSelector((state) => state.user.value);
   const { loading } = useSelector((state) => state.global.value);
   // const [lintResultList, setLintResultList] = useState([]);
   const [setting, setSetting] = useState(initialSetting);
-
-  const editorOptions = {
-    scrollBeyondLastLine: false,
-    fontSize: setting.editors.fontSize,
-    fontFamily: setting.editors.font,
-    autoIndent: "advanced",
-    wrappingIndent: "same",
-    automaticLayout: true,
-    wordWrap: setting.editors.autoLine,
-  };
 
   useEffect(() => {
     async function fetchTeam() {
@@ -104,28 +86,6 @@ const Project = () => {
     //   })
     //   .catch((err) => console.error(err));
   }, [teamDocId]);
-
-  // 콘솔 높이 초기값 세팅
-  useEffect(() => {
-    const resizeHandler = () => {
-      setEditorHeight(editorHeightRef.current.pane1.clientHeight - 34); // 에디터 높이 변경값 셋
-      setConsoleHeight(editorHeightRef.current.pane2.clientHeight - 0.5); // 콘솔 높이 변경값 셋
-    }; // 브라우저 사이즈 변경할 때 에디터와 콘솔 높이 변경
-    setEditorHeight(editorHeightRef.current.pane1.clientHeight - 34);
-    setConsoleHeight(editorHeightRef.current.pane2.clientHeight - 0.5);
-    window.addEventListener("resize", resizeHandler); // 브라우저 사이즈 변경 감지
-    return () => window.removeEventListener("resize", resizeHandler); // 메모리 누수 방지?
-  }, []);
-
-  // 화면 분할 드래그
-  const checkSizeHandler = () => {
-    const tempSize = editorHeightRef.current.state.pane1Size;
-    const offsetSize = editorHeightRef.current.splitPane.clientHeight;
-    const horizonSplit = parseInt((tempSize / offsetSize) * 100);
-    setSetting((prev) => ({ ...prev, horizonSplit }));
-    setEditorHeight(editorHeightRef.current.pane1.clientHeight - 34);
-    setConsoleHeight(editorHeightRef.current.pane2.clientHeight - 0.5);
-  };
 
   // 개인 환경 세팅 저장
   const saveSetting = () => {
@@ -215,31 +175,6 @@ const Project = () => {
     window.location.reload();
   };
 
-  // 코드 실행 버튼 클릭
-  const startCompile = async (enteredInput) => {
-    setLoadingCompile(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setCompiledOutputList(enteredInput.split("\n"));
-    setLoadingCompile(false);
-    // setLintResultList([]);
-    // const dataToCompile = { type: projectType, filePath: selectedFilePath, input: enteredInput };
-  };
-
-  // 코드 실행 멈춤 버튼 클릭
-  const stopCompile = async () => {
-    setLoadingCompile(false);
-    setCompiledOutputList([]);
-    // setLintResultList([]);
-  };
-
-  // 출력창 문자열 클릭
-  const toGoogle = (searchQuery) => {
-    if (searchQuery.includes("k7d207.p.ssafy.io"))
-      window.open(`http://${searchQuery}`, "_blank");
-    else
-      window.open(`https://www.google.com/search?q=${searchQuery}`, "_blank");
-  };
-
   return (
     <div className="flex mx-3" style={{ height: "calc(100% - 80px)" }}>
       {/* 왼쪽 */}
@@ -261,7 +196,7 @@ const Project = () => {
                 setSelected={setSelected}
                 saveFileContent={saveFileContentHandler}
                 loading={loading}
-                editorRef={editorRef}
+                // editorRef={editorRef}
               />
             )}
             {/* 깃 */}
@@ -296,57 +231,13 @@ const Project = () => {
           </div>
         )}
       </div>
-      {/* 오른쪽 */}
-      <div
-        className="flex flex-col ml-[8px] h-full"
-        style={
-          lastClickedSidebarIcon === ""
-            ? { width: "calc(100vw - 105px)" }
-            : { width: "calc(100vw - 400px)" }
-        }
-      >
-        {/* 화면 분할: 위, 아래 */}
-        <SplitPane
-          style={{ position: "static", height: "auto" }}
-          split="horizontal"
-          minSize={30}
-          maxSize={-30}
-          defaultSize={setting.horizonSplit + "%"}
-          className="vertical Pane1"
-          ref={editorHeightRef}
-          onDragFinished={checkSizeHandler}
-        >
-          {/* 위: 파일 경로, 코드 에디터 */}
-          <div className="w-full">
-            {/* 파일 경로 표시 박스 */}
-            <div className="text-sm flex items-center bg-component_item_bg_dark p-1 rounded-lg mb-1.5">
-              <TiArrowRightThick className="text-point_yellow" />
-              <div className="ml-2 break-all">{selected.filePath}</div>
-            </div>
-            {/* 코드 에디터 */}
-            <Editor
-              style={{ overflow: "auto" }}
-              height={editorHeight}
-              theme="vs-dark"
-              defaultLanguage="python"
-              onMount={(editor) => {
-                editorRef.current = editor;
-              }}
-              options={editorOptions}
-            />
-          </div>
-          {/* 아래: 콘솔 터미널 */}
-          <ConsoleTerminal
-            consoleHeight={consoleHeight}
-            consoleSetting={setting.consoles}
-            loadingCompile={loadingCompile} // 컴파일 미니 로딩
-            compiledOutputList={compiledOutputList}
-            startCompile={startCompile}
-            stopCompile={stopCompile}
-            toGoogle={toGoogle}
-          />
-        </SplitPane>
-      </div>
+      {/* 오른쪽 에디터, 콘솔 터미널 */}
+      <EditorAndConsoleTerminal
+        lastClickedSidebarIcon={lastClickedSidebarIcon}
+        setting={setting}
+        setSetting={setSetting}
+        selectedFilePath={selected.filePath}
+      />
     </div>
   );
 };
