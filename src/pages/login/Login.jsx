@@ -28,7 +28,7 @@ const Login = () => {
     } catch (error) {
       const { code, message } = error; // 로그인 에러
       if (code === "auth/invalid-credential")
-        toast.warning("유효하지 않은 이메일이나 비밀번호입니다");
+        toast.warning("유효하지 않은 이메일이나 비밀번호");
       else toast.error("로그인 오류"); // 기타 에러
       console.error(message);
     } finally {

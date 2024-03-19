@@ -35,7 +35,7 @@ const Signup = () => {
     } catch (error) {
       const { code, message } = error; // 회원가입 에러
       if (code === "auth/email-already-in-use")
-        toast.warning("이미 사용중인 이메일입니다");
+        toast.warning("이미 사용중인 이메일");
       else toast.error("회원가입 오류"); // 기타 에러
       console.error(message);
     } finally {

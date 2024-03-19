@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { InputForm } from "../../components/forms/InputForm";
+import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { ProjectTypeSelect } from "../../components/ProjectTypeSelect";
 
@@ -105,7 +105,7 @@ const TeamForms = ({ createTeam }) => {
       className="flex flex-col items-center"
     >
       {/* 팀 이름 */}
-      <InputForm
+      <Input
         type="text"
         id="teamName"
         name="teamName"

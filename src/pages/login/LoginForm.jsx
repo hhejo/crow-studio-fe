@@ -1,7 +1,7 @@
 // React
 import { useState } from "react";
 // Components
-import { InputForm } from "../../components/forms/InputForm";
+import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 
 // 이메일 정규표현식
@@ -71,7 +71,7 @@ export const LoginForm = (props) => {
       className="flex flex-col items-center"
     >
       {/* 이메일 */}
-      <InputForm
+      <Input
         type="email"
         id="email"
         name="email"
@@ -84,7 +84,7 @@ export const LoginForm = (props) => {
       />
 
       {/* 비밀번호 */}
-      <InputForm
+      <Input
         type="password"
         id="password"
         name="password"

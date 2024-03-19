@@ -1,7 +1,7 @@
 // React
 import { useState } from "react";
 // Components
-import { InputForm } from "../../components/forms/InputForm";
+import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 
 // 이메일 정규표현식
@@ -48,6 +48,10 @@ export const SignupForm = (props) => {
       msg = "이메일을 입력하세요";
       setEmailErrMsg(msg);
       isValid = false;
+    } else if (email.trim().length > 30) {
+      msg = "너무 긴 이메일입니다";
+      setEmailErrMsg(msg);
+      isValid = false;
     } else if (!emailRegEx.test(email)) {
       msg = "이메일 형식이 올바르지 않습니다";
       setEmailErrMsg(msg);
@@ -64,19 +68,27 @@ export const SignupForm = (props) => {
       isValid = false;
     }
     // 비밀번호 1
-    if (password1.trim().length < 6 || password1.trim().length > 20) {
+    if (password1.trim().length === 0) {
+      msg = "비밀번호를 입력하세요";
+      setPassword1ErrMsg(msg);
+      isValid = false;
+    } else if (password1.trim().length < 6 || password1.trim().length > 20) {
       msg = "비밀번호를 6자 이상 20자 이하로 입력하세요";
       setPassword1ErrMsg(msg);
       isValid = false;
     }
     // 비밀번호 2
-    if (password2.trim().length < 6 || password2.trim().length > 20) {
+    if (password2.trim().length === 0) {
+      msg = "비밀번호를 입력하세요";
+      setPassword2ErrMsg(msg);
+      isValid = false;
+    } else if (password2.trim().length < 6 || password2.trim().length > 20) {
       msg = "비밀번호를 6자 이상 20자 이하로 입력하세요";
       setPassword2ErrMsg(msg);
       isValid = false;
     }
     // 비밀번호 불일치
-    if (password2 !== password1) {
+    if (password1 !== password2) {
       msg = "비밀번호가 일치하지 않습니다";
       setPassword2ErrMsg(msg);
       isValid = false;
@@ -107,7 +119,7 @@ export const SignupForm = (props) => {
       className="flex flex-col items-center"
     >
       {/* 이메일 */}
-      <InputForm
+      <Input
         type="email"
         id="email"
         name="email"
@@ -120,7 +132,7 @@ export const SignupForm = (props) => {
       />
 
       {/* 닉네임 */}
-      <InputForm
+      <Input
         type="text"
         id="nickname"
         name="nickname"
@@ -133,7 +145,7 @@ export const SignupForm = (props) => {
       />
 
       {/* 비밀번호 1 */}
-      <InputForm
+      <Input
         type="password"
         id="password1"
         name="password1"
@@ -146,7 +158,7 @@ export const SignupForm = (props) => {
       />
 
       {/* 비밀번호 2 */}
-      <InputForm
+      <Input
         type="password"
         id="password2"
         name="password2"

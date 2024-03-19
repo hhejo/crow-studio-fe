@@ -1,7 +1,7 @@
 // React
 import { useState } from "react";
 // Components
-import { InputForm } from "../../components/forms/InputForm";
+import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import PasswordForm from "./components/PasswordForm";
 import GitForm from "./components/GitForm";
@@ -76,7 +76,7 @@ export const MypageModifyForm = (props) => {
         onSubmit={modifyNicknameHandler}
         className="flex flex-col items-center mb-8"
       >
-        <InputForm
+        <Input
           type="text"
           id="nickname"
           name="nickname"

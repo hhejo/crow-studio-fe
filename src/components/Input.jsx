@@ -1,4 +1,4 @@
-export const InputForm = (props) => {
+export const Input = (props) => {
   const { type, id, name, placeholder, htmlFor, labelContent } = props;
   const { value, onChange, errMsg } = props;
 
