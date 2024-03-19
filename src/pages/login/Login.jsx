@@ -1,4 +1,4 @@
-// React-Router, Redux
+// Router, Redux
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 // Firebase

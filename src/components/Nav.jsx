@@ -1,22 +1,21 @@
-import { Link, useNavigate } from "react-router-dom";
+// Router, Redux
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+// Slice
+import { logout } from "../redux/user-slice";
+// Toast
 import { toast } from "react-toastify";
+// Context Menu
 import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
-import { logout } from "../redux/user-slice";
-import { startLoading, stopLoading } from "../redux/global-slice";
-
-const MENU_ID = "nav-menu-id";
 
 export const Nav = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
-  const { loggedIn, uid, nickname } = useSelector((state) => state.user.value);
+  const { loggedIn, nickname } = useSelector((state) => state.user.value);
+  const { show } = useContextMenu({ id: "nav-menu-id" });
 
-  const { show } = useContextMenu({ id: MENU_ID });
   const logoutHandler = async () => {
-    await dispatch(startLoading());
-    await dispatch(logout());
-    await dispatch(stopLoading());
+    dispatch(logout());
     toast.success("로그아웃 성공");
     navigate("/intro", { replace: true });
   };
@@ -43,6 +42,7 @@ export const Nav = () => {
             </Link>
           </div>
         </div>
+
         {/* 프로필 */}
         <div className="flex item-center mt-2.5">
           <div className="cursor-pointer mt-[3px]">
@@ -55,6 +55,7 @@ export const Nav = () => {
                 {nickname}
               </div>
             )}
+
             {/* 로그인 X */}
             {!loggedIn && (
               <div className="flex justify-end items-center">
@@ -75,11 +76,12 @@ export const Nav = () => {
           </div>
         </div>
       </div>
+
       {/* Context Menu */}
       {loggedIn && (
-        <Menu id={MENU_ID} className="contexify-crow-nav">
+        <Menu id="nav-menu-id" className="contexify-crow-nav">
           <Item onClick={() => navigate(`/teams`)}>나의 팀 목록</Item>
-          <Item onClick={() => navigate(`/mypage/${uid}`)}>회원정보 수정</Item>
+          <Item onClick={() => navigate(`/mypage`)}>회원정보 수정</Item>
           <Item onClick={logoutHandler}>로그아웃</Item>
         </Menu>
       )}
