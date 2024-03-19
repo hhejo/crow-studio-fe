@@ -6,6 +6,9 @@ import SplitPane from "react-split-pane";
 import { toast } from "react-toastify";
 import { TiArrowRightThick } from "react-icons/ti";
 
+import { doc, getDoc } from "firebase/firestore";
+import { firestore } from "../../firebase";
+
 import SidebarIconsContainer from "./components/sidebar/SidebarIconsContainer";
 
 import Directory from "./components/sidebar/Directory";
@@ -38,6 +41,9 @@ const Project = () => {
   const [consoleHeight, setConsoleHeight] = useState(""); // 콘솔 높이
   const [selected, setSelected] = useState(initialSelected); // 디렉토리에서 선택된 파일이나 폴더
   const [lastClickedSidebarIcon, setLastClickedSidebarIcon] = useState("Dir"); // 마지막으로 선택된 사이드바 아이콘
+  const [team, setTeam] = useState({}); // 현재 팀 정보
+  const [teammateList, setTeammateList] = useState([]); // 현재 팀의 팀원 리스트
+  // const { teamName, leaderNickname, leaderUid, teammates, projectType, teamGit } = team;
 
   const editorRef = useRef(null); // 에디터 내용
   // const { teamGit } = useSelector((state) => state.team.value);
@@ -57,6 +63,29 @@ const Project = () => {
   };
 
   useEffect(() => {
+    async function fetchTeam() {
+      try {
+        const docRef = doc(firestore, "teams", teamDocId);
+        const documentSnapshot = await getDoc(docRef);
+        const teamFetched = documentSnapshot.data();
+        setTeam(teamFetched);
+        const { teammates: teammatesFetched } = teamFetched;
+        setTeammateList([]);
+        for (let teammateFetched of teammatesFetched) {
+          const docRef = doc(firestore, "users", teammateFetched);
+          const documentSnapshot = await getDoc(docRef);
+          const { id: teammateDocId } = documentSnapshot;
+          const { nickname: teammateNickname } = documentSnapshot.data();
+          const newTeammate = { teammateDocId, teammateNickname };
+          setTeammateList((prev) => [...prev, newTeammate]);
+        }
+      } catch (err) {
+        console.error(err);
+        // 404: navigate("/404", { replace: true })
+        // 403: navigate("/403", { replace: true })
+      }
+    }
+    fetchTeam();
     // // 초기 팀 정보 가져옴
     // dispatch(getTeamDetail(teamDocId))
     //   .unwrap()
@@ -74,7 +103,7 @@ const Project = () => {
     //     else userApi.setPersonalSetting(teamDocId, setting);
     //   })
     //   .catch((err) => console.error(err));
-  }, []);
+  }, [teamDocId]);
 
   // 콘솔 높이 초기값 세팅
   useEffect(() => {
@@ -224,6 +253,7 @@ const Project = () => {
         {/* 아이콘 클릭 시 내용 */}
         {lastClickedSidebarIcon && lastClickedSidebarIcon !== "Share" && (
           <div style={{ width: "292px", height: "100%", marginLeft: "3px" }}>
+            {/* 디렉토리 */}
             {lastClickedSidebarIcon === "Dir" && (
               <Directory
                 teamDocId={teamDocId}
@@ -234,6 +264,7 @@ const Project = () => {
                 editorRef={editorRef}
               />
             )}
+            {/* 깃 */}
             {lastClickedSidebarIcon === "Git" && (
               <Git
                 // selectedFilePath={selectedFilePath}
@@ -242,9 +273,19 @@ const Project = () => {
                 docId={docId}
               />
             )}
-            {lastClickedSidebarIcon === "Team" && <Team />}
+            {/* 팀 */}
+            {lastClickedSidebarIcon === "Team" && (
+              <Team
+                teamDocId={teamDocId}
+                team={team}
+                teammateList={teammateList}
+              />
+            )}
+            {/* API */}
             {lastClickedSidebarIcon === "Api" && <Api />}
+            {/* 변수명 추천 */}
             {lastClickedSidebarIcon === "Var" && <VariableName />}
+            {/* 환경설정 */}
             {lastClickedSidebarIcon === "Set" && (
               <Settings
                 setting={setting}

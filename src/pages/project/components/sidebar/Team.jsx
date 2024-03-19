@@ -1,22 +1,12 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 // import { ReactComponent as IcAddTeam } from "../../../../assets/icons/ic_addTeam.svg";
 // import { getTeamDetail } from "../../../../redux/teamSlice";
 
-const Team = () => {
+const Team = (props) => {
   const navigate = useNavigate();
-  const { teamDocId } = useParams();
-  const [team, setTeam] = useState({});
-  const { teamName, teamLeaderNickname, memberDtoList: members } = team;
-
-  useEffect(() => {
-    // dispatch(getTeamDetail(teamDocId))
-    //   .unwrap()
-    //   .then(setTeam)
-    //   .catch(() => toast.error("팀 불러오기 실패"));
-  }, [teamDocId]);
+  const { teamDocId, team, teammateList } = props;
+  const { teamName, leaderNickname } = team;
 
   return (
     <div className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto h-full rounded-r-lg">
@@ -36,7 +26,6 @@ const Team = () => {
                   <IcToggle alt="IcToggle" aria-hidden="true" />
                 </IcSpan>
               </Menu.Button>
-
               <Transition
                 as={Fragment}
                 enter="transition ease-out duration-100"
@@ -116,9 +105,10 @@ const Team = () => {
       </div>
       {/* 줄 */}
       <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
-      {/*  */}
+      {/* 팀 */}
       <div style={{ padding: 15 }}>
         <div className="pl-1">
+          {/* 팀 이름 */}
           <div className="mb-4">
             <span
               className="text-point_light_yellow text-2xl font-bold hover:text-point_yellow cursor-pointer mr-2 transition"
@@ -128,24 +118,26 @@ const Team = () => {
             </span>
             <span>팀</span>
           </div>
+          {/* 팀장 */}
           <div className="mb-4">
             <div className="text-primary_dark text-lg mb-1">팀장</div>
             <div className="flex items-center text-white text-2xl font-bold">
-              <div>{teamLeaderNickname}</div>
+              <div>{leaderNickname}</div>
             </div>
           </div>
+          {/* 팀원 */}
           <div>
             <div className="text-primary_dark text-lg mb-1">팀원</div>
-            {members?.length === 0 && (
-              <div className="text-white">팀원이 존재하지 않습니다</div>
+            {teammateList?.length === 0 && (
+              <div className="text-white text-sm">팀원이 존재하지 않습니다</div>
             )}
-            {members?.length > 0 &&
-              members?.map((member) => (
+            {teammateList?.length > 0 &&
+              teammateList?.map((teammate) => (
                 <div
-                  key={`m${member.memberSeq}`}
+                  key={`m${teammate.teammateDocId}`}
                   className="text-white text-2xl font-bold"
                 >
-                  {member.memberNickname}
+                  {teammate.teammateNickname}
                 </div>
               ))}
           </div>

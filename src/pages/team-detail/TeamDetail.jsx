@@ -60,6 +60,7 @@ const TeamDetail = () => {
         const documentSnapshot = await getDoc(docRef);
         const teamFetched = documentSnapshot.data();
         setTeam(teamFetched);
+        setTeammateList([]);
         const { teammates: teammatesFetched } = teamFetched;
         for (let teammateFetched of teammatesFetched) {
           const docRef = doc(firestore, "users", teammateFetched);
