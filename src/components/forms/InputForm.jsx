@@ -9,7 +9,7 @@ export const InputForm = (props) => {
         type={type}
         id={id}
         name={name}
-        className="mt-1 w-full text-white bg-component_item_bg_+2_dark transition:bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
+        className="mt-1 w-full text-white bg-component_item_bg_+2_dark transition:bg-component_item_bg_+2_dark py-2 px-3 placeholder:text-gray-300 placeholder:text-sm border-none outline-none focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple rounded-md transition"
         placeholder={placeholder}
         value={value}
         onChange={onChange}
