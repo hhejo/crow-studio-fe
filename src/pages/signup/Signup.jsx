@@ -1,48 +1,41 @@
-import { Link, useNavigate } from "react-router-dom";
+// React-Router, Redux
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+// Firebase
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { auth, firestore } from "../../firebase";
+// Slice
 import { setCurrentUser } from "../../redux/user-slice";
-import SignupForm from "./SignupForm";
+// Toast
+import { toast } from "react-toastify";
+// Components
+import { SignupForm } from "./SignupForm";
 import { TitleWithLogo } from "../../components/TitleWithLogo";
 
 const Signup = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
 
+  // 회원가입 핸들러
   const signupHandler = async (signupData) => {
-    // 입력한 email, password, nickname 가져오기
-    const { email, password: pw, nickname } = signupData;
+    const { email, nickname, password: pw } = signupData; // 회원가입 폼에 입력한 email, password, nickname
     try {
-      // firebase에 회원가입 유저 생성
-      const { user } = await createUserWithEmailAndPassword(auth, email, pw);
-      // 닉네임도 적용
-      await updateProfile(user, { displayName: nickname });
-      // 회원가입 유저
-      const basic = { uid: user.uid, email, nickname, password: "" };
-      const extra = { imageURL: "", gitUsername: "", gitToken: "", teams: [] };
-      const userToAdd = { ...basic, ...extra };
-      // users 컬렉션에 회원가입 유저 추가
-      const docRef = await addDoc(collection(firestore, "users"), userToAdd);
-      // Redux에 회원가입한 유저 정보 저장. 현재 로그인한 유저가 됨
-      const currentUser = { ...user, docId: docRef.id };
-      dispatch(setCurrentUser(currentUser));
-      //
-      toast.success("회원가입 성공");
-      navigate("/teams");
+      const { user } = await createUserWithEmailAndPassword(auth, email, pw); // 1. firebase Authentication에 회원가입 유저 생성하고 해당 유저 정보 받기
+      await updateProfile(user, { displayName: nickname }); // 2. firebase Authentication에 회원가입 시 입력된 닉네임도 적용
+      const basic = { uid: user.uid, email, nickname, password: "" }; // 기본 유저 정보
+      const extra = { imageURL: "", gitUsername: "", gitToken: "", teams: [] }; // 추가 유저 정보
+      const userToAdd = { ...basic, ...extra }; // firestore의 users 컬렉션에 추가할 회원가입된 유저
+      const docRef = await addDoc(collection(firestore, "users"), userToAdd); // 3. firebase의 users 컬렉션에 회원가입 유저 추가하고 해당 document 받기
+      const currentUser = { ...user, docId: docRef.id }; // Redux에 저장할 회원가입 유저 정보
+      dispatch(setCurrentUser(currentUser)); // 4. Redux에 회원가입한 유저 정보 저장. 현재 로그인한 유저가 됨
+      toast.success("회원가입 성공"); // 회원가입 성공 토스트
+      navigate("/teams", { replace: true }); // /teams로 리다이렉트하고 뒤로가기 방지
     } catch (error) {
-      // 회원가입 에러
-      const { code: errCode, message: errMessage } = error;
-      //
-      if (errCode === "auth/weak-password")
-        toast.warning("비밀번호는 6자 이상이어야 합니다.");
-      // 409
-      else if (errCode === "auth/email-already-in-use")
-        toast.warning("이미 사용중인 이메일입니다.");
-      //
-      else toast.error("회원가입 오류");
-      console.error(errMessage);
+      const { code, message } = error; // 회원가입 에러
+      if (code === "auth/email-already-in-use")
+        toast.warning("이미 사용중인 이메일입니다."); // 사용중인 이메일 존재
+      else toast.error("회원가입 오류"); // 기타 에러
+      console.error(message);
     }
   };
 
@@ -52,11 +45,14 @@ const Signup = () => {
       className="p-4 w-screen h-full flex flex-wrap justify-center items-center"
     >
       <div className="h-fit flex flex-col">
+        {/* 까마귀공방 로고, 회원가입 타이틀 */}
         <TitleWithLogo title="회원가입" />
+        {/* 회원가입 폼 */}
         <SignupForm signup={signupHandler} />
+        {/* 로그인하기 버튼 */}
         <Link
-          to="/login"
           className="block w-full text-center hover:text-white transition"
+          to="/login"
         >
           계정이 있으신가요? 로그인하기
         </Link>

@@ -1,109 +1,103 @@
+// React
 import { useState } from "react";
+// Components
 import { InputForm } from "../../components/forms/InputForm";
 import { Button } from "../../components/Button";
 
 // 이메일 정규표현식
 const emailRegEx =
   /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/i;
-// 초기 입력 상태
-const initialInputState = { email: "", nickname: "", pw1: "", pw2: "" };
-// 초기 에러 메시지 상태
-const initialErrState = {
-  emailErrMsg: "",
-  nicknameErrMsg: "",
-  pw1ErrMsg: "",
-  pw2ErrMsg: "",
-};
 
-const SignupForm = ({ signup }) => {
-  const [inputs, setInputs] = useState(initialInputState); // 초기 입력
-  const [errMsgs, setErrMsgs] = useState(initialErrState); // 초기 에러메시지
-  const { email, nickname, pw1, pw2 } = inputs; // 이메일, 비밀번호 상태 할당
-  const { emailErrMsg, nicknameErrMsg, pw1ErrMsg, pw2ErrMsg } = errMsgs; // 에러메시지 상태 할당
+export const SignupForm = (props) => {
+  const { signup } = props;
 
+  const [email, setEmail] = useState(""); // 이메일
+  const [nickname, setNickname] = useState(""); // 닉네임
+  const [password1, setPassword1] = useState(""); // 비밀번호 1
+  const [password2, setPassword2] = useState(""); // 비밀번호 2
+
+  const [emailErrMsg, setEmailErrMsg] = useState(""); // 이메일 에러 메시지
+  const [nicknameErrMsg, setNicknameErrMsg] = useState(""); // 닉네임 에러 메시지
+  const [password1ErrMsg, setPassword1ErrMsg] = useState(""); // 비밀번호 1 에러 메시지
+  const [password2ErrMsg, setPassword2ErrMsg] = useState(""); // 비밀번호 2 에러 메시지
+
+  // 이메일, 닉네임, 비밀번호1, 비밀번호2, 입력창 onChange 핸들러
   const inputChangeHandler = (e) => {
-    const { name: eName, value: eValue } = e.target;
+    const { name: eName, value: eValue } = e.target; // eName: 입력창 이름, eValue: 입력창 입력 값
     if (eName === "email") {
-      setInputs((prev) => {
-        return { ...prev, email: eValue };
-      });
-      setErrMsgs((prev) => {
-        return { ...prev, emailErrMsg: "" };
-      });
+      setEmail(eValue);
+      setEmailErrMsg("");
     } else if (eName === "nickname") {
-      setInputs((prev) => {
-        return { ...prev, nickname: eValue };
-      });
-      setErrMsgs((prev) => {
-        return { ...prev, nicknameErrMsg: "" };
-      });
-    } else if (eName === "pw1") {
-      setInputs((prev) => {
-        return { ...prev, pw1: eValue };
-      });
-      setErrMsgs((prev) => {
-        return { ...prev, pw1ErrMsg: "" };
-      });
-    } else if (eName === "pw2") {
-      setInputs((prev) => {
-        return { ...prev, pw2: eValue };
-      });
-      setErrMsgs((prev) => {
-        return { ...prev, pw2ErrMsg: "" };
-      });
+      setNickname(eValue);
+      setNicknameErrMsg("");
+    } else if (eName === "password1") {
+      setPassword1(eValue);
+      setPassword1ErrMsg("");
+    } else if (eName === "password2") {
+      setPassword2(eValue);
+      setPassword2ErrMsg("");
     }
   };
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    setErrMsgs(initialErrState);
-    let isValid = true;
+  // 입력 값 유효한지 검사하는 함수
+  const checkIsValid = () => {
+    let isValid = true; // 회원가입 입력 값들의 유효 여부
+    let msg = ""; // 띄울 에러 메시지
     // 이메일
     if (email.trim().length === 0) {
-      setErrMsgs((prev) => {
-        return { ...prev, emailErrMsg: "이메일을 입력하세요" };
-      });
+      msg = "이메일을 입력하세요";
+      setEmailErrMsg(msg);
       isValid = false;
     } else if (!emailRegEx.test(email)) {
-      setErrMsgs((prev) => {
-        return { ...prev, emailErrMsg: "이메일 형식이 올바르지 않습니다" };
-      });
+      msg = "이메일 형식이 올바르지 않습니다";
+      setEmailErrMsg(msg);
       isValid = false;
     }
     // 닉네임
     if (nickname.trim().length === 0) {
-      setErrMsgs((prev) => {
-        return { ...prev, nicknameErrMsg: "닉네임을 입력하세요" };
-      });
+      msg = "닉네임을 입력하세요";
+      setNicknameErrMsg(msg);
+      isValid = false;
+    } else if (nickname.trim().length > 10) {
+      msg = "닉네임을 10자 이하로 입력하세요";
+      setNicknameErrMsg(msg);
       isValid = false;
     }
     // 비밀번호 1
-    if (pw1.trim().length === 0) {
-      setErrMsgs((prev) => {
-        return { ...prev, pw1ErrMsg: "비밀번호를 입력하세요" };
-      });
+    if (password1.trim().length < 6 || password1.trim().length > 20) {
+      msg = "비밀번호를 6자 이상 20자 이하로 입력하세요";
+      setPassword1ErrMsg(msg);
       isValid = false;
     }
-    //비밀번호 2
-    if (pw2.trim().length === 0) {
-      setErrMsgs((prev) => {
-        return { ...prev, pw2ErrMsg: "비밀번호를 한번 더 입력하세요" };
-      });
+    // 비밀번호 2
+    if (password2.trim().length < 6 || password2.trim().length > 20) {
+      msg = "비밀번호를 6자 이상 20자 이하로 입력하세요";
+      setPassword2ErrMsg(msg);
       isValid = false;
     }
     // 비밀번호 불일치
-    if (pw2 !== pw1) {
-      setErrMsgs((prev) => {
-        return { ...prev, pw2ErrMsg: "비밀번호가 일치하지 않습니다" };
-      });
+    if (password2 !== password1) {
+      msg = "비밀번호가 일치하지 않습니다";
+      setPassword2ErrMsg(msg);
       isValid = false;
     }
-    // 하나라도 유효하지 않으면 종료
-    if (!isValid) return;
-    // 에러메시지 초기화하고 회원가입 정보 전달
-    setErrMsgs(initialErrState);
-    const signupData = { email: email, password: pw2, nickname: nickname };
-    signup(signupData);
+    return isValid;
+  };
+
+  // 회원가입 제출 핸들러
+  const submitHandler = (e) => {
+    e.preventDefault();
+    setEmailErrMsg("");
+    setNicknameErrMsg("");
+    setPassword1ErrMsg("");
+    setPassword2ErrMsg("");
+    if (!checkIsValid()) return; // 하나라도 유효하지 않으면 종료
+    setEmailErrMsg("");
+    setNicknameErrMsg("");
+    setPassword1ErrMsg("");
+    setPassword2ErrMsg("");
+    const signupData = { email, nickname, password: password2 }; // 회원가입 정보
+    signup(signupData); // 회원가입 정보 전달
   };
 
   return (
@@ -139,26 +133,26 @@ const SignupForm = ({ signup }) => {
       {/* 비밀번호 1 */}
       <InputForm
         type="password"
-        id="pw1"
-        name="pw1"
+        id="password1"
+        name="password1"
         placeholder="비밀번호를 입력하세요"
-        htmlFor="pw1"
+        htmlFor="password1"
         labelContent="비밀번호"
-        value={pw1}
+        value={password1}
         onChange={inputChangeHandler}
-        errMsg={pw1ErrMsg}
+        errMsg={password1ErrMsg}
       />
       {/* 비밀번호 2 */}
       <InputForm
         type="password"
-        id="pw2"
-        name="pw2"
+        id="password2"
+        name="password2"
         placeholder="비밀번호를 한 번 더 입력하세요"
-        htmlFor="pw2"
+        htmlFor="password2"
         labelContent="비밀번호 확인"
-        value={pw2}
+        value={password2}
         onChange={inputChangeHandler}
-        errMsg={pw2ErrMsg}
+        errMsg={password2ErrMsg}
       />
       {/* 회원가입 버튼 */}
       <Button type="submit" onClick={submitHandler}>
@@ -167,5 +161,3 @@ const SignupForm = ({ signup }) => {
     </form>
   );
 };
-
-export default SignupForm;
