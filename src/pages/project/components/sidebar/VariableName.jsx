@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import editorApi from "../../../../api/editorApi";
+// import editorApi from "../../../../api/editorApi";
 
 const VariableName = () => {
   const [variable, setVariable] = useState("");
@@ -36,16 +36,16 @@ const VariableName = () => {
   const sendWord = (e) => {
     e.preventDefault();
     const body = JSON.stringify({ data: variable });
-    editorApi
-      .variableRecommend(body)
-      .then((res) => {
-        setResultActive(() => true);
-        setResult(() => res.data.data);
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error("Error");
-      });
+    // editorApi
+    //   .variableRecommend(body)
+    //   .then((res) => {
+    //     setResultActive(() => true);
+    //     setResult(() => res.data.data);
+    //   })
+    //   .catch((err) => {
+    //     console.error(err);
+    //     toast.error("Error");
+    //   });
   };
 
   return (

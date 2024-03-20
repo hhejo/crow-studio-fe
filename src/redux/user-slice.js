@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { auth } from "../firebase";
-import userApi from "../api/userApi";
 
 // 초기 상태값
 const initialState = {
@@ -30,22 +29,6 @@ export const setCurrentUser = createAsyncThunk(
   }
 );
 
-// 깃 업데이트
-export const updateGitAuth = createAsyncThunk(
-  "user/updateGitAuth",
-  async (credentialsData, { rejectWithValue }) => {
-    try {
-      const response = await userApi.updateGitAuth(credentialsData);
-      return response.data;
-    } catch (err) {
-      if (!err.response) {
-        throw err;
-      }
-      return rejectWithValue(err.response.status);
-    }
-  }
-);
-
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -63,9 +46,6 @@ export const userSlice = createSlice({
       })
       .addCase(setCurrentUser.rejected, (state, action) => {
         state.value = initialState.value;
-      })
-      .addCase(updateGitAuth.fulfilled, (state, action) => {
-        state.value.myGitUsername = action.payload.userGitUsername;
       });
   },
 });

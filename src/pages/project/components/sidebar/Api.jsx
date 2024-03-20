@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import SelectMethod from "./ApiMethod";
-import editorApi from "../../../../api/editorApi";
+// import editorApi from "../../../../api/editorApi";
 import { toast } from "react-toastify";
 
 const Api = () => {
@@ -47,17 +47,17 @@ const Api = () => {
       header: jsonHeader,
     };
     console.log(body);
-    editorApi
-      .apiRequest(body)
-      .then((res) => {
-        setResultActive(() => true);
-        setResult(() => JSON.stringify(res.data.data, null, 4));
-        setTime(() => res.data.time);
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error("Error");
-      });
+    // editorApi
+    //   .apiRequest(body)
+    //   .then((res) => {
+    //     setResultActive(() => true);
+    //     setResult(() => JSON.stringify(res.data.data, null, 4));
+    //     setTime(() => res.data.time);
+    //   })
+    //   .catch((err) => {
+    //     console.error(err);
+    //     toast.error("Error");
+    //   });
   };
 
   // 따로 컴포넌트를 받아서 거기서 데이터 가져올 때 작동시켜라고 했던 함수

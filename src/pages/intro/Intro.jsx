@@ -6,7 +6,7 @@ import styled from "styled-components";
 import SplitPane from "react-split-pane";
 import { TiArrowRightThick } from "react-icons/ti";
 import { toast } from "react-toastify";
-import userApi from "../../api/userApi";
+// import userApi from "../../api/userApi";
 import Sidebar from "./components/sidebar/Sidebar";
 import VariableName from "./components/sidebar/VariableName";
 import ConsoleTerminal from "./components/ConsoleTerminal";
@@ -51,7 +51,7 @@ const Intro = () => {
 
   // 개인 환경 세팅 저장
   const saveSetting = async () => {
-    userApi.setPersonalSetting(teamSeq, setting);
+    // userApi.setPersonalSetting(teamSeq, setting);
   };
 
   // 사이드바 아이콘 눌러서 해당 컴포넌트 보여주기

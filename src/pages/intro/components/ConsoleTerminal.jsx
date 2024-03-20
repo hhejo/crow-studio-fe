@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import compileApi from "../../../api/compileApi";
-import editorApi from "../../../api/editorApi";
-import fileApi from "../../../api/fileApi";
+// import compileApi from "../../../api/compileApi";
+// import editorApi from "../../../api/editorApi";
+// import fileApi from "../../../api/fileApi";
 
 import { startLoading, stopLoading } from "../../../redux/global-slice";
 
@@ -73,32 +73,33 @@ const ConsoleTerminal = (props) => {
     // }
 
     // setLintResultList([]);
-    const compileData = {
-      fileContent: editorRef.current.getValue(),
-      input: inputData,
-    };
-    try {
-      const res = await compileApi.getUnLoginCompileResult(compileData);
-      // setOutputData(res.data.response);
-      console.log(res.data.response.split("\n"));
-      setFinalOutputDataList(res.data.response.split("\n"));
-      dispatch(stopLoading());
-    } catch (err) {
-      toast.error("컴파일 오류");
-    }
+
+    // const compileData = {
+    //   fileContent: editorRef.current.getValue(),
+    //   input: inputData,
+    // };
+    // try {
+    //   const res = await compileApi.getUnLoginCompileResult(compileData);
+    //   // setOutputData(res.data.response);
+    //   console.log(res.data.response.split("\n"));
+    //   setFinalOutputDataList(res.data.response.split("\n"));
+    //   dispatch(stopLoading());
+    // } catch (err) {
+    //   toast.error("컴파일 오류");
+    // }
   };
 
   const stopCompileHandler = async () => {
-    dispatch(stopLoading());
-    // setLintResultList([]);
-    const teamData = { teamSeq, teamName };
-    try {
-      await compileApi.stopCompile(teamData);
-      setFinalOutputDataList([]);
-    } catch (err) {
-      dispatch(stopLoading());
-      toast.error("컴파일 오류");
-    }
+    // dispatch(stopLoading());
+    // // setLintResultList([]);
+    // const teamData = { teamSeq, teamName };
+    // try {
+    //   await compileApi.stopCompile(teamData);
+    //   setFinalOutputDataList([]);
+    // } catch (err) {
+    //   dispatch(stopLoading());
+    //   toast.error("컴파일 오류");
+    // }
   };
 
   const inputChangeHandler = (e) => changeInputData(e);

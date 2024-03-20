@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import gitApi from "../../../../api/gitApi";
+// import gitApi from "../../../../api/gitApi";
 import { BsCircleFill } from "react-icons/bs";
 
 const Git = (props) => {
@@ -26,14 +26,14 @@ const Git = (props) => {
       ""
     );
     const gitData = { branchName: pureBranch };
-    gitApi
-      .gitSwitch(teamDocId, 1, gitData)
-      .then(() => {
-        setCallBell((prev) => prev + 1);
-        setNowBranch(() => pureBranch);
-        toast.success("깃 스위치 성공");
-      })
-      .catch(() => toast.error("깃 스위치 실패"));
+    // gitApi
+    //   .gitSwitch(teamDocId, 1, gitData)
+    //   .then(() => {
+    //     setCallBell((prev) => prev + 1);
+    //     setNowBranch(() => pureBranch);
+    //     toast.success("깃 스위치 성공");
+    //   })
+    //   .catch(() => toast.error("깃 스위치 실패"));
   };
 
   const createNewBranchHandler = () => {

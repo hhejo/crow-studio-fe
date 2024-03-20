@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import editorApi from "../../../../api/editorApi";
+// import editorApi from "../../../../api/editorApi";
 
 // styled
 const VariableNameContainer = styled.div`
@@ -46,16 +46,16 @@ const VariableName = () => {
     const body = JSON.stringify({
       data: variable,
     });
-    editorApi
-      .variableRecommend(body)
-      .then((res) => {
-        setResultActive(() => true);
-        setResult(() => res.data.data);
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error("Error");
-      });
+    // editorApi
+    //   .variableRecommend(body)
+    //   .then((res) => {
+    //     setResultActive(() => true);
+    //     setResult(() => res.data.data);
+    //   })
+    //   .catch((err) => {
+    //     console.error(err);
+    //     toast.error("Error");
+    //   });
   };
 
   return (
