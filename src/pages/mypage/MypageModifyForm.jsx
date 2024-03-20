@@ -7,7 +7,7 @@ import PasswordForm from "./components/PasswordForm";
 import GitForm from "./components/GitForm";
 
 export const MypageModifyForm = (props) => {
-  const { modifyNickname, resign } = props;
+  const { modifyNickname, resign, modifyPassword, modifyGit } = props;
 
   const [modifiedNickname, setModifiedNickname] = useState("");
   const [nicknameErrMsg, setNicknameErrMsg] = useState("");
@@ -38,29 +38,23 @@ export const MypageModifyForm = (props) => {
   };
 
   // 비밀번호 변경 핸들러
-  // const submitPasswordHandler = (passwordData) => {
-  //   userApi
-  //     .updatePassword(passwordData)
-  //     .then(toast.success("비밀번호를 성공적으로 변경했습니다"))
-  //     .catch((errorStatusCode) => {
-  //       console.log(errorStatusCode);
-  //       if (errorStatusCode.response.status === 409) {
-  //         toast.warning("현재 비밀번호가 틀립니다");
-  //       } else {
-  //         toast.error("Error");
-  //       }
-  //     });
-  // };
+  const modifyPasswordHandler = () => {
+    modifyPassword();
+  };
 
-  // 회원 탈퇴 핸들러
-  const resignHandler = () => resign();
-
+  // 깃 아이디, 토큰 변경 핸들러
+  const modifyGitHandler = () => {
+    modifyGit();
+  };
   // const updateGitAuthHandler = (credentialsData) => {
   //   dispatch(updateGitAuth(credentialsData))
   //     .unwrap()
   //     .then(() => toast.success("깃 연결 성공"))
   //     .catch(console.error);
   // };
+
+  // 회원 탈퇴 핸들러
+  const resignHandler = () => resign();
 
   return (
     <section
@@ -95,16 +89,15 @@ export const MypageModifyForm = (props) => {
       <hr className="border-primary_-2_dark mb-5" />
 
       {/* 비밀번호 변경 폼 */}
-      <PasswordForm
-      // updatePassword={submitPasswordHandler}
-      />
+      <PasswordForm modifyPassword={modifyPasswordHandler} />
 
       <hr className="border-primary_-2_dark mb-5" />
 
       {/* 깃 변경 폼 */}
       <GitForm
-      // initialGitUsername={myGitUsername}
-      // updateGitAuth={updateGitAuthHandler}
+        // initialGitUsername={myGitUsername}
+        // updateGitAuth={updateGitAuthHandler}
+        modifyGit={modifyGitHandler}
       />
 
       {/* 회원 탈퇴 버튼 */}
