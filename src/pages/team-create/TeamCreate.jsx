@@ -11,7 +11,7 @@ import {
 import { firestore } from "../../firebase";
 import { startLoading, stopLoading } from "../../redux/global-slice";
 import { LoadingScreen } from "../../components/LoadingScreen";
-import TeamForms from "./TeamForms";
+import { TeamCreateForm } from "./TeamCreateForm";
 
 const TeamCreate = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
@@ -64,7 +64,7 @@ const TeamCreate = () => {
               팀 생성하기
             </div>
             {/* 팀 생성 폼 */}
-            <TeamForms createTeam={createTeamHandler} />
+            <TeamCreateForm createTeam={createTeamHandler} />
             {/* 팀 목록 버튼 */}
             <button
               onClick={() => navigate("/teams")}

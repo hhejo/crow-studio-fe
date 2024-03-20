@@ -19,7 +19,7 @@ const pjtType = [
   { name: "FastAPI" },
 ];
 
-const TeamForms = ({ createTeam }) => {
+export const TeamCreateForm = ({ createTeam }) => {
   const [inputs, setInputs] = useState(initialInputState);
   const [errorMsgs, setErrorMsgs] = useState(initialErrorState);
   const { teamName, projectType, teamGit } = inputs;
@@ -165,5 +165,3 @@ const TeamForms = ({ createTeam }) => {
     </form>
   );
 };
-
-export default TeamForms;
