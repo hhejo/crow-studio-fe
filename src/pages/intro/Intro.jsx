@@ -15,9 +15,9 @@ import { Nav } from "../../components/Nav";
 const Intro = () => {
   const dispatch = useDispatch();
   const { teamSeq } = useParams();
-  const { selectedFileName, selectedFileType, selectedFilePath } = useSelector(
-    (state) => state.team.value
-  );
+  // const { selectedFileName, selectedFileType, selectedFilePath } = useSelector(
+  //   (state) => state.team.value
+  // );
   const [lintResultList, setLintResultList] = useState([]);
   const [unLoginSession, setUnLoginSession] = useState("");
   const editorRef = useRef(null); // 에디터 내용
@@ -142,7 +142,7 @@ const Intro = () => {
             <div className="text-sm flex items-center bg-component_item_bg_dark p-1 rounded-lg mb-1.5">
               <TiArrowRightThick className="text-point_yellow" />
               <div className="ml-2 break-all">
-                {selectedFilePath?.split("/").slice(1).join("/")}
+                {/* {selectedFilePath?.split("/").slice(1).join("/")} */}
               </div>
             </div>
             <Editor
@@ -161,7 +161,7 @@ const Intro = () => {
           </div>
           <ConsoleTerminal
             teamSeq={teamSeq}
-            selectedFilePath={selectedFilePath}
+            // selectedFilePath={selectedFilePath}
             consoleHeight={consoleHeight}
             lintResultList={lintResultList}
             setLintResultList={setLintResultList}

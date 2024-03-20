@@ -19,7 +19,7 @@ const ConsoleTerminal = (props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const loading = useSelector((state) => state.global.value.loading);
-  const { teamName, projectType } = useSelector((state) => state.team.value);
+  // const { teamName, projectType } = useSelector((state) => state.team.value);
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
   const [finalOutputDataList, setFinalOutputDataList] = useState([]);
