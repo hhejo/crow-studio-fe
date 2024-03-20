@@ -1,34 +1,52 @@
+// React, Redux, Router
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+// Firebase
 import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "../../firebase";
-import TeamList from "./components/TeamList";
+// Components
+import { TeamsListItem } from "./TeamsListItem";
 
 const Teams = () => {
   const navigate = useNavigate();
   const { docId, nickname } = useSelector((state) => state.user.value);
   const [myTeams, setMyTeams] = useState([]);
 
-  const createTeamHandler = () => navigate("/teams/create");
-
-  const clickTeamHandler = (teamDocId) => navigate(`/teams/${teamDocId}`);
-
+  // 내가 속한 팀들 가져오기
   useEffect(() => {
+    setMyTeams([]);
     async function fetchTeams() {
-      const documentSnapshot = await getDoc(doc(firestore, "users", docId));
-      const { teams } = documentSnapshot.data();
-      for (let teamDocId of teams) {
-        const docSnapshot = await getDoc(doc(firestore, "teams", teamDocId));
-        const team = docSnapshot.data();
-        setMyTeams((prev) => [...prev, { ...team, teamDocId }]);
+      try {
+        const documentSnapshot = await getDoc(doc(firestore, "users", docId));
+        const { teams } = documentSnapshot.data();
+        for (let teamDocId of teams) {
+          const docSnapshot = await getDoc(doc(firestore, "teams", teamDocId));
+          const team = docSnapshot.data();
+          // setMyTeams((prev) => [...prev, { ...team, teamDocId }]);
+          // teammates의 팀원들 userDocId로 각각에 대해 유저 정보 받아옴
+          const { teammates } = team;
+          const teammatesNickname = [];
+          for (let teammateDocId of teammates) {
+            const snap = await getDoc(doc(firestore, "users", teammateDocId));
+            const { nickname } = snap.data();
+            teammatesNickname.push(nickname);
+          }
+          const myTeam = { ...team, teamDocId, teammatesNickname };
+          setMyTeams((prev) => [...prev, myTeam]);
+        }
+      } catch (error) {
+        console.error(error);
       }
     }
     fetchTeams();
   }, [docId]);
 
+  // 팀 선택 핸들러
+  const clickTeamHandler = (teamDocId) => navigate(`/teams/${teamDocId}`);
+
   return (
-    <div
+    <main
       data-aos="fade-in"
       className="m-3 mb-6 h-full flex flex-wrap justify-center items-center"
     >
@@ -56,20 +74,30 @@ const Teams = () => {
           {/* 팀 생성 버튼 */}
           <button
             className="md:px-3 ml-4 px-2 py-1 md:text-sm text-[13px] font-bold bg-point_purple text-component_dark hover:bg-point_purple_-2 hover:text-white rounded-md transition"
-            onClick={createTeamHandler}
+            onClick={() => navigate("/teams/create")}
           >
             새로운 팀 생성
           </button>
         </div>
 
         {/* 팀 리스트 */}
-        {myTeams.length > 0 ? (
-          <TeamList clickTeam={clickTeamHandler} teams={myTeams} />
-        ) : (
+        {myTeams.length === 0 ? (
           <div className="mt-4">팀이 없습니다</div>
+        ) : (
+          <div className="flex justify-center">
+            <div className="flex flex-col justify-center md:w-full w-[285px] gap-2">
+              {myTeams?.map((team) => (
+                <TeamsListItem
+                  key={`team${team.teamDocId}`}
+                  team={team}
+                  clickTeam={clickTeamHandler}
+                />
+              ))}
+            </div>
+          </div>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 
