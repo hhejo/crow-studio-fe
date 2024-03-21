@@ -25,7 +25,7 @@ const customStyles = {
   overlay: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
 };
 
-const AddTeammateModal = (props) => {
+export const AddTeammateModal = (props) => {
   const { isModalOpen, setIsModalOpen } = props;
   const { findTeammate, addTeammate, foundTeammates } = props;
   const [enteredTeammateNickname, setEnteredTeammateNickname] = useState("");
@@ -101,5 +101,3 @@ const AddTeammateModal = (props) => {
     </Modal>
   );
 };
-
-export default AddTeammateModal;
