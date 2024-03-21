@@ -21,7 +21,6 @@ export const TeamDetailMain = (props) => {
   const { showProjectTypeSelect, setShowProjectTypeSelect } = props;
   const { projectType, updateProjectType } = props;
   const { removeTeammate, openModal } = props;
-
   const [selected, setSelected] = useState(pjtType[0]);
 
   const listboxChangeHandler = (e) => setSelected(e);

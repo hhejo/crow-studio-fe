@@ -60,8 +60,8 @@ export const TeamDetailHeader = (props) => {
           <form onSubmit={updateTeamNameHandler}>
             <input
               type="text"
-              name="inputTeamName"
-              id="inputTeamName"
+              name="teamName"
+              id="teamName"
               className="rounded-md bg-component_item_bg_+2_dark md:w-auto w-[140px] mr-1 px-4 py-1 text-sm font-medium text-white text-left appearance-none shadow-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
               defaultValue={teamName}
               onChange={(e) => setEnteredTeamName(e.target.value)}

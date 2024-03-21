@@ -14,19 +14,19 @@ import { swalOptions, MySwal } from "../../sweet-alert";
 // Components
 import { TeamDetailHeader } from "./TeamDetailHeader";
 import { TeamDetailMain } from "./TeamDetailMain";
-import AddTeammateModal from "./components/AddTeammateModal";
+import { AddTeammateModal } from "../../components/AddTeammateModal";
 
 const TeamDetail = () => {
   const navigate = useNavigate();
   const { teamDocId } = useParams();
   const { docId } = useSelector((state) => state.user.value);
   const [myTeam, setMyTeam] = useState({}); // myTeam: { teamName, leaderDocId, leaderNickname, projectType, teamGit }
-  const { teamName, leaderDocId, leaderNickname, projectType, teamGit } =
-    myTeam;
+  const { teamName, leaderDocId, leaderNickname } = myTeam;
+  const { projectType, teamGit } = myTeam;
   const [showTeamNameInput, setShowTeamNameInput] = useState(false); // 팀명 변경 입력창 표시 여부
   const [myTeammates, setMyTeammates] = useState([]); // myTeammate: { docId, nickname }
-  const [foundTeammates, setFoundTeammates] = useState([]); // foundTeammates: { docId, email, nickname }
-  const [showProjectTypeSelect, setShowProjectTypeSelect] = useState(false);
+  const [foundTeammates, setFoundTeammates] = useState([]); // foundTeammates { docId, email, nickname }
+  const [showProjectTypeSelect, setShowProjectTypeSelect] = useState(false); // 프로젝트 타입 변경 선택창 표시 여부
   const [isModalOpen, setIsModalOpen] = useState(false); // modal
 
   // 팀 정보 가져오기
@@ -131,6 +131,7 @@ const TeamDetail = () => {
 
   // 팀원 추가 핸들러
   const addTeammateHandler = async (teammateToAdd) => {
+    setFoundTeammates([]);
     const { docId: teammateDocId, nickname: teammateNickname } = teammateToAdd;
     if (teammateDocId === docId) return; // 본인을 팀원으로 추가할 수 없음
     const title = `${teammateNickname}님을 팀원으로 추가할까요?`;
@@ -140,7 +141,6 @@ const TeamDetail = () => {
       myTeammates.filter((myTeammate) => myTeammate.docId === teammateDocId)
         .length > 0
     ) {
-      setFoundTeammates([]);
       toast.warning("이미 추가된 팀원");
       return;
     }
@@ -150,7 +150,6 @@ const TeamDetail = () => {
       const updateTeamsField = { teams: arrayUnion(teamDocId) };
       await updateDoc(doc(firestore, "users", teammateDocId), updateTeamsField); // 2. 해당 팀원의 teams 필드에 현재 팀 추가하기
       setMyTeammates((prev) => [...prev, teammateToAdd]);
-      setFoundTeammates([]);
 
       // const documentRef = doc(firestore, "teams", teamDocId);
       // const documentSnapshot = await getDoc(documentRef); // 3. 갱신된 팀 document 가져오기
@@ -246,7 +245,7 @@ const TeamDetail = () => {
             팀 상세 정보
           </div>
 
-          {/* TeamDetailHeader */}
+          {/* Team Detail 제목, 팀명, 팀명 수정, 팀 삭제, 팀 탈퇴 */}
           <TeamDetailHeader
             teamName={teamName}
             isLeader={leaderDocId === docId}
