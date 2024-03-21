@@ -13,8 +13,8 @@ const pjtType = [
   { name: "FastAPI" },
 ];
 
-const TeamDetailMain = (props) => {
-  const { leaderNickname, isLeader, teammateList, teamGit } = props;
+export const TeamDetailMain = (props) => {
+  const { leaderNickname, isLeader, myTeammateList, teamGit } = props;
   const { showModifyProjectTypeSelect, setShowModifyProjectTypeSelect } = props;
   const { projectType, modifyProjectType } = props;
   const { removeTeammate, openModal } = props;
@@ -43,17 +43,17 @@ const TeamDetailMain = (props) => {
         <div className="md:w-48 w-32 bg-point_purple_op20 p-2 flex items-center rounded-bl-md rounded-tl-md">
           <span className="text-white font-bold">팀원</span>
           <span className="text-point_light_yellow text-xs font-semibold mr-2 px-1.5 py-0.5 rounded">
-            {teammateList?.length}
+            {myTeammateList?.length}
           </span>
         </div>
 
         <div className="flex md:flex-row flex-col justify-center items-center">
-          {teammateList?.length === 0 && (
+          {myTeammateList?.length === 0 && (
             <div className="text-sm flex items-center py-2 pl-2">
               팀원을 추가
             </div>
           )}
-          {teammateList?.map((teammate) => (
+          {myTeammateList?.map((teammate) => (
             <Teammate
               key={`m${teammate.teammateDocId}`}
               isLeader={isLeader}
@@ -128,5 +128,3 @@ const TeamDetailMain = (props) => {
     </>
   );
 };
-
-export default TeamDetailMain;

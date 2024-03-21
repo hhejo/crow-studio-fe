@@ -3,7 +3,7 @@ import ReactTooltip from "react-tooltip";
 import { IoClose } from "react-icons/io5";
 import { BsPencilFill } from "react-icons/bs";
 
-const TeamDetailHeader = (props) => {
+export const TeamDetailHeader = (props) => {
   const { teamName, isLeader, modifyTeamName, deleteTeam, resignTeam } = props;
   const { showModifyTeamNameInput, setShowModifyTeamNameInput } = props;
   const [enteredTeamName, setEnteredTeamName] = useState(teamName);
@@ -63,5 +63,3 @@ const TeamDetailHeader = (props) => {
     </div>
   );
 };
-
-export default TeamDetailHeader;
