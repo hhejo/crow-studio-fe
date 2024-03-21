@@ -1,23 +1,23 @@
+// React, Router, Redux
 import { useState, useRef, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-
+import { useSelector } from "react-redux";
+// Firebase
 import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "../../firebase";
-
+// Slice
+import { startLoading, stopLoading } from "../../redux/global-slice";
+// Toast
+import { toast } from "react-toastify";
+// Components
 import SidebarIconsContainer from "./components/sidebar/SidebarIconsContainer";
-
 import Directory from "./components/sidebar/Directory";
 import Git from "./components/sidebar/Git";
 import Team from "./components/sidebar/Team";
 import Api from "./components/sidebar/Api";
 import VariableName from "./components/sidebar/VariableName";
 import Settings from "./components/sidebar/Settings";
-
-import EditorAndConsoleTerminal from "./EditorAndConsoleTerminal";
-
-import { startLoading, stopLoading } from "../../redux/global-slice";
+import { ProjectContent } from "./ProjectContent";
 
 const initialSetting = {
   horizonSplit: 50,
@@ -232,7 +232,7 @@ const Project = () => {
         )}
       </div>
       {/* 오른쪽 에디터, 콘솔 터미널 */}
-      <EditorAndConsoleTerminal
+      <ProjectContent
         lastClickedSidebarIcon={lastClickedSidebarIcon}
         setting={setting}
         setSetting={setSetting}

@@ -5,7 +5,7 @@ import { TiArrowRightThick } from "react-icons/ti";
 
 import ConsoleTerminal from "./components/ConsoleTerminal";
 
-const EditorAndConsoleTerminal = (props) => {
+export const ProjectContent = (props) => {
   const { lastClickedSidebarIcon, selectedFilePath } = props;
   const { setting, setSetting } = props;
   const editorRef = useRef(null); // 에디터 내용
@@ -125,5 +125,3 @@ const EditorAndConsoleTerminal = (props) => {
     </div>
   );
 };
-
-export default EditorAndConsoleTerminal;
