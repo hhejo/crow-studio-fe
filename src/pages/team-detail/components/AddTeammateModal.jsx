@@ -1,5 +1,8 @@
+// React
+import { useState } from "react";
+// Modal
 import Modal from "react-modal";
-
+// Icon
 import { IoClose } from "react-icons/io5";
 
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
@@ -24,21 +27,23 @@ const customStyles = {
 
 const AddTeammateModal = (props) => {
   const { isModalOpen, setIsModalOpen } = props;
-  const { enteredUserNickname, setEnteredUserNickname } = props;
-  const { findTeammate, addTeammate } = props;
-  const { findResults } = props;
+  const { findTeammate, addTeammate, foundTeammates } = props;
+  const [enteredTeammateNickname, setEnteredTeammateNickname] = useState("");
 
   let subtitle; // modal
 
-  const findUserHandler = (e) => {
+  const findTeammateHandler = (e) => {
     e.preventDefault();
-    if (enteredUserNickname.trim().length === 0) return;
-    findTeammate(enteredUserNickname);
+    if (enteredTeammateNickname.trim().length === 0) return;
+    else if (enteredTeammateNickname.trim().length > 10) return;
+    findTeammate(enteredTeammateNickname);
   };
 
   const addTeammateHandler = (teammateToAdd) => {
-    const { teammateUid, teammateDocId, teammateNickname } = teammateToAdd;
-    addTeammate({ teammateUid, teammateDocId, teammateNickname });
+    const { docId, nickname } = teammateToAdd;
+    setEnteredTeammateNickname("");
+    setIsModalOpen(false);
+    addTeammate({ docId, nickname });
   };
 
   return (
@@ -64,13 +69,13 @@ const AddTeammateModal = (props) => {
       <div className="flex flex-col">
         <div className="flex justify-between items-center mb-2">
           <div className="text-sm mr-2">유저검색</div>
-          <form onSubmit={findUserHandler}>
+          <form onSubmit={findTeammateHandler}>
             <input
               type="text"
               name="searchUser"
               id="searchUser"
-              onChange={(e) => setEnteredUserNickname(e.target.value)}
-              value={enteredUserNickname}
+              onChange={(e) => setEnteredTeammateNickname(e.target.value)}
+              value={enteredTeammateNickname}
               className="rounded-md bg-component_item_bg_+2_dark px-4 py-1 text-sm font-medium text-white text-left appearance-none shadow-sm focus:border-none focus:outline-none focus:ring-2 focus:ring-point_purple placeholder:text-primary_dark"
             />
           </form>
@@ -79,15 +84,15 @@ const AddTeammateModal = (props) => {
           <div className="text-point_purple_op20 text-xs ml-14 mb-1">
             닉네임을 누르면 해당 유저가 팀에 추가됩니다.
           </div>
-          {findResults?.map((teammate) => (
+          {foundTeammates.map((teammate) => (
             <div
-              key={teammate.teammateUid}
+              key={`${teammate.docId}`}
               className="hover:cursor-pointer px-4 py-1 text-sm font-bold ml-14 rounded-md text-point_yellow hover:bg-point_yellow_+2 hover:text-black"
               onClick={() => addTeammateHandler(teammate)}
             >
-              {teammate.teammateNickname}
+              {teammate.nickname}
               <span className="ml-2 text-sm text-white">
-                ({teammate.teammateEmail})
+                ({teammate.email})
               </span>
             </div>
           ))}
