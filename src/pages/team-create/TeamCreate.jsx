@@ -14,8 +14,7 @@ import { TeamCreateForm } from "./TeamCreateForm";
 
 const TeamCreate = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
-  const { docId, nickname } = useSelector((state) => state.user.value);
-  const { imageURL } = useSelector((state) => state.user.value);
+  const { docId } = useSelector((state) => state.user.value);
 
   // 팀 생성 핸들러
   const createTeamHandler = async (teamData) => {
