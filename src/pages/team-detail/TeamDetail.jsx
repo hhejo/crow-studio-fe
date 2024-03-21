@@ -12,84 +12,59 @@ import { toast } from "react-toastify";
 // Sweet Alert
 import { swalOptions, MySwal } from "../../sweet-alert";
 // Components
-import TeamDetailHeader from "./TeamDetailHeader";
-import TeamDetailMain from "./TeamDetailMain";
+import { TeamDetailHeader } from "./TeamDetailHeader";
+import { TeamDetailMain } from "./TeamDetailMain";
 import AddTeammateModal from "./components/AddTeammateModal";
 
 const TeamDetail = () => {
   const navigate = useNavigate();
   const { teamDocId } = useParams();
-  const { uid, docId } = useSelector((state) => state.user.value);
-  const [team, setTeam] = useState({});
-  const {
-    teamName,
-    leaderNickname,
-    leaderUid,
-    teammates,
-    projectType,
-    teamGit,
-  } = team;
+  const { docId, nickname } = useSelector((state) => state.user.value);
+  const [myTeam, setMyTeam] = useState({}); // 현재 팀 정보
+  const { teamName, leaderDocId, teammates, projectType, teamGit } = myTeam;
+
+  const [leaderNickname, setLeaderNickname] = useState("");
+
   const [enteredUserNickname, setEnteredUserNickname] = useState("");
   const [findResults, setFindResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // modal
   const [showModifyProjectTypeSelect, setShowModifyProjectTypeSelect] =
     useState(false);
   const [showModifyTeamNameInput, setShowModifyTeamNameInput] = useState(false);
-  const [teammateList, setTeammateList] = useState([]);
+  const [myTeammateList, setMyTeammateList] = useState([]);
 
   // 팀 정보 가져오기
   useEffect(() => {
+    setMyTeam({});
+    setMyTeammateList([]);
     async function fetchTeam() {
       try {
+        // 현재 팀 정보 가져오기
         const docRef = doc(firestore, "teams", teamDocId);
-        const documentSnapshot = await getDoc(docRef);
-        const teamFetched = documentSnapshot.data();
-        setTeam(teamFetched);
-        setTeammateList([]);
-        const { teammates: teammatesFetched } = teamFetched;
-        for (let teammateFetched of teammatesFetched) {
-          const docRef = doc(firestore, "users", teammateFetched);
-          const documentSnapshot = await getDoc(docRef);
-          const { id: teammateDocId } = documentSnapshot;
-          const { nickname: teammateNickname } = documentSnapshot.data();
-          const newTeammate = { teammateDocId, teammateNickname };
-          setTeammateList((prev) => [...prev, newTeammate]);
+        const documentSnapshot = await getDoc(docRef); // 1. teamDocId에 해당하는 팀 가져오기
+        const team = documentSnapshot.data(); // 해당 팀 정보
+        setMyTeam(team); // 2. 팀 정보 갱신
+        if (docId === team.leaderDocId)
+          setLeaderNickname(nickname); // 3. 현재 로그인된 유저가 팀의 리더
+        else {
+          const snap = await getDoc(doc(firestore, "users", team.leaderDocId)); // 3. 아니라면 팀 리더의 docId로 리더의 닉네임 가져오고 적용
+          setLeaderNickname(snap.data().nickname);
         }
+        // 팀원 정보 가져오기
+        const tempTeammateList = []; // 팀원 리스트
+        for (let teammateDocIdToFetch of team.teammates) {
+          const docRef = doc(firestore, "users", teammateDocIdToFetch); // 팀원 docId와 일치하는 documentRef
+          const docSnapshot = await getDoc(docRef); // 4. 팀원 docId로 해당 팀원 정보 가져오기
+          const { nickname } = docSnapshot.data(); // 팀원의 닉네임
+          tempTeammateList.push({ docId: docSnapshot.id, nickname }); // 팀원 리스트에 추가
+        }
+        setMyTeammateList(tempTeammateList); // 5. 팀원 리스트 갱신
       } catch (error) {
         console.error(error);
       }
     }
     fetchTeam();
-  }, [teamDocId]);
-
-  // // 내가 속한 팀들 가져오기
-  // useEffect(() => {
-  //   setMyTeams([]);
-  //   async function fetchTeams() {
-  //     try {
-  //       const documentSnapshot = await getDoc(doc(firestore, "users", docId));
-  //       const { teams } = documentSnapshot.data();
-  //       for (let teamDocId of teams) {
-  //         const docSnapshot = await getDoc(doc(firestore, "teams", teamDocId));
-  //         const team = docSnapshot.data();
-  //         // setMyTeams((prev) => [...prev, { ...team, teamDocId }]);
-  //         // teammates의 팀원들 userDocId로 각각에 대해 유저 정보 받아옴
-  //         const { teammates } = team;
-  //         const teammatesNickname = [];
-  //         for (let teammateDocId of teammates) {
-  //           const snap = await getDoc(doc(firestore, "users", teammateDocId));
-  //           const { nickname } = snap.data();
-  //           teammatesNickname.push(nickname);
-  //         }
-  //         const myTeam = { ...team, teamDocId, teammatesNickname };
-  //         setMyTeams((prev) => [...prev, myTeam]);
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   }
-  //   fetchTeams();
-  // }, [docId]);
+  }, [teamDocId, docId, nickname]);
 
   // 팀명 수정
   const modifyTeamNameHandler = async (modifiedTeamName) => {
@@ -97,7 +72,7 @@ const TeamDetail = () => {
       const teamsDocRef = doc(firestore, "teams", teamDocId); // teamDocId인 documenetReference
       await updateDoc(teamsDocRef, { teamName: modifiedTeamName }); // 수정된 팀 이름으로 적용
       const documentSnapshot = await getDoc(teamsDocRef); // 팀명 변경된 teamDocId인 documentSnapshot 가져옴
-      setTeam(documentSnapshot.data()); // team 정보 업데이트
+      setMyTeam(documentSnapshot.data()); // team 정보 업데이트
       setShowModifyTeamNameInput(false); // 팀명 수정 입력창 숨기기
       toast.success("팀명을 성공적으로 변경했습니다");
     } catch (error) {
@@ -107,7 +82,7 @@ const TeamDetail = () => {
 
   // 팀 삭제
   const deleteTeamHandler = async () => {
-    if (uid !== leaderUid) return;
+    if (docId !== leaderDocId) return;
     const alertTitle = "정말로 팀을 삭제하시겠습니까?";
     const res = await MySwal.fire({ ...swalOptions, title: alertTitle });
     if (!res.isConfirmed) return;
@@ -131,7 +106,7 @@ const TeamDetail = () => {
 
   // 팀 탈퇴
   const resignTeamHandler = async () => {
-    if (uid === leaderUid) return;
+    if (docId === leaderDocId) return;
     const alertTitle = "정말로 팀에서 탈퇴하시겠습니까?";
     const res = await MySwal.fire({ ...swalOptions, title: alertTitle });
     if (!res.isConfirmed) return;
@@ -172,7 +147,7 @@ const TeamDetail = () => {
   // 팀원 추가
   const addTeammateHandler = async (teammateToAdd) => {
     const { teammateUid, teammateDocId, teammateNickname } = teammateToAdd;
-    if (teammateUid === uid) return; // 본인을 팀원으로 추가할 수 없음
+    if (teammateUid === docId) return; // 본인을 팀원으로 추가할 수 없음
     const alertTitle = `${teammateNickname}님을 팀원으로 추가할까요?`;
     const res = await MySwal.fire({ ...swalOptions, title: alertTitle });
     if (!res.isConfirmed) return;
@@ -187,9 +162,9 @@ const TeamDetail = () => {
       const teamsDocRef = doc(firestore, "teams", teamDocId);
       const documentSnapshot = await getDoc(teamsDocRef);
       const updatedTeam = documentSnapshot.data();
-      setTeam(updatedTeam);
-      // 4. teammateList 갱신하기 (teammates와 다름) <- 리팩토링 필요
-      setTeammateList([]);
+      setMyTeam(updatedTeam);
+      // 4. myTeammateList 갱신하기 (teammates와 다름) <- 리팩토링 필요
+      setMyTeammateList([]);
       const { teammates: teammatesFetched } = updatedTeam;
       for (let teammateFetched of teammatesFetched) {
         const docRef = doc(firestore, "users", teammateFetched);
@@ -197,7 +172,7 @@ const TeamDetail = () => {
         const { id: teammateDocId } = documentSnapshot;
         const { nickname: teammateNickname } = documentSnapshot.data();
         const newTeammate = { teammateDocId, teammateNickname };
-        setTeammateList((prev) => [...prev, newTeammate]);
+        setMyTeammateList((prev) => [...prev, newTeammate]);
       }
       toast.success("팀원 추가 성공");
     } catch (error) {
@@ -221,9 +196,9 @@ const TeamDetail = () => {
       const teamsDocRef = doc(firestore, "teams", teamDocId);
       const documentSnapshot = await getDoc(teamsDocRef);
       const updatedTeam = documentSnapshot.data();
-      setTeam(updatedTeam);
-      // 4. teammateList 갱신하기 (teammates와 다름) <- 리팩토링 필요
-      setTeammateList([]);
+      setMyTeam(updatedTeam);
+      // 4. myTeammateList 갱신하기 (teammates와 다름) <- 리팩토링 필요
+      setMyTeammateList([]);
       const { teammates: teammatesFetched } = updatedTeam;
       for (let teammateFetched of teammatesFetched) {
         const docRef = doc(firestore, "users", teammateFetched);
@@ -231,7 +206,7 @@ const TeamDetail = () => {
         const { id: teammateDocId } = documentSnapshot;
         const { nickname: teammateNickname } = documentSnapshot.data();
         const newTeammate = { teammateDocId, teammateNickname };
-        setTeammateList((prev) => [...prev, newTeammate]);
+        setMyTeammateList((prev) => [...prev, newTeammate]);
       }
       toast.success("팀원 삭제 성공");
     } catch (error) {
@@ -250,7 +225,7 @@ const TeamDetail = () => {
       const teamsDocRef = doc(firestore, "teams", teamDocId); // 팀명 수정과 동일
       await updateDoc(teamsDocRef, { projectType: modifiedProjectType }); // 팀명 수정과 동일
       const documentSnapshot = await getDoc(teamsDocRef); // 팀명 수정과 동일
-      setTeam(documentSnapshot.data()); // 팀명 수정과 동일
+      setMyTeam(documentSnapshot.data()); // 팀명 수정과 동일
       toast.success("프로젝트 타입을 성공적으로 변경했습니다");
     } catch (error) {
       console.error(error); // 401: JWT가 없거나 틀림, 403: Forbidden, 404: Not Found
@@ -261,19 +236,8 @@ const TeamDetail = () => {
 
   return (
     <>
-      {/* 팀원 추가 모달 */}
-      <AddTeammateModal
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        enteredUserNickname={enteredUserNickname}
-        setEnteredUserNickname={setEnteredUserNickname}
-        findTeammate={findTeammateHandler}
-        findResults={findResults}
-        addTeammate={addTeammateHandler}
-      />
-
-      {/* team detail */}
-      <div
+      {/* Team Detail */}
+      <main
         data-aos="fade-in"
         className="flex flex-wrap items-center justify-center m-3 mb-6 h-full"
       >
@@ -286,7 +250,7 @@ const TeamDetail = () => {
           {/* TeamDetailHeader */}
           <TeamDetailHeader
             teamName={teamName}
-            isLeader={leaderUid === uid}
+            isLeader={leaderDocId === docId}
             modifyTeamName={modifyTeamNameHandler}
             showModifyTeamNameInput={showModifyTeamNameInput}
             setShowModifyTeamNameInput={setShowModifyTeamNameInput}
@@ -297,9 +261,9 @@ const TeamDetail = () => {
           {/* 팀장, 팀원, 팀 깃 주소, 프로젝트 타입 */}
           <TeamDetailMain
             leaderNickname={leaderNickname}
-            isLeader={leaderUid === uid}
+            isLeader={leaderDocId === docId}
             // teammates={teammates}
-            teammateList={teammateList}
+            myTeammateList={myTeammateList}
             teamGit={teamGit}
             //
             showModifyProjectTypeSelect={showModifyProjectTypeSelect}
@@ -327,7 +291,18 @@ const TeamDetail = () => {
             </button>
           </div>
         </div>
-      </div>
+      </main>
+
+      {/* 팀원 추가 모달 */}
+      <AddTeammateModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        enteredUserNickname={enteredUserNickname}
+        setEnteredUserNickname={setEnteredUserNickname}
+        findTeammate={findTeammateHandler}
+        findResults={findResults}
+        addTeammate={addTeammateHandler}
+      />
     </>
   );
 };
