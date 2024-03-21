@@ -11,27 +11,34 @@ import { TeamsListItem } from "./TeamsListItem";
 const Teams = () => {
   const navigate = useNavigate();
   const { docId, nickname } = useSelector((state) => state.user.value);
-  const [myTeams, setMyTeams] = useState([]);
+  const [myTeams, setMyTeams] = useState([]); // myTeam: { teamDocId, teamName, leaderNickname, teammatesNicknames }
 
   // 내가 속한 팀들 가져오기
   useEffect(() => {
     setMyTeams([]);
     async function fetchTeams() {
       try {
-        const documentSnapshot = await getDoc(doc(firestore, "users", docId));
-        const { teams } = documentSnapshot.data();
+        const documentSnapshot = await getDoc(doc(firestore, "users", docId)); // 1. 로그인된 유저의 docId로 해당 유저 정보 가져오기
+        const { teams } = documentSnapshot.data(); // teams: teamDocId들의 배열
         for (let teamDocId of teams) {
-          const docSnapshot = await getDoc(doc(firestore, "teams", teamDocId));
-          const team = docSnapshot.data();
-          // setMyTeams((prev) => [...prev, { ...team, teamDocId }]);
+          const docSnapshot = await getDoc(doc(firestore, "teams", teamDocId)); // 2. teamDocId로 해당 팀 정보 가져오기
+          const team = docSnapshot.data(); // 해당 팀 document
+          const { teamName, leaderDocId, teammates } = team; // teamName, leaderDocId, teammates만 선택
+          const docSnap = await getDoc(doc(firestore, "users", leaderDocId)); // 3. 팀 리더 docId로 해당 유저 정보 가져오기
+          const { nickname: leaderNickname } = docSnap.data(); // 닉네임만 선택
           // teammates의 팀원들 userDocId로 각각에 대해 유저 정보 받아옴
-          const teammatesNickname = [];
-          for (let teammateDocId of team.teammates) {
-            const snap = await getDoc(doc(firestore, "users", teammateDocId));
-            const { nickname } = snap.data();
-            teammatesNickname.push(nickname);
+          const teammatesNicknames = []; // 팀원 닉네임의 배열
+          for (let teammateDocId of teammates) {
+            const snap = await getDoc(doc(firestore, "users", teammateDocId)); // 4. 팀원 docId로 해당 유저 정보 가져오기
+            const { nickname } = snap.data(); // 닉네임만 선택
+            teammatesNicknames.push(nickname); // 닉네임 추가
           }
-          const myTeam = { ...team, teamDocId, teammatesNickname };
+          const myTeam = {
+            teamDocId,
+            teamName,
+            leaderNickname,
+            teammatesNicknames,
+          };
           setMyTeams((prev) => [...prev, myTeam]);
         }
       } catch (error) {

@@ -1,6 +1,6 @@
 export const TeamsListItem = (props) => {
   const { team, clickTeam } = props;
-  const { teamDocId, teamName, leaderNickname, teammatesNickname } = team;
+  const { teamDocId, teamName, leaderNickname, teammatesNicknames } = team;
 
   return (
     <div
@@ -19,7 +19,7 @@ export const TeamsListItem = (props) => {
         </div>
         {/* 팀원들 */}
         <div className="flex md:flex-row flex-col">
-          {teammatesNickname?.map((nickname, i) => (
+          {teammatesNicknames?.map((nickname, i) => (
             <div key={`${nickname}${i}`} className="p-2">
               <div className="text-sm break-all text-white">{nickname}</div>
             </div>
