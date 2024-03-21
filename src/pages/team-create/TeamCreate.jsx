@@ -21,9 +21,7 @@ const TeamCreate = () => {
   const createTeamHandler = async (teamData) => {
     dispatch(startLoading());
     try {
-      const basicInfo = { ...teamData, leaderDocId: docId, teammates: [] }; // teamName, projectType, teamGit, leaderDocId, teammates
-      const extraInfo = { leaderNickname: nickname, leaderImageURL: imageURL }; // leaderNickname, leaderImageURL
-      const teamToAdd = { ...basicInfo, ...extraInfo }; // 생성할 팀
+      const teamToAdd = { ...teamData, leaderDocId: docId, teammates: [] }; // 생성할 팀: teamName, projectType, teamGit, leaderDocId, teammates
       const collectionRef = collection(firestore, "teams"); // firestore의 teams 컬렉션 레퍼런스
       const { id: teamDocId } = await addDoc(collectionRef, teamToAdd); // 1. firestore의 teams 컬렉션에 추가
       const updateField = { teams: arrayUnion(teamDocId) }; // teams 필드에 생성된 팀 teamDocId 추가
