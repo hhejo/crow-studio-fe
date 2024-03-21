@@ -25,9 +25,8 @@ const Teams = () => {
           const team = docSnapshot.data();
           // setMyTeams((prev) => [...prev, { ...team, teamDocId }]);
           // teammates의 팀원들 userDocId로 각각에 대해 유저 정보 받아옴
-          const { teammates } = team;
           const teammatesNickname = [];
-          for (let teammateDocId of teammates) {
+          for (let teammateDocId of team.teammates) {
             const snap = await getDoc(doc(firestore, "users", teammateDocId));
             const { nickname } = snap.data();
             teammatesNickname.push(nickname);
