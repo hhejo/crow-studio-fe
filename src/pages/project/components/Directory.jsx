@@ -1,5 +1,8 @@
 // React
 import { useState, useEffect } from "react";
+// Firebase
+import { doc, updateDoc } from "firebase/firestore";
+import { firestore } from "../../../firebase";
 // Styled
 import styled from "styled-components";
 //
@@ -38,16 +41,17 @@ const dummyFilesFolders = {
   name: "src",
   children: [
     {
-      id: "src/pages",
-      name: "pages",
+      id: "src/comps",
+      name: "comps",
       children: [
-        { id: "src/pages/haha", name: "haha" },
-        { id: "src/pages/yaho", name: "yaho" },
-        { id: "src/pages/c.py", name: "c.py" },
+        { id: "src/comps/test1", name: "test1" },
+        { id: "src/comps/test2", name: "test2" },
+        { id: "src/comps/snake.py", name: "snake.py" },
       ],
     },
     { id: "src/app.py", name: "app.py" },
-    { id: "src/b.md", name: " b.md" },
+    { id: "src/readme.md", name: "readme.md" },
+    { id: "src/xyz", name: "xyz" },
   ],
 };
 
@@ -130,6 +134,15 @@ export const Directory = (props) => {
       return;
     }
     addNewChildToNode(nameToCreate);
+    try {
+      const projectDocId = "F4jS31nXypDkajX17ZNe";
+      const docRef = doc(firestore, "projects", projectDocId);
+      const data = { directory: filesFolders };
+      await updateDoc(docRef, data);
+      console.log("wow");
+    } catch (error) {
+      console.error(error);
+    }
     toast.success("폴더 생성 성공");
   };
 
