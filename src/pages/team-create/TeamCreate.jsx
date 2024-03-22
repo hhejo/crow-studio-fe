@@ -20,11 +20,17 @@ const TeamCreate = () => {
   const createTeamHandler = async (teamData) => {
     dispatch(startLoading());
     try {
-      const teamToAdd = { ...teamData, leaderDocId: docId, teammates: [] }; // 생성할 팀: teamName, projectType, teamGit, leaderDocId, teammates
-      const collectionRef = collection(firestore, "teams"); // firestore의 teams 컬렉션 레퍼런스
-      const { id: teamDocId } = await addDoc(collectionRef, teamToAdd); // 1. firestore의 teams 컬렉션에 추가
-      const updateField = { teams: arrayUnion(teamDocId) }; // teams 필드에 생성된 팀 teamDocId 추가
-      await updateDoc(doc(firestore, "users", docId), updateField); // 2. firestore의 users 컬렉션에서 현재 로그인한 유저의 필드 업데이트
+      const extra = { leaderDocId: docId, teammates: [], projectDocId: null };
+      const teamToAdd = { ...teamData, ...extra }; // 생성할 팀: teamName, projectType, teamGit, leaderDocId, teammates, projectDocId
+      const teamsColRef = collection(firestore, "teams");
+      const { id: teamDocId } = await addDoc(teamsColRef, teamToAdd); // 1. firestore의 teams 컬렉션에 생성된 팀 추가
+      const updateTeamsField = { teams: arrayUnion(teamDocId) };
+      await updateDoc(doc(firestore, "users", docId), updateTeamsField); // 2. firestore의 users 컬렉션에서 현재 로그인한 유저의 teams 필드에 생성된 팀 docId 추가
+      const ProjectsColRef = collection(firestore, "projects");
+      const projectToAdd = { teamDocId, directory: {}, setting: {} }; // 생성할 프로젝트: teamDocId, directory, setting
+      const { id: projectDocId } = await addDoc(ProjectsColRef, projectToAdd); // 3. firestore의 projects 컬렉션에 생성된 프로젝트 추가
+      const updatePjtDocIdField = { projectDocId };
+      await updateDoc(doc(firestore, "teams", teamDocId), updatePjtDocIdField); // 4. firestore의 teams 컬렉션에서 현재 생성된 팀의 projectDocId 필드를 생성된 프로젝트 projectDocId로 갱신
       toast.success("팀 생성 완료");
       navigate("/teams", { replace: true });
     } catch (error) {
