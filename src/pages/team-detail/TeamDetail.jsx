@@ -21,11 +21,11 @@ const TeamDetail = () => {
   const { teamDocId } = useParams();
   const { docId } = useSelector((state) => state.user.value);
   const [myTeam, setMyTeam] = useState({}); // myTeam: { teamName, leaderDocId, leaderNickname, projectType, teamGit }
-  const { teamName, leaderDocId, leaderNickname } = myTeam;
-  const { projectType, teamGit } = myTeam;
+  const { teamName, leaderDocId, leaderNickname, projectType, teamGit } =
+    myTeam;
+  const [myTeammates, setMyTeammates] = useState([]); // myTeammate: { docId, nickname, email }
   const [showTeamNameInput, setShowTeamNameInput] = useState(false); // 팀명 변경 입력창 표시 여부
-  const [myTeammates, setMyTeammates] = useState([]); // myTeammate: { docId, nickname }
-  const [foundTeammates, setFoundTeammates] = useState([]); // foundTeammates { docId, email, nickname }
+  const [foundTeammates, setFoundTeammates] = useState([]); // foundTeammates { docId, nickname, email }
   const [showProjectTypeSelect, setShowProjectTypeSelect] = useState(false); // 프로젝트 타입 변경 선택창 표시 여부
   const [isModalOpen, setIsModalOpen] = useState(false); // modal
 
@@ -35,7 +35,7 @@ const TeamDetail = () => {
     setMyTeammates([]);
     async function fetchTeam() {
       try {
-        const docRef = doc(firestore, "teams", teamDocId);
+        const docRef = doc(firestore, "teams", teamDocId); // 팀 docId와 일치하는 documentRef
         const documentSnapshot = await getDoc(docRef); // 1. teamDocId에 해당하는 팀 가져오기
         const team = documentSnapshot.data(); // 해당 팀 정보
         const snap = await getDoc(doc(firestore, "users", team.leaderDocId)); // 2. 팀 리더의 docId로 유저 정보 가져오기
@@ -45,10 +45,9 @@ const TeamDetail = () => {
         setMyTeam({ ...temp, leaderNickname }); // 3. 팀 정보 갱신
         for (let teammateDocId of team.teammates) {
           const docRef = doc(firestore, "users", teammateDocId); // 팀원 docId와 일치하는 documentRef
-          const docSnapshot = await getDoc(docRef); // 4. 팀원 docId로 해당 팀원 정보 가져오기
-          const docId = docSnapshot.id; // 팀원의 docId
-          const { nickname } = docSnapshot.data(); // 팀원의 닉네임
-          setMyTeammates((prev) => [...prev, { docId, nickname }]); // 5. 팀원 리스트 갱신
+          const docSnap = await getDoc(docRef); // 4. 팀원 docId로 해당 팀원 정보 가져오기
+          const [docId, { nickname, email }] = [docSnap.id, docSnap.data()]; // 팀원의 docId, 닉네임, 이메일
+          setMyTeammates((prev) => [...prev, { docId, nickname, email }]); // 5. 팀원 리스트 갱신
         }
       } catch (error) {
         console.error(error);
