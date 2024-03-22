@@ -146,7 +146,7 @@ export const Directory = (props) => {
   // 이름 변경 핸들러
   const renameFileHandler = async () => {
     const [title, input] = ["이름 변경", "text"];
-    const inputValue = selected.fileName;
+    const inputValue = selected.filePath.split("/").at(-1);
     const res = await MySwal.fire({ ...swalOptions, title, input, inputValue });
     if (!res.isConfirmed) return;
     const { value: nameToUpdate } = res;
@@ -176,6 +176,10 @@ export const Directory = (props) => {
         for (let child of node.children) {
           if (child.id === nodeId) {
             child.name = nameToUpdate;
+            child.id = `${nodeId
+              .split("/")
+              .slice(0, -1)
+              .join("/")}/${nameToUpdate}`;
             return true;
           }
           if (updateNodeNameRecursively(child)) return true;
@@ -191,6 +195,7 @@ export const Directory = (props) => {
       const projectsDocRef = doc(firestore, "projects", projectDocId);
       const updateDirectoryField = { directory: myDirectory };
       await updateDoc(projectsDocRef, updateDirectoryField); // directory 필드 덮어쓰기
+      setSelected({ fileName: "", fileType: "", filePath: "" });
       toast.success("이름 변경 성공");
     } catch (error) {
       console.error(error);
