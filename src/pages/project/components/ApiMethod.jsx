@@ -1,5 +1,8 @@
-import React, { Fragment, useState } from "react";
+// React
+import { Fragment, useState } from "react";
+// UI
 import { Combobox, Transition } from "@headlessui/react";
+// Icon
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 // Combobox items
@@ -10,7 +13,7 @@ const methods = [
   { id: 4, name: "DELETE" },
 ];
 
-const SelectMethod = ({ onMethodChange }) => {
+export const SelectMethod = ({ onMethodChange }) => {
   // 폰트 셀렉트 Combobox
   const [selected, setSelected] = useState(methods[0]);
   const [query, setQuery] = useState("");
@@ -131,8 +134,6 @@ const SelectMethod = ({ onMethodChange }) => {
     </>
   );
 };
-
-export default SelectMethod;
 
 // const SelectMethod = ({ onMethodChange }) => {
 //   return (

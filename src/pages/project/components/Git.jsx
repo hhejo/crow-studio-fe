@@ -1,31 +1,33 @@
+// React
 import { useState, useEffect } from "react";
+// Toast
 import { toast } from "react-toastify";
-// import gitApi from "../../../../api/gitApi";
+// Icon
 import { BsCircleFill } from "react-icons/bs";
 
-const Git = (props) => {
+export const Git = (props) => {
   const [commitMsg, setCommitMsg] = useState(""); // 커밋 메시지
   const [newBranch, setNewBranch] = useState("");
 
   const [repoBranch, setRepoBranch] = useState([]);
   const [localBranch, setLocalBranch] = useState([]);
-  const [callBell, setCallBell] = useState(0);
-  const [nowBranch, setNowBranch] = useState("");
-  const { selectedFilePath, teamDocId, docId } = props;
+  // const [callBell, setCallBell] = useState(0);
+  // const [nowBranch, setNowBranch] = useState("");
+  // const { selectedFilePath, teamDocId, docId } = props;
 
-  useEffect(() => {
-    // const body = { gitPath: selectedFilePath };
-    // gitApi.gitBranch(teamDocId, 2, body).then((res) => setRepoBranch(() => res.data));
-    // gitApi.gitBranch(teamDocId, 1, body).then((res) => setLocalBranch(() => res.data));
-  }, [callBell, selectedFilePath, teamDocId]);
+  // useEffect(() => {
+  //   const body = { gitPath: selectedFilePath };
+  //   gitApi.gitBranch(teamDocId, 2, body).then((res) => setRepoBranch(() => res.data));
+  //   gitApi.gitBranch(teamDocId, 1, body).then((res) => setLocalBranch(() => res.data));
+  // }, [callBell, selectedFilePath, teamDocId]);
 
   const changeBranch = (event) => {
-    const ChangingBranch = event.target.textContent;
-    const pureBranch = ChangingBranch.replaceAll(" ", "").replace(
-      "origin/",
-      ""
-    );
-    const gitData = { branchName: pureBranch };
+    // const ChangingBranch = event.target.textContent;
+    // const pureBranch = ChangingBranch.replaceAll(" ", "").replace(
+    //   "origin/",
+    //   ""
+    // );
+    // const gitData = { branchName: pureBranch };
     // gitApi
     //   .gitSwitch(teamDocId, 1, gitData)
     //   .then(() => {
@@ -38,7 +40,7 @@ const Git = (props) => {
 
   const createNewBranchHandler = () => {
     if (newBranch.length === 0) {
-      toast.warning("브랜치 이름을 입력하세요");
+      toast.warning("브랜치 이름을 입력");
       return;
     }
     toast.success("신규 브랜치 생성 완료");
@@ -57,12 +59,16 @@ const Git = (props) => {
   // Commit, Commit And Push
   const commitHandler = (type) => {
     if (commitMsg.length === 0) {
-      toast.warning("Commit 메시지를 입력하세요");
+      toast.warning("Commit 메시지를 입력");
       return;
     }
-    if (type === "commit") toast.success("Commit 성공");
-    else if (type === "commitAndPush") toast.success("Commit & Push 성공");
+    toast.warning("현재 지원하지 않는 기능");
     setCommitMsg("");
+    return;
+    // if (type === "commit") toast.success("Commit 성공");
+    // else if (type === "commitAndPush") toast.success("Commit & Push 성공");
+    //
+
     // const body = { message: commitMsg, filePath: "all" };
     // try {
     //   await gitApi.gitCommit(teamDocId, body);
@@ -83,17 +89,19 @@ const Git = (props) => {
   };
 
   return (
-    <div className="mb-3 bg-component_item_bg_dark flex flex-col h-full rounded-r-lg">
-      {/* 타이틀 */}
+    <section className="mb-3 bg-component_item_bg_dark flex flex-col h-full rounded-r-lg">
+      {/* 깃 */}
       <div
         className="flex justify-between items-center"
         style={{ padding: 15 }}
       >
         <div className="text-xl font-bold text-white my-1">Git</div>
       </div>
+
       {/* 줄 */}
       <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
-      {/* 컨텐트 */}
+
+      {/* 커밋, 푸시, 브랜치 생성, 로컬 브랜치, 레포 브랜치 */}
       <div className="p-[15px] overflow-auto">
         <div className="pl-1">
           <div className="text-primary_dark text-sm font-bold">
@@ -121,8 +129,10 @@ const Git = (props) => {
                 </button>
               </div>
             </div>
+
             {/* 줄 */}
             <hr className="bg-component_+2_dark border-0 m-0 h-[1px] min-h-[1px] w-[253px] mb-5" />
+
             {/* 새로운 브랜치 */}
             <details open className="mb-5 w-fit">
               <summary className="font-bold mb-2 text-xl cursor-pointer">
@@ -143,8 +153,10 @@ const Git = (props) => {
                 </button>
               </div>
             </details>
+
             {/* 줄 */}
             <hr className="bg-component_+2_dark border-0 m-0 h-[1px] min-h-[1px] w-[253px] mb-5" />
+
             {/* Local Branch */}
             <details open className="mb-5 w-fit">
               <summary className="mb-2 text-xl cursor-pointer">
@@ -176,8 +188,10 @@ const Git = (props) => {
                   );
                 })}
             </details>
+
             {/* 줄 */}
             <hr className="bg-component_+2_dark border-0 m-0 h-[1px] min-h-[1px] w-[253px] mb-5" />
+
             {/* Repo Branch */}
             <details className="mb-5 w-fit">
               <summary className="mb-2 text-xl cursor-pointer">
@@ -208,8 +222,6 @@ const Git = (props) => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
-
-export default Git;

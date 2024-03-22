@@ -1,7 +1,10 @@
+// React
 import { Fragment, useState } from "react";
-import { toast } from "react-toastify";
+// UI
 import { Combobox, Transition, Switch } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+// Toast
+import { toast } from "react-toastify";
 
 // Combobox items
 const fonts = [
@@ -12,7 +15,7 @@ const fonts = [
   { id: 6, name: "Courier" },
 ];
 
-const Settings = ({ setting, saveSetting, setSetting }) => {
+export const Settings = ({ setting, saveSetting, setSetting }) => {
   const [query, setQuery] = useState("");
   const [nowEditorFont, setNowEditorFont] = useState(
     fonts.filter((font) => font.name === setting.editors.font)[0]
@@ -125,15 +128,17 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
   };
 
   return (
-    <div className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto h-full rounded-r-lg">
+    <section className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto h-full rounded-r-lg">
       <div
         className="flex justify-between items-center"
         style={{ padding: 15 }}
       >
         <div className="text-xl font-bold text-white my-1">Settings</div>
       </div>
+
       {/* 줄 */}
       <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
+
       {/*  */}
       <div className="" style={{ padding: 15 }}>
         {/* 에디터 폰트 크기 */}
@@ -154,6 +159,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             value={setting.editors.fontSize}
           />
         </div>
+
         {/* 에디터 폰트 */}
         <div className="pl-1 mt-5">
           <div className="text-primary_dark text-xl font-bold mb-2">
@@ -249,6 +255,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             </div>
           </Combobox>
         </div>
+
         {/* 에디터 자동 줄바꿈 */}
         <div className="pl-1 mt-5 flex items-center">
           <div className="text-primary_dark text-xl font-bold ">
@@ -272,6 +279,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             />
           </Switch>
         </div>
+
         {/* 콘솔 폰트 크기 */}
         <div className="pl-1 mt-5">
           <label
@@ -290,6 +298,7 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             value={setting.consoles.fontSize}
           />
         </div>
+
         {/* 콘솔 폰트 */}
         <div className="pl-1 mt-5">
           <div className="text-primary_dark text-xl font-bold mb-2">
@@ -385,6 +394,8 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
             </div>
           </Combobox>
         </div>
+
+        {/* 저장 버튼 */}
         <div className="ml-1 my-5">
           <button
             onClick={trySave}
@@ -394,8 +405,6 @@ const Settings = ({ setting, saveSetting, setSetting }) => {
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
-
-export default Settings;

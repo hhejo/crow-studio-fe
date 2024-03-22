@@ -354,44 +354,51 @@ export const Directory = (props) => {
   };
 
   return (
-    <div className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto h-full rounded-r-lg">
-      {/* 디렉터리, 파일 생성 버튼튼 폴더 생성 버튼, 저장 버튼 */}
-      <div className="justify-between items-center" style={{ padding: 15 }}>
-        <div className="flex items-center justify-between gap-4">
-          <div className="text-xl font-bold text-white">Directory</div>
-          <div className="mt-1 flex items-center">
-            {/* 새 파일 생성 버튼 */}
-            <IcSpan onClick={createFileHandler} data-tip="새 파일">
-              <IcNewFile alt="IcNewFile" />
-            </IcSpan>
-            {/* 새 폴더 생성 버튼 */}
-            <IcSpan onClick={createFolderHandler} data-tip="새 폴더">
-              <IcNewDir className="mt-0.5" alt="IcNewDir" />
-            </IcSpan>
-            {/* 파일 저장 버튼 */}
-            <IcSpan onClick={saveFileContentHandler} data-tip="파일 저장">
-              <SaveIcon
-                className={loading && `animate-spin`}
-                sx={{ fontSize: 20 }}
-              />
-            </IcSpan>
+    <>
+      <section className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto h-full rounded-r-lg">
+        {/* 디렉터리, 파일 생성 버튼튼 폴더 생성 버튼, 저장 버튼 */}
+        <div className="justify-between items-center" style={{ padding: 15 }}>
+          <div className="flex items-center justify-between gap-4">
+            <div className="text-xl font-bold text-white">Directory</div>
+            <div className="mt-1 flex items-center">
+              {/* 새 파일 생성 버튼 */}
+              <IcSpan onClick={createFileHandler} data-tip="새 파일">
+                <IcNewFile alt="IcNewFile" />
+              </IcSpan>
+
+              {/* 새 폴더 생성 버튼 */}
+              <IcSpan onClick={createFolderHandler} data-tip="새 폴더">
+                <IcNewDir className="mt-0.5" alt="IcNewDir" />
+              </IcSpan>
+
+              {/* 파일 저장 버튼 */}
+              <IcSpan onClick={saveFileContentHandler} data-tip="파일 저장">
+                <SaveIcon
+                  className={loading && `animate-spin`}
+                  sx={{ fontSize: 20 }}
+                />
+              </IcSpan>
+            </div>
           </div>
         </div>
-      </div>
-      {/* stroke */}
-      <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
-      {/* 디렉터리 파일, 폴더 모음 트리 뷰 */}
-      <div className="text-xs" style={{ padding: 15 }}>
-        <TreeView
-          aria-label="files and directories"
-          defaultExpanded={["root"]}
-          defaultEndIcon={<div style={{ width: 24 }} />}
-          sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
-          onNodeSelect={nodeSelectHandler}
-        >
-          {renderTree(myDirectory)}
-        </TreeView>
-      </div>
+
+        {/* 줄 */}
+        <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
+
+        {/* 디렉터리 파일, 폴더 모음 트리 뷰 */}
+        <div className="text-xs" style={{ padding: 15 }}>
+          <TreeView
+            aria-label="files and directories"
+            defaultExpanded={["root"]}
+            defaultEndIcon={<div style={{ width: 24 }} />}
+            sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
+            onNodeSelect={nodeSelectHandler}
+          >
+            {renderTree(myDirectory)}
+          </TreeView>
+        </div>
+      </section>
+
       {/* Context Menu */}
       <Menu id={"menu-id"} className="contexify-crow">
         <Item onClick={renameFileHandler}>
@@ -399,7 +406,7 @@ export const Directory = (props) => {
         </Item>
         <Item onClick={deleteHandler}>삭제 ⌫</Item>
       </Menu>
-    </div>
+    </>
   );
 };
 

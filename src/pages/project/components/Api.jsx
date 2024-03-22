@@ -1,9 +1,11 @@
+// React
 import { useRef, useState, useEffect } from "react";
-import SelectMethod from "./ApiMethod";
-// import editorApi from "../../../../api/editorApi";
+// Toast
 import { toast } from "react-toastify";
+// Component
+import { SelectMethod } from "./ApiMethod";
 
-const Api = () => {
+export const Api = () => {
   const [uri, setUri] = useState("");
   const [method, setMethod] = useState("");
   const [request, setRequest] = useState({});
@@ -35,18 +37,22 @@ const Api = () => {
   };
 
   const sendApi = () => {
-    const jsonRequest = JSON.parse(request);
-    const jsonHeader = JSON.parse(header);
-    if (jsonHeader["Content-Type"] === undefined) {
-      jsonHeader["Content-Type"] = "application/json";
-    }
-    const body = {
-      api: uri,
-      type: method,
-      request: jsonRequest,
-      header: jsonHeader,
-    };
-    console.log(body);
+    toast.warning("현재 지원하지 않는 기능");
+    return;
+    // const jsonRequest = JSON.parse(request);
+    // const jsonHeader = JSON.parse(header);
+    // if (jsonHeader["Content-Type"] === undefined) {
+    //   jsonHeader["Content-Type"] = "application/json";
+    // }
+    // const body = {
+    //   api: uri,
+    //   type: method,
+    //   request: jsonRequest,
+    //   header: jsonHeader,
+    // };
+    // console.log(body);
+    // //
+    // //
     // editorApi
     //   .apiRequest(body)
     //   .then((res) => {
@@ -85,7 +91,7 @@ const Api = () => {
   const obj1 = { a: { b: { c: 10 } } };
 
   return (
-    <div className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto h-full rounded-r-lg">
+    <section className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto h-full rounded-r-lg">
       <div
         className="flex justify-between items-center"
         style={{ padding: 15 }}
@@ -158,8 +164,6 @@ const Api = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
-
-export default Api;

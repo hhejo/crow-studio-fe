@@ -12,11 +12,11 @@ import { toast } from "react-toastify";
 // Components
 import { SidebarIcons } from "./components/SidebarIcons";
 import { Directory } from "./components/Directory";
-import Git from "./components/sidebar/Git";
+import { Git } from "./components/Git";
 import { Team } from "./components/Team";
-import Api from "./components/sidebar/Api";
-import VariableName from "./components/sidebar/VariableName";
-import Settings from "./components/sidebar/Settings";
+import { Api } from "./components/Api";
+import { VariableName } from "./components/VariableName";
+import { Settings } from "./components/Settings";
 import { ProjectContent } from "./ProjectContent";
 
 const initialSetting = {

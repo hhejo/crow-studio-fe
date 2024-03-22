@@ -1,8 +1,9 @@
+// React
 import { useState } from "react";
+// Toast
 import { toast } from "react-toastify";
-// import editorApi from "../../../../api/editorApi";
 
-const VariableName = () => {
+export const VariableName = () => {
   const [variable, setVariable] = useState("");
   const [result, setResult] = useState([]);
   const [resultActive, setResultActive] = useState(false);
@@ -35,7 +36,9 @@ const VariableName = () => {
 
   const sendWord = (e) => {
     e.preventDefault();
-    const body = JSON.stringify({ data: variable });
+    toast.warning("현재 지원하지 않는 기능");
+    return;
+    // const body = JSON.stringify({ data: variable });
     // editorApi
     //   .variableRecommend(body)
     //   .then((res) => {
@@ -49,16 +52,18 @@ const VariableName = () => {
   };
 
   return (
-    <div className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto h-full rounded-r-lg">
+    <section className="mb-3 bg-component_item_bg_dark flex flex-col overflow-auto h-full rounded-r-lg">
       <div
         className="flex justify-between items-center"
         style={{ padding: 15 }}
       >
         <div className="text-xl font-bold text-white my-1">변수명 추천</div>
       </div>
+
       {/* 줄 */}
       <hr className="bg-component_dark border-0 m-0 h-[3px] min-h-[3px]" />
-      {/*  */}
+
+      {/* 변수명 입력 */}
       <div style={{ padding: 15 }}>
         <div className="pl-1">
           <div className="text-primary_dark text-sm font-bold">
@@ -86,8 +91,6 @@ const VariableName = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
-
-export default VariableName;
