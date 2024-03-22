@@ -10,7 +10,7 @@ import { startLoading, stopLoading } from "../../redux/global-slice";
 // Toast
 import { toast } from "react-toastify";
 // Components
-import SidebarIconsContainer from "./components/sidebar/SidebarIconsContainer";
+import { SidebarIcons } from "./components/SidebarIcons";
 import Directory from "./components/sidebar/Directory";
 import Git from "./components/sidebar/Git";
 import { Team } from "./components/Team";
@@ -34,10 +34,9 @@ const Project = () => {
   const { teamDocId } = useParams();
   const { docId } = useSelector((state) => state.user.value);
   const [myTeam, setMyTeam] = useState({}); // myTeam: { teamName, leaderDocId, leaderNickname, projectType, teamGit }
-  // const { teamName, leaderDocId, leaderNickname, projectType, teamGit } = myTeam;
   const [myTeammates, setMyTeammates] = useState([]); // myTeammate: { docId, nickname, email }
-  const [selected, setSelected] = useState(initialSelected); // 디렉토리에서 선택된 파일이나 폴더
   const [lastClickedSidebarIcon, setLastClickedSidebarIcon] = useState("Dir"); // 마지막으로 선택된 사이드바 아이콘
+  const [selected, setSelected] = useState(initialSelected); // 디렉토리에서 선택된 파일이나 폴더
 
   const { loading } = useSelector((state) => state.global.value);
   // const [lintResultList, setLintResultList] = useState([]);
@@ -174,7 +173,7 @@ const Project = () => {
       {/* 왼쪽 사이드바 아이콘, 내용 */}
       <div className="flex">
         {/* 사이드바 아이콘 모음 */}
-        <SidebarIconsContainer
+        <SidebarIcons
           clickIcon={showIconContentHandler}
           lastClickedSidebarIcon={lastClickedSidebarIcon}
           goCodeShare={goCodeShare}

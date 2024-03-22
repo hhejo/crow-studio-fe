@@ -1,15 +1,19 @@
+// React
 import { useRef } from "react";
+// Tooltip
 import ReactTooltip from "react-tooltip";
+// Styled
 import styled from "styled-components";
-import { ReactComponent as IcDirectory } from "../../../../assets/icons/ic_dir.svg";
-import { ReactComponent as IcEdit } from "../../../../assets/icons/ic_edit.svg";
-import { ReactComponent as IcGit } from "../../../../assets/icons/ic_git.svg";
-import { ReactComponent as IcTeam } from "../../../../assets/icons/ic_team.svg";
-import { ReactComponent as IcApi } from "../../../../assets/icons/ic_api.svg";
-import { ReactComponent as IcVar } from "../../../../assets/icons/ic_var.svg";
-import { ReactComponent as IcSettings } from "../../../../assets/icons/ic_set.svg";
+// Icon
+import { ReactComponent as IcDirectory } from "../../../assets/icons/ic_dir.svg";
+import { ReactComponent as IcEdit } from "../../../assets/icons/ic_edit.svg";
+import { ReactComponent as IcGit } from "../../../assets/icons/ic_git.svg";
+import { ReactComponent as IcTeam } from "../../../assets/icons/ic_team.svg";
+import { ReactComponent as IcApi } from "../../../assets/icons/ic_api.svg";
+import { ReactComponent as IcVar } from "../../../assets/icons/ic_var.svg";
+import { ReactComponent as IcSettings } from "../../../assets/icons/ic_set.svg";
 
-const SidebarIconsContainer = (props) => {
+export const SidebarIcons = (props) => {
   const iconClassRef = useRef(null);
   const { clickIcon, lastClickedSidebarIcon: lastClicked } = props;
   const { goCodeShare } = props;
@@ -61,6 +65,7 @@ const SidebarIconsContainer = (props) => {
           <IcDirectory alt="directory" />
         </IcSpan>
       </ListHover>
+
       {/* CodeShare */}
       <ListHover
         className={`flex flex-col items-center py-0.5`}
@@ -72,6 +77,7 @@ const SidebarIconsContainer = (props) => {
           <IcEdit alt="settings" />
         </IcSpan>
       </ListHover>
+
       {/* Git */}
       <ListHover
         className={`flex flex-col items-center py-0.5 ${activeIconGit}`}
@@ -83,6 +89,7 @@ const SidebarIconsContainer = (props) => {
           <IcGit alt="git" />
         </IcSpan>
       </ListHover>
+
       {/* Team */}
       <ListHover
         className={`flex flex-col items-center py-0.5 ${activeIconTeam}`}
@@ -94,6 +101,7 @@ const SidebarIconsContainer = (props) => {
           <IcTeam alt="team" />
         </IcSpan>
       </ListHover>
+
       {/* API */}
       <ListHover
         className={`flex flex-col items-center py-0.5 ${activeIconApi}`}
@@ -105,6 +113,7 @@ const SidebarIconsContainer = (props) => {
           <IcApi alt="api" />
         </IcSpan>
       </ListHover>
+
       {/* Variable Name */}
       <ListHover
         className={`flex flex-col items-center py-0.5 ${activeIconVar}`}
@@ -116,6 +125,7 @@ const SidebarIconsContainer = (props) => {
           <IcVar alt="variable name" />
         </IcSpan>
       </ListHover>
+
       {/* Settings */}
       <ListHover
         className={`flex flex-col items-center py-0.5 ${activeIconSet}`}
@@ -131,8 +141,6 @@ const SidebarIconsContainer = (props) => {
     </Div>
   );
 };
-
-export default SidebarIconsContainer;
 
 const Div = styled.div`
   border-radius: 10px 0 0 10px;
