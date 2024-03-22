@@ -27,18 +27,13 @@ const Teams = () => {
           const docSnap = await getDoc(doc(firestore, "users", leaderDocId)); // 3. 팀 리더 docId로 해당 유저 정보 가져오기
           const { nickname: leaderNickname } = docSnap.data(); // 닉네임만 선택
           // teammates의 팀원들 userDocId로 각각에 대해 유저 정보 받아옴
-          const teammatesNicknames = []; // 팀원 닉네임의 배열
+          const myTeammates = []; // 팀원 닉네임의 배열
           for (let teammateDocId of teammates) {
             const snap = await getDoc(doc(firestore, "users", teammateDocId)); // 4. 팀원 docId로 해당 유저 정보 가져오기
             const { nickname } = snap.data(); // 닉네임만 선택
-            teammatesNicknames.push(nickname); // 닉네임 추가
+            myTeammates.push(nickname); // 닉네임 추가
           }
-          const myTeam = {
-            teamDocId,
-            teamName,
-            leaderNickname,
-            teammatesNicknames,
-          };
+          const myTeam = { teamDocId, teamName, leaderNickname, myTeammates };
           setMyTeams((prev) => [...prev, myTeam]);
         }
       } catch (error) {
