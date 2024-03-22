@@ -5,7 +5,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../../../firebase";
 // Styled
 import styled from "styled-components";
-//
+// MUI
 import TreeView from "@mui/lab/TreeView";
 import TreeItem, { treeItemClasses } from "@mui/lab/TreeItem";
 import Box from "@mui/material/Box";
@@ -32,29 +32,6 @@ import { swalOptions, MySwal } from "../../../sweet-alert";
 import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 
-const MENU_ID = "menu-id";
-// const [TYPE_FOLDER, TYPE_FILE] = ["1", "2"];
-
-// 파일, 폴더 임시 더미 데이터
-const dummyFilesFolders = {
-  id: "src",
-  name: "src",
-  children: [
-    {
-      id: "src/comps",
-      name: "comps",
-      children: [
-        { id: "src/comps/test1", name: "test1" },
-        { id: "src/comps/test2", name: "test2" },
-        { id: "src/comps/snake.py", name: "snake.py" },
-      ],
-    },
-    { id: "src/app.py", name: "app.py" },
-    { id: "src/readme.md", name: "readme.md" },
-    { id: "src/xyz", name: "xyz" },
-  ],
-};
-
 // filePath(nodeIds)를 받아 확장자가 무엇인지 확인하고 해당 파일 타입을 리턴
 const getFileType = (filePath) => {
   const extension = filePath.split(".")[1] ?? null;
@@ -76,16 +53,10 @@ const getFileName = (filePath) => {
 };
 
 export const Directory = (props) => {
-  const { teamDocId, loading, editorRef, saveFileContent } = props;
-  const { selected, setSelected } = props;
-  const { show } = useContextMenu({ id: MENU_ID });
-  const [filesFolders, setFilesFolders] = useState({});
-
-  // 프로젝트 파일, 폴더 구조 받아서 화면에 표시하기
-  useEffect(() => {
-    setFilesFolders(dummyFilesFolders);
-    return () => setFilesFolders({});
-  }, []);
+  const { teamDocId, projectDocId, loading, saveFileContent } = props;
+  const { selected, setSelected, editorRef } = props;
+  const { myDirectory, setMyDirectory } = props;
+  const { show } = useContextMenu({ id: "menu-id" });
 
   // 디렉토리에 폴더나 파일 추가하는 함수
   const addNewChildToNode = (nameToCreate) => {
@@ -111,9 +82,9 @@ export const Directory = (props) => {
       return false;
     };
 
-    const updatedFilesFolders = { ...filesFolders };
-    addNewChildRecursively(updatedFilesFolders);
-    setFilesFolders(updatedFilesFolders);
+    const updatedMyDirectory = { ...myDirectory };
+    addNewChildRecursively(updatedMyDirectory);
+    setMyDirectory(updatedMyDirectory);
   };
 
   // 폴더 생성 핸들러
@@ -135,15 +106,13 @@ export const Directory = (props) => {
     }
     addNewChildToNode(nameToCreate);
     try {
-      const projectDocId = "F4jS31nXypDkajX17ZNe";
-      const docRef = doc(firestore, "projects", projectDocId);
-      const data = { directory: filesFolders };
-      await updateDoc(docRef, data);
-      console.log("wow");
+      const projectsDocRef = doc(firestore, "projects", projectDocId);
+      const updateDirectoryField = { directory: myDirectory };
+      await updateDoc(projectsDocRef, updateDirectoryField); // directory 필드 덮어쓰기
+      toast.success("폴더 생성 성공");
     } catch (error) {
       console.error(error);
     }
-    toast.success("폴더 생성 성공");
   };
 
   // 파일 생성 핸들러
@@ -164,7 +133,14 @@ export const Directory = (props) => {
       return;
     }
     addNewChildToNode(nameToCreate);
-    toast.success("파일 생성 성공");
+    try {
+      const projectsDocRef = doc(firestore, "projects", projectDocId);
+      const updateDirectoryField = { directory: myDirectory };
+      await updateDoc(projectsDocRef, updateDirectoryField); // directory 필드 덮어쓰기
+      toast.success("파일 생성 성공");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // 이름 변경 핸들러
@@ -206,12 +182,19 @@ export const Directory = (props) => {
         }
         return false;
       };
-      const updatedFilesFolders = { ...filesFolders };
-      updateNodeNameRecursively(updatedFilesFolders);
-      setFilesFolders(updatedFilesFolders);
+      const updatedMyDirectory = { ...myDirectory };
+      updateNodeNameRecursively(updatedMyDirectory);
+      setMyDirectory(updatedMyDirectory);
     };
     updateNodeNameById(selected.filePath, nameToUpdate);
-    toast.success("이름 변경 성공");
+    try {
+      const projectsDocRef = doc(firestore, "projects", projectDocId);
+      const updateDirectoryField = { directory: myDirectory };
+      await updateDoc(projectsDocRef, updateDirectoryField); // directory 필드 덮어쓰기
+      toast.success("이름 변경 성공");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // 삭제 핸들러
@@ -233,17 +216,28 @@ export const Directory = (props) => {
         }
         return false;
       };
-      const updatedFilesFolders = { ...filesFolders };
-      removeNodeRecursively(updatedFilesFolders);
-      setFilesFolders(updatedFilesFolders);
+      const updatedMyDirectory = { ...myDirectory };
+      removeNodeRecursively(updatedMyDirectory);
+      setMyDirectory(updatedMyDirectory);
     };
     removeNodeById(selected.filePath);
-    setSelected({ fileName: "", fileType: "", filePath: "" });
-    toast.success("삭제 성공");
+    try {
+      const projectsDocRef = doc(firestore, "projects", projectDocId);
+      const updateDirectoryField = { directory: myDirectory };
+      await updateDoc(projectsDocRef, updateDirectoryField); // directory 필드 덮어쓰기
+      setSelected({ fileName: "", fileType: "", filePath: "" });
+      toast.success("삭제 성공");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // 파일 내용 저장 핸들러
-  const saveFileContentHandler = () => saveFileContent();
+  const saveFileContentHandler = () => {
+    // editorRef.current.getModel().setValue(res.data.fileContent);
+    console.log(editorRef.current.getModel().getValue());
+    // saveFileContent()
+  };
 
   // 노드 선택 (폴더, 파일 아이콘 선택) 핸들러
   const nodeSelectHandler = (e, nodeIds) => {
@@ -252,7 +246,6 @@ export const Directory = (props) => {
       fileType: getFileType(nodeIds),
       filePath: nodeIds,
     };
-    console.log("changeTo:", changeTo);
     setSelected(changeTo);
   };
 
@@ -392,11 +385,11 @@ export const Directory = (props) => {
           sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
           onNodeSelect={nodeSelectHandler}
         >
-          {renderTree(filesFolders)}
+          {renderTree(myDirectory)}
         </TreeView>
       </div>
       {/* Context Menu */}
-      <Menu id={MENU_ID} className="contexify-crow">
+      <Menu id={"menu-id"} className="contexify-crow">
         <Item onClick={renameFileHandler}>
           이름 변경 <BsPencilFill className="ml-1" />
         </Item>

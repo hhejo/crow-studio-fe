@@ -7,8 +7,7 @@ import ConsoleTerminal from "./components/ConsoleTerminal";
 
 export const ProjectContent = (props) => {
   const { lastClickedSidebarIcon, selectedFilePath } = props;
-  const { setting, setSetting } = props;
-  const editorRef = useRef(null); // 에디터 내용
+  const { setting, setSetting, editorRef } = props;
   const editorHeightRef = useRef(); // 에디터 높이 Ref
   const [editorHeight, setEditorHeight] = useState(); // 에디터 높이
   const [consoleHeight, setConsoleHeight] = useState(""); // 콘솔 높이
@@ -55,6 +54,7 @@ export const ProjectContent = (props) => {
     setLoadingCompile(false);
     // setLintResultList([]);
     // const dataToCompile = { type: projectType, filePath: selectedFilePath, input: enteredInput };
+    //
   };
 
   // 코드 실행 멈춤 버튼 클릭
