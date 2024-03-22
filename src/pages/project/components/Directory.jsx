@@ -234,7 +234,6 @@ export const Directory = (props) => {
 
   // 파일 내용 저장 핸들러
   const saveFileContentHandler = () => {
-    // editorRef.current.getModel().setValue(res.data.fileContent);
     console.log(editorRef.current.getModel().getValue());
     // saveFileContent()
   };
