@@ -11,7 +11,7 @@ import { startLoading, stopLoading } from "../../redux/global-slice";
 import { toast } from "react-toastify";
 // Components
 import { SidebarIcons } from "./components/SidebarIcons";
-import Directory from "./components/sidebar/Directory";
+import { Directory } from "./components/Directory";
 import Git from "./components/sidebar/Git";
 import { Team } from "./components/Team";
 import Api from "./components/sidebar/Api";
@@ -36,7 +36,7 @@ const Project = () => {
   const [myTeam, setMyTeam] = useState({}); // myTeam: { teamName, leaderDocId, leaderNickname, projectType, teamGit }
   const [myTeammates, setMyTeammates] = useState([]); // myTeammate: { docId, nickname, email }
   const [lastClickedSidebarIcon, setLastClickedSidebarIcon] = useState("Dir"); // 마지막으로 선택된 사이드바 아이콘
-  const [selected, setSelected] = useState(initialSelected); // 디렉토리에서 선택된 파일이나 폴더
+  const [selected, setSelected] = useState(initialSelected); // selected: { fileName, fileType, filePath } 디렉토리에서 선택된 파일이나 폴더
 
   const { loading } = useSelector((state) => state.global.value);
   // const [lintResultList, setLintResultList] = useState([]);

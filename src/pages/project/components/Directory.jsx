@@ -1,45 +1,39 @@
+// React
 import { useState, useEffect } from "react";
+// Styled
 import styled from "styled-components";
-import { toast } from "react-toastify";
-
+//
 import TreeView from "@mui/lab/TreeView";
 import TreeItem, { treeItemClasses } from "@mui/lab/TreeItem";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { styled as muiStyled } from "@mui/material/styles";
+// Prop Type
 import PropTypes from "prop-types";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-
-// icons
+// Icon
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FolderIcon from "@mui/icons-material/Folder";
-// import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SaveIcon from "@mui/icons-material/Save";
+// import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import { IoLogoPython } from "react-icons/io5";
 import { BsPencilFill } from "react-icons/bs";
-
-import { ReactComponent as IcNewFile } from "../../../../assets/icons/ic_new_file.svg";
-import { ReactComponent as IcNewDir } from "../../../../assets/icons/ic_new_dir.svg";
-
+import { ReactComponent as IcNewFile } from "../../../assets/icons/ic_new_file.svg";
+import { ReactComponent as IcNewDir } from "../../../assets/icons/ic_new_dir.svg";
+// Toast
+import { toast } from "react-toastify";
+// Sweet Alert
+import { swalOptions, MySwal } from "../../../sweet-alert";
+// Context Menu
 import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 
 const MENU_ID = "menu-id";
 // const [TYPE_FOLDER, TYPE_FILE] = ["1", "2"];
 
-// MySwal.fire SweetAlert 옵션
-const alertOption = {
-  showCancelButton: true,
-  confirmButtonText: "네",
-  cancelButtonText: "아니오",
-  background: "#3C3C3C",
-};
-
 // 파일, 폴더 임시 더미 데이터
-const dummyFilesDirectories = {
+const dummyFilesFolders = {
   id: "src",
   name: "src",
   children: [
@@ -77,141 +71,175 @@ const getFileName = (filePath) => {
   return name; // 폴더인 경우
 };
 
-const Directory = (props) => {
+export const Directory = (props) => {
   const { teamDocId, loading, editorRef, saveFileContent } = props;
   const { selected, setSelected } = props;
-  const MySwal = withReactContent(Swal);
   const { show } = useContextMenu({ id: MENU_ID });
-  const [filesDirectories, setFilesDirectories] = useState({});
+  const [filesFolders, setFilesFolders] = useState({});
 
   // 프로젝트 파일, 폴더 구조 받아서 화면에 표시하기
   useEffect(() => {
-    setFilesDirectories(dummyFilesDirectories);
-    return () => setFilesDirectories({});
+    setFilesFolders(dummyFilesFolders);
+    return () => setFilesFolders({});
   }, []);
 
-  // 디렉터리 생성
-  const createDirectoryHandler = async () => {
-    const alertResult = await MySwal.fire({
-      ...alertOption,
-      title: "생성할 폴더 이름을 입력하세요",
-      input: "text",
-    });
-    if (!alertResult.isConfirmed) return;
-    const { value: newDirectoryName } = alertResult;
-    if (newDirectoryName.length === 0) {
-      toast.warning("폴더 이름을 입력해야합니다");
-      return;
-    }
-    if (newDirectoryName.includes(".")) {
-      toast.warning("폴더 이름에 점(.)을 넣을 수 없습니다");
-      return;
-    }
-    console.log("newDirectoryName:", newDirectoryName);
-    // const fileInfoData = { fileTitle: newDirectoryName.value, filePath: selectedFilePath };
-    // try {
-    //   await fileApi.createFile(teamDocId, TYPE_FOLDER, fileInfoData);
-    //   const res = await projectApi.getAllFiles(teamDocId);
-    //   setFilesDirectories(res.data);
-    //   toast.success("폴더 생성 성공");
-    // } catch (err) {
-    //   toast.error("폴더 생성 실패");
-    // }
+  // 디렉토리에 폴더나 파일 추가하는 함수
+  const addNewChildToNode = (nameToCreate) => {
+    const { filePath, fileType } = selected;
+    let destFilePath = "";
+    if (fileType === "folder") destFilePath = filePath;
+    else destFilePath = filePath.split("/").slice(0, -1).join("/");
+
+    const addNewChildRecursively = (node) => {
+      if (node.id === destFilePath) {
+        if (!node.children) node.children = [];
+        const newChild = {
+          id: `${destFilePath}/${nameToCreate}`,
+          name: nameToCreate,
+        };
+        console.log(newChild);
+        node.children.push(newChild);
+        return true;
+      }
+      if (node.children)
+        for (let child of node.children)
+          if (addNewChildRecursively(child)) return true;
+      return false;
+    };
+
+    const updatedFilesFolders = { ...filesFolders };
+    addNewChildRecursively(updatedFilesFolders);
+    setFilesFolders(updatedFilesFolders);
   };
 
-  // 파일 생성
+  // 폴더 생성 핸들러
+  const createFolderHandler = async () => {
+    const [title, input] = ["생성할 폴더 이름을 입력하세요", "text"];
+    const result = await MySwal.fire({ ...swalOptions, title, input });
+    if (!result.isConfirmed) return;
+    const { value: nameToCreate } = result;
+    if (nameToCreate.length === 0) {
+      toast.warning("폴더 이름을 입력");
+      return;
+    } else if (nameToCreate.length > 20) {
+      toast.warning("20자 이하로 입력");
+      return;
+    }
+    if (nameToCreate.includes(".")) {
+      toast.warning("폴더 이름에 점(.)을 넣을 수 없음");
+      return;
+    }
+    addNewChildToNode(nameToCreate);
+    toast.success("폴더 생성 성공");
+  };
+
+  // 파일 생성 핸들러
   const createFileHandler = async () => {
-    const alertResult = await MySwal.fire({
-      ...alertOption,
-      title: "생성할 파일 이름(확장자까지)을 입력하세요",
-      input: "text",
-    });
-    if (!alertResult.isConfirmed) return;
-    const { value: newFileName } = alertResult;
-    if (newFileName.length === 0) {
-      toast.warning("파일 이름을 입력해야합니다");
+    const [title, input] = ["생성할 파일 이름(확장자까지)을 입력", "text"];
+    const result = await MySwal.fire({ ...swalOptions, title, input });
+    if (!result.isConfirmed) return;
+    const { value: nameToCreate } = result;
+    if (nameToCreate.length === 0) {
+      toast.warning("파일 이름을 입력");
+      return;
+    } else if (nameToCreate.length > 20) {
+      toast.warning("20자 이하로 입력");
       return;
     }
-    if (!newFileName.includes(".")) {
-      toast.warning("확장자까지 유효하게 입력해야 합니다");
+    if (!nameToCreate.includes(".")) {
+      toast.warning("확장자까지 유효하게 입력해야 함");
       return;
     }
-    console.log("newFileName:", newFileName);
-    // const fileInfoData = { fileTitle: newFileName.value, filePath: selectedFilePath };
-    // try {
-    //   await fileApi.createFile(teamDocId, TYPE_FILE, fileInfoData);
-    //   const res = await projectApi.getAllFiles(teamDocId);
-    //   setFilesDirectories(res.data);
-    //   toast.success("파일 생성 성공");
-    // } catch (err) {
-    //   toast.error("파일 생성 실패");
-    // }
+    addNewChildToNode(nameToCreate);
+    toast.success("파일 생성 성공");
   };
 
-  // 이름 변경
+  // 이름 변경 핸들러
   const renameFileHandler = async () => {
-    const alertResult = await Swal.fire({
-      ...alertOption,
-      title: "이름 변경",
-      input: "text",
-      inputValue: selected.fileName,
-    });
-    if (!alertResult.isConfirmed) return;
-    const { value: newName } = alertResult;
-    if (newName.length === 0) {
-      toast.warning("변경할 이름을 입력해야합니다");
+    const [title, input] = ["이름 변경", "text"];
+    const inputValue = selected.fileName;
+    const res = await MySwal.fire({ ...swalOptions, title, input, inputValue });
+    if (!res.isConfirmed) return;
+    const { value: nameToUpdate } = res;
+    if (nameToUpdate.length === 0) {
+      toast.warning("변경할 이름을 입력해야 함");
+      return;
+    } else if (nameToUpdate.length > 20) {
+      toast.warning("20자 이하로 입력");
       return;
     }
-    if (newName === selected.fileName) return;
-    else if (!newName) return;
-    console.log("newName:", newName);
-    // const renameData = { filePath: selectedFilePath, oldFileName, fileTitle: newName.value };
-    // try {
-    //   await fileApi.renameFile(teamDocId, renameData);
-    //   const res = await projectApi.getAllFiles(teamDocId);
-    //   setFilesDirectories(res.data);
-    //   toast.success("이름 변경 성공");
-    // } catch (err) {
-    //   toast.error("이름 변경 실패");
-    // }
+    if (selected.fileType === "folder") {
+      if (nameToUpdate.includes(".")) {
+        toast.warning("폴더 이름에 점(.)을 넣을 수 없음");
+        return;
+      }
+    } else {
+      if (!nameToUpdate.includes(".")) {
+        toast.warning("확장자까지 유효하게 입력해야 함");
+        return;
+      }
+    }
+    if (nameToUpdate === selected.fileName) return;
+    else if (!nameToUpdate) return;
+    const updateNodeNameById = (nodeId, nameToUpdate) => {
+      const updateNodeNameRecursively = (node) => {
+        if (!node.children) return false;
+        for (let child of node.children) {
+          if (child.id === nodeId) {
+            child.name = nameToUpdate;
+            return true;
+          }
+          if (updateNodeNameRecursively(child)) return true;
+        }
+        return false;
+      };
+      const updatedFilesFolders = { ...filesFolders };
+      updateNodeNameRecursively(updatedFilesFolders);
+      setFilesFolders(updatedFilesFolders);
+    };
+    updateNodeNameById(selected.filePath, nameToUpdate);
+    toast.success("이름 변경 성공");
   };
 
-  // 삭제
+  // 삭제 핸들러
   const deleteHandler = async () => {
-    const alertResult = await MySwal.fire({
-      ...alertOption,
-      title: `${selected.fileName}을(를) 삭제하시겠습니까?`,
-    });
-    if (!alertResult.isConfirmed) return;
-    // const filePathData = { filePath: selectedFilePath };
-    // try {
-    //   await fileApi.deleteFile(
-    //     teamDocId,
-    //     selectedFileType === "folder" ? TYPE_FOLDER : TYPE_FILE,
-    //     filePathData
-    //   );
-    //   const res = await projectApi.getAllFiles(teamDocId);
-    //   setFilesDirectories(res.data);
-    //   const resetPayloadData = { type: "", name: "", path: "" };
-    //   dispatch(selectFile(resetPayloadData));
-    //   editorRef.current.getModel().setValue("");
-    //   toast.success("파일 삭제 성공");
-    // } catch (err) {
-    //   console.error(err);
-    //   toast.error("파일 삭제 실패");
-    // }
+    const target = selected.filePath.split("/").at(-1);
+    const title = `${target}을(를) 삭제하시겠습니까?`;
+    const result = await MySwal.fire({ ...swalOptions, title });
+    if (!result.isConfirmed) return;
+    const removeNodeById = (nodeId) => {
+      const removeNodeRecursively = (node) => {
+        if (!node.children) return false;
+        for (let i = 0; i < node.children.length; i++) {
+          const child = node.children[i];
+          if (child.id === nodeId) {
+            node.children.splice(i, 1);
+            return true;
+          }
+          if (removeNodeRecursively(child)) return true;
+        }
+        return false;
+      };
+      const updatedFilesFolders = { ...filesFolders };
+      removeNodeRecursively(updatedFilesFolders);
+      setFilesFolders(updatedFilesFolders);
+    };
+    removeNodeById(selected.filePath);
+    setSelected({ fileName: "", fileType: "", filePath: "" });
+    toast.success("삭제 성공");
   };
 
-  // 파일 내용 저장
+  // 파일 내용 저장 핸들러
   const saveFileContentHandler = () => saveFileContent();
 
-  // 노드 선택 (폴더, 파일 아이콘 선택)
+  // 노드 선택 (폴더, 파일 아이콘 선택) 핸들러
   const nodeSelectHandler = (e, nodeIds) => {
     const changeTo = {
       fileName: getFileName(nodeIds),
       fileType: getFileType(nodeIds),
       filePath: nodeIds,
     };
+    console.log("changeTo:", changeTo);
     setSelected(changeTo);
   };
 
@@ -277,10 +305,13 @@ const Directory = (props) => {
     );
   }
 
-  // 파일, 폴더 아이콘 오른쪽 클릭 컨텍스트 메뉴
-  const contextMenuHandler = (e) => {
-    e.preventDefault();
-    show({ event: e });
+  // propTypes
+  StyledTreeItem.propTypes = {
+    bgColor: PropTypes.string,
+    color: PropTypes.string,
+    labelIcon: PropTypes.elementType.isRequired,
+    labelInfo: PropTypes.string,
+    labelText: PropTypes.string.isRequired,
   };
 
   // 스타일 적용된 트리 생성 함수
@@ -306,13 +337,10 @@ const Directory = (props) => {
     </StyledTreeItem>
   );
 
-  // propTypes
-  StyledTreeItem.propTypes = {
-    bgColor: PropTypes.string,
-    color: PropTypes.string,
-    labelIcon: PropTypes.elementType.isRequired,
-    labelInfo: PropTypes.string,
-    labelText: PropTypes.string.isRequired,
+  // 파일, 폴더 아이콘 오른쪽 클릭 컨텍스트 메뉴
+  const contextMenuHandler = (e) => {
+    e.preventDefault();
+    show({ event: e });
   };
 
   return (
@@ -327,7 +355,7 @@ const Directory = (props) => {
               <IcNewFile alt="IcNewFile" />
             </IcSpan>
             {/* 새 폴더 생성 버튼 */}
-            <IcSpan onClick={createDirectoryHandler} data-tip="새 폴더">
+            <IcSpan onClick={createFolderHandler} data-tip="새 폴더">
               <IcNewDir className="mt-0.5" alt="IcNewDir" />
             </IcSpan>
             {/* 파일 저장 버튼 */}
@@ -351,7 +379,7 @@ const Directory = (props) => {
           sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
           onNodeSelect={nodeSelectHandler}
         >
-          {renderTree(filesDirectories)}
+          {renderTree(filesFolders)}
         </TreeView>
       </div>
       {/* Context Menu */}
@@ -364,8 +392,6 @@ const Directory = (props) => {
     </div>
   );
 };
-
-export default Directory;
 
 const IcSpan = styled.span`
   width: 34px;
