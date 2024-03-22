@@ -12,6 +12,26 @@ import { toast } from "react-toastify";
 // Components
 import { TeamCreateForm } from "./TeamCreateForm";
 
+// 파일, 폴더 임시 더미 데이터
+const dummy = {
+  id: "src",
+  name: "src",
+  children: [
+    {
+      id: "src/comps",
+      name: "comps",
+      children: [
+        { id: "src/comps/test1", name: "test1" },
+        { id: "src/comps/test2", name: "test2" },
+        { id: "src/comps/snake.py", name: "snake.py" },
+      ],
+    },
+    { id: "src/app.py", name: "app.py" },
+    { id: "src/readme.md", name: "readme.md" },
+    { id: "src/xyz", name: "xyz" },
+  ],
+};
+
 const TeamCreate = () => {
   const [dispatch, navigate] = [useDispatch(), useNavigate()];
   const { docId } = useSelector((state) => state.user.value);
@@ -27,7 +47,7 @@ const TeamCreate = () => {
       const updateTeamsField = { teams: arrayUnion(teamDocId) };
       await updateDoc(doc(firestore, "users", docId), updateTeamsField); // 2. firestore의 users 컬렉션에서 현재 로그인한 유저의 teams 필드에 생성된 팀 docId 추가
       const ProjectsColRef = collection(firestore, "projects");
-      const projectToAdd = { teamDocId, directory: {}, setting: {} }; // 생성할 프로젝트: teamDocId, directory, setting
+      const projectToAdd = { teamDocId, directory: dummy, setting: {} }; // 생성할 프로젝트: teamDocId, directory, setting
       const { id: projectDocId } = await addDoc(ProjectsColRef, projectToAdd); // 3. firestore의 projects 컬렉션에 생성된 프로젝트 추가
       const updatePjtDocIdField = { projectDocId };
       await updateDoc(doc(firestore, "teams", teamDocId), updatePjtDocIdField); // 4. firestore의 teams 컬렉션에서 현재 생성된 팀의 projectDocId 필드를 생성된 프로젝트 projectDocId로 갱신
