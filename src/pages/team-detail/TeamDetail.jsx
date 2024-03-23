@@ -8,7 +8,7 @@ import { getDocs, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { query, where, arrayUnion, arrayRemove } from "firebase/firestore";
 import { firestore } from "../../firebase";
 // Toast
-import { toast } from "react-toastify";
+import { alertToast, toastType } from "../../toast";
 // Sweet Alert
 import { swalOptions, MySwal } from "../../sweet-alert";
 // Components
@@ -65,7 +65,7 @@ const TeamDetail = () => {
       const { teamName } = documentSnapshot.data(); // 변경된 팀 이름
       setMyTeam((prev) => ({ ...prev, teamName })); // 3. myTeam 정보 업데이트
       setShowTeamNameInput(false); // 4. 팀명 변경 입력창 숨기기
-      toast.success("팀명 변경 성공");
+      alertToast(toastType.success, "팀명 변경 성공");
     } catch (error) {
       console.error(error);
     }
@@ -78,7 +78,7 @@ const TeamDetail = () => {
     const res = await MySwal.fire({ ...swalOptions, title });
     if (!res.isConfirmed) return;
     if (myTeammates.length > 0) {
-      toast.warning("팀원이 있어 팀 삭제 불가");
+      alertToast(toastType.warning, "팀원이 있어 팀 삭제 불가");
       return;
     }
     try {
@@ -86,7 +86,7 @@ const TeamDetail = () => {
       const updateTeamsField = { teams: arrayRemove(teamDocId) };
       await updateDoc(doc(firestore, "users", docId), updateTeamsField); // 2. 팀 리더의 teams에서 현재 팀 삭제하기
       navigate("/teams", { replace: true });
-      toast.success("팀 삭제 성공");
+      alertToast(toastType.success, "팀 삭제 성공");
     } catch (error) {
       console.error(error);
     }
@@ -104,7 +104,7 @@ const TeamDetail = () => {
       const updateTeamsField = { teams: arrayRemove(teamDocId) };
       await updateDoc(doc(firestore, "users", docId), updateTeamsField); // 2. 해당 팀원의 teams 필드에서 현재 팀 삭제하기;
       navigate("/teams", { replace: true });
-      toast.success("팀 탈퇴 성공");
+      alertToast(toastType.success, "팀 탈퇴 성공");
     } catch (error) {
       console.error(error);
     }
@@ -140,7 +140,7 @@ const TeamDetail = () => {
       myTeammates.filter((myTeammate) => myTeammate.docId === teammateDocId)
         .length > 0
     ) {
-      toast.warning("이미 추가된 팀원");
+      alertToast(toastType.warning, "이미 추가된 팀원");
       return;
     }
     try {
@@ -165,7 +165,7 @@ const TeamDetail = () => {
       //   const newTeammate = { teammateDocId, teammateNickname };
       //   setMyTeammateList((prev) => [...prev, newTeammate]);
       // }
-      toast.success("팀원 추가 성공");
+      alertToast(toastType.success, "팀원 추가 성공");
     } catch (error) {
       console.error(error);
     }
@@ -204,7 +204,7 @@ const TeamDetail = () => {
       //   const newTeammate = { teammateDocId, teammateNickname };
       //   setMyTeammateList((prev) => [...prev, newTeammate]);
       // }
-      toast.success("팀원 삭제 성공");
+      alertToast(toastType.success, "팀원 삭제 성공");
     } catch (error) {
       console.error(error);
     }
@@ -213,7 +213,7 @@ const TeamDetail = () => {
   // 프로젝트 타입 변경 핸들러
   const updateProjectTypeHandler = async (projectTypeToUpdate) => {
     if (projectType === projectTypeToUpdate) {
-      toast.warning("이전과 동일한 프로젝트 타입");
+      alertToast(toastType.warning, "이전과 동일한 프로젝트 타입");
       setShowProjectTypeSelect(false);
       return;
     }
@@ -223,7 +223,7 @@ const TeamDetail = () => {
       const documentSnapshot = await getDoc(teamsDocRef); // 팀명 변경과 동일
       const { projectType } = documentSnapshot.data();
       setMyTeam((prev) => ({ ...prev, projectType }));
-      toast.success("프로젝트 타입 변경 성공");
+      alertToast(toastType.success, "프로젝트 타입 변경 성공");
     } catch (error) {
       console.error(error);
     } finally {

@@ -8,7 +8,7 @@ import { auth } from "../../firebase";
 import { setCurrentUser } from "../../redux/user-slice";
 import { startLoading, stopLoading } from "../../redux/global-slice";
 // Toast
-import { toast } from "react-toastify";
+import { alertToast, toastType } from "../../toast";
 // Components
 import { LoginForm } from "./LoginForm";
 import { TitleWithLogo } from "../../components/TitleWithLogo";
@@ -23,13 +23,13 @@ const Login = () => {
     try {
       const { user } = await signInWithEmailAndPassword(auth, email, pw); // 1. firebase authentication에서 email, password가 일치하는 유저 정보 가져오기
       dispatch(setCurrentUser(user)); // 2. Redux에 로그인 유저 정보 저장. 현재 로그인한 유저가 됨. docId는 없지만 어차피 App.js에서 작업
-      toast.success("로그인 성공"); // 로그인 성공 토스트
+      alertToast(toastType.success, "로그인 성공");
       navigate("/teams", { replace: true }); // /teams로 리다이렉트하고 뒤로가기 방지
     } catch (error) {
       const { code, message } = error; // 로그인 에러
       if (code === "auth/invalid-credential")
-        toast.warning("유효하지 않은 이메일이나 비밀번호");
-      else toast.error("로그인 오류"); // 기타 에러
+        alertToast(toastType.warning, "유효하지 않은 이메일이나 비밀번호");
+      else alertToast(toastType.error, "로그인 오류");
       console.error(message);
     } finally {
       dispatch(stopLoading()); // 로딩 화면 종료

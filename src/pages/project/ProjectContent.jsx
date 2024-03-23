@@ -1,9 +1,13 @@
+// React
 import { useState, useEffect, useRef } from "react";
+// Monaco Editor
 import Editor from "@monaco-editor/react";
+// Split Pane
 import SplitPane from "react-split-pane";
+// Icon
 import { TiArrowRightThick } from "react-icons/ti";
-
-import ConsoleTerminal from "./components/ConsoleTerminal";
+// Component
+import { ConsoleTerminal } from "./components/ConsoleTerminal";
 
 export const ProjectContent = (props) => {
   const { lastClickedSidebarIcon, selectedFilePath } = props;
@@ -99,6 +103,7 @@ export const ProjectContent = (props) => {
             <TiArrowRightThick className="text-point_yellow" />
             <div className="ml-2 break-all">{selectedFilePath}</div>
           </div>
+
           {/* 코드 에디터 */}
           <Editor
             style={{ overflow: "auto" }}
@@ -111,6 +116,7 @@ export const ProjectContent = (props) => {
             options={editorOptions}
           />
         </div>
+
         {/* 아래: 콘솔 터미널 */}
         <ConsoleTerminal
           consoleHeight={consoleHeight}

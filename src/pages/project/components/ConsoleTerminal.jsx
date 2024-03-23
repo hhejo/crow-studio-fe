@@ -1,9 +1,12 @@
+// React
 import { useState } from "react";
+// Icon
 import { BsPlayFill, BsStopFill } from "react-icons/bs";
 import { TbTerminal } from "react-icons/tb";
+// Component
 import { LoadingMini } from "../../../components/LoadingMini";
 
-const ConsoleTerminal = (props) => {
+export const ConsoleTerminal = (props) => {
   const { consoleHeight, consoleSetting, loadingCompile } = props;
   const { compiledOutputList, startCompile, stopCompile, toGoogle } = props;
   const [enteredInput, setEnteredInput] = useState("");
@@ -36,6 +39,7 @@ const ConsoleTerminal = (props) => {
             size="27"
             data-tip="코드 실행"
           />
+
           {/* 실행 멈춤 버튼 */}
           <BsStopFill
             className="cursor-pointer hover:text-point_purple hover:scale-110 transition"
@@ -45,6 +49,7 @@ const ConsoleTerminal = (props) => {
           />
         </div>
       </div>
+
       {/* console 하단: Input, Output */}
       <div
         className="flex justify-between"
@@ -59,6 +64,7 @@ const ConsoleTerminal = (props) => {
               Input
             </div>
           </div>
+
           {/* Input 입력창 */}
           <textarea
             name="input"
@@ -72,6 +78,7 @@ const ConsoleTerminal = (props) => {
             }}
           ></textarea>
         </div>
+
         {/* Output */}
         <div className="w-1/2 ml-1">
           {/* Output 라벨 */}
@@ -81,6 +88,7 @@ const ConsoleTerminal = (props) => {
               Output
             </div>
           </div>
+
           {/* Output 출력창 */}
           <div
             className={`w-full h-full p-[10px] bg-component_item_bg_+2_dark rounded-[10px] rounded-tl-[0px] text-sm font-medium text-white overflow-auto ${
@@ -113,5 +121,3 @@ const ConsoleTerminal = (props) => {
     </div>
   );
 };
-
-export default ConsoleTerminal;

@@ -8,7 +8,7 @@ import { firestore } from "../../firebase";
 // Slice
 import { startLoading, stopLoading } from "../../redux/global-slice";
 // Toast
-import { toast } from "react-toastify";
+import { alertToast, toastType } from "../../toast";
 // Components
 import { SidebarIcons } from "./components/SidebarIcons";
 import { Directory } from "./components/Directory";

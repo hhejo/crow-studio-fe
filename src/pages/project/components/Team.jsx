@@ -1,7 +1,7 @@
 // Router
 import { useNavigate } from "react-router-dom";
 // Toast
-import { toast } from "react-toastify";
+import { alertToast, toastType } from "../../../toast";
 // Styled
 import styled from "styled-components";
 // Icon
@@ -21,7 +21,11 @@ export const Team = (props) => {
       >
         <div className="text-xl font-bold text-white my-1">Team</div>
         <div className="mt-1 flex items-center">
-          <IcSpan onClick={() => toast.warning("현재 지원하지 않는 기능")}>
+          <IcSpan
+            onClick={() =>
+              alertToast(toastType.warning, "현재 지원하지 않는 기능")
+            }
+          >
             <IcAddTeam className="h-[15px]" alt="IcAddTeam" />
           </IcSpan>
         </div>

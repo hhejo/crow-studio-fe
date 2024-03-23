@@ -9,7 +9,7 @@ import { auth, firestore } from "../../firebase";
 import { setCurrentUser } from "../../redux/user-slice";
 import { startLoading, stopLoading } from "../../redux/global-slice";
 // Toast
-import { toast } from "react-toastify";
+import { alertToast, toastType } from "../../toast";
 // Components
 import { SignupForm } from "./SignupForm";
 import { TitleWithLogo } from "../../components/TitleWithLogo";
@@ -30,13 +30,13 @@ const Signup = () => {
       const docRef = await addDoc(collection(firestore, "users"), userToAdd); // 3. firestore의 users 컬렉션에 회원가입 유저 추가하고 해당 document 받기
       const currentUser = { ...user, docId: docRef.id }; // Redux에 저장할 회원가입 유저 정보
       dispatch(setCurrentUser(currentUser)); // 4. Redux에 회원가입한 유저 정보 저장. 현재 로그인한 유저가 됨
-      toast.success("회원가입 성공"); // 회원가입 성공 토스트
-      navigate("/teams", { replace: true }); // /teams로 리다이렉트하고 뒤로가기 방지
+      alertToast(toastType.success, "회원가입 성공");
+      navigate("/teams", { replace: true });
     } catch (error) {
       const { code, message } = error; // 회원가입 에러
       if (code === "auth/email-already-in-use")
-        toast.warning("이미 사용중인 이메일");
-      else toast.error("회원가입 오류"); // 기타 에러
+        alertToast(toastType.warning, "이미 사용중인 이메일");
+      else alertToast(toastType.error, "회원가입 오류"); // 기타 에러
       console.error(message);
     } finally {
       dispatch(stopLoading()); // 로딩 화면 종료

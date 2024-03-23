@@ -1,7 +1,7 @@
 // React
 import { useState, useEffect } from "react";
 // Toast
-import { toast } from "react-toastify";
+import { alertToast, toastType } from "../../../toast";
 // Icon
 import { BsCircleFill } from "react-icons/bs";
 
@@ -40,10 +40,11 @@ export const Git = (props) => {
 
   const createNewBranchHandler = () => {
     if (newBranch.length === 0) {
-      toast.warning("브랜치 이름을 입력");
+      alertToast(toastType.warning, "브랜치 이름을 입력");
       return;
     }
-    toast.success("신규 브랜치 생성 완료");
+    // alertToast(toastType.success, '신규 브랜치 생성 완료')
+    alertToast(toastType.warning, "현재 지원하지 않는 기능");
     setNewBranch("");
     // const gitData = { branchName: newBranchName };
     // gitApi
@@ -59,10 +60,10 @@ export const Git = (props) => {
   // Commit, Commit And Push
   const commitHandler = (type) => {
     if (commitMsg.length === 0) {
-      toast.warning("Commit 메시지를 입력");
+      alertToast(toastType.warning, "Commit 메시지를 입력");
       return;
     }
-    toast.warning("현재 지원하지 않는 기능");
+    alertToast(toastType.warning, "현재 지원하지 않는 기능");
     setCommitMsg("");
     return;
     // if (type === "commit") toast.success("Commit 성공");

@@ -17,6 +17,7 @@ export const TeamsListItem = (props) => {
             {leaderNickname}
           </div>
         </div>
+
         {/* 팀원들 */}
         <div className="flex md:flex-row flex-col">
           {myTeammates.map((nickname, i) => (

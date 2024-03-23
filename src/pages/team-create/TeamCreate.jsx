@@ -8,7 +8,7 @@ import { firestore } from "../../firebase";
 // Slice
 import { startLoading, stopLoading } from "../../redux/global-slice";
 // Toast
-import { toast } from "react-toastify";
+import { alertToast, toastType } from "../../toast";
 // Components
 import { TeamCreateForm } from "./TeamCreateForm";
 
@@ -51,7 +51,7 @@ const TeamCreate = () => {
       const { id: projectDocId } = await addDoc(ProjectsColRef, projectToAdd); // 3. firestore의 projects 컬렉션에 생성된 프로젝트 추가
       const updatePjtDocIdField = { projectDocId };
       await updateDoc(doc(firestore, "teams", teamDocId), updatePjtDocIdField); // 4. firestore의 teams 컬렉션에서 현재 생성된 팀의 projectDocId 필드를 생성된 프로젝트 projectDocId로 갱신
-      toast.success("팀 생성 완료");
+      alertToast(toastType.success, "팀 생성 완료");
       navigate("/teams", { replace: true });
     } catch (error) {
       console.error(error);

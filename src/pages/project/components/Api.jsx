@@ -1,7 +1,7 @@
 // React
 import { useRef, useState, useEffect } from "react";
 // Toast
-import { toast } from "react-toastify";
+import { alertToast, toastType } from "../../../toast";
 // Component
 import { SelectMethod } from "./ApiMethod";
 
@@ -37,7 +37,7 @@ export const Api = () => {
   };
 
   const sendApi = () => {
-    toast.warning("현재 지원하지 않는 기능");
+    alertToast(toastType.warning, "현재 지원하지 않는 기능");
     return;
     // const jsonRequest = JSON.parse(request);
     // const jsonHeader = JSON.parse(header);

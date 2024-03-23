@@ -51,7 +51,7 @@ const Teams = () => {
       data-aos="fade-in"
       className="m-3 mb-6 h-full flex flex-wrap justify-center items-center"
     >
-      <div className="mb-6 px-8 py-8 lg:w-4/5 w-fit max-w-[1000px] h-fit flex flex-col justify-cente border border-primary_-2_dark rounded-md overflow-auto">
+      <div className="mb-6 px-8 py-8 lg:w-4/5 w-fit max-w-[1000px] h-fit flex flex-col justify-center border border-primary_-2_dark rounded-md overflow-auto">
         <div className="text-4xl font-bold text-white pb-2 mb-5">
           나의 팀 목록
         </div>

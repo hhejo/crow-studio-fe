@@ -4,7 +4,7 @@ import { Fragment, useState } from "react";
 import { Combobox, Transition, Switch } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 // Toast
-import { toast } from "react-toastify";
+import { alertToast, toastType } from "../../../toast";
 
 // Combobox items
 const fonts = [
@@ -124,7 +124,7 @@ export const Settings = ({ setting, saveSetting, setSetting }) => {
   // 세팅 저장
   const trySave = () => {
     saveSetting();
-    toast.success("세팅이 저장되었습니다");
+    alertToast(toastType.success, "세팅 저장 완료");
   };
 
   return (

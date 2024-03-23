@@ -25,7 +25,7 @@ import { BsPencilFill } from "react-icons/bs";
 import { ReactComponent as IcNewFile } from "../../../assets/icons/ic_new_file.svg";
 import { ReactComponent as IcNewDir } from "../../../assets/icons/ic_new_dir.svg";
 // Toast
-import { toast } from "react-toastify";
+import { alertToast, toastType } from "../../../toast";
 // Sweet Alert
 import { swalOptions, MySwal } from "../../../sweet-alert";
 // Context Menu
@@ -94,14 +94,15 @@ export const Directory = (props) => {
     if (!result.isConfirmed) return;
     const { value: nameToCreate } = result;
     if (nameToCreate.length === 0) {
-      toast.warning("폴더 이름을 입력");
+      alertToast(toastType.warning, "폴더 이름을 입력");
       return;
     } else if (nameToCreate.length > 20) {
-      toast.warning("20자 이하로 입력");
+      // toast.warning("20자 이하로 입력");
+      alertToast(toastType.warning, "20자 이하로 입력");
       return;
     }
     if (nameToCreate.includes(".")) {
-      toast.warning("폴더 이름에 점(.)을 넣을 수 없음");
+      alertToast(toastType.warning, "폴더 이름에 점(.)을 넣을 수 없음");
       return;
     }
     addNewChildToNode(nameToCreate);
@@ -109,7 +110,7 @@ export const Directory = (props) => {
       const projectsDocRef = doc(firestore, "projects", projectDocId);
       const updateDirectoryField = { directory: myDirectory };
       await updateDoc(projectsDocRef, updateDirectoryField); // directory 필드 덮어쓰기
-      toast.success("폴더 생성 성공");
+      alertToast(toastType.success, "폴더 생성 성공");
     } catch (error) {
       console.error(error);
     }
@@ -122,14 +123,14 @@ export const Directory = (props) => {
     if (!result.isConfirmed) return;
     const { value: nameToCreate } = result;
     if (nameToCreate.length === 0) {
-      toast.warning("파일 이름을 입력");
+      alertToast(toastType.warning, "파일 이름을 입력");
       return;
     } else if (nameToCreate.length > 20) {
-      toast.warning("20자 이하로 입력");
+      alertToast(toastType.warning, "20자 이하로 입력");
       return;
     }
     if (!nameToCreate.includes(".")) {
-      toast.warning("확장자까지 유효하게 입력해야 함");
+      alertToast(toastType.warning, "확장자까지 유효하게 입력해야 함");
       return;
     }
     addNewChildToNode(nameToCreate);
@@ -137,7 +138,7 @@ export const Directory = (props) => {
       const projectsDocRef = doc(firestore, "projects", projectDocId);
       const updateDirectoryField = { directory: myDirectory };
       await updateDoc(projectsDocRef, updateDirectoryField); // directory 필드 덮어쓰기
-      toast.success("파일 생성 성공");
+      alertToast(toastType.success, "파일 생성 성공");
     } catch (error) {
       console.error(error);
     }
@@ -151,20 +152,20 @@ export const Directory = (props) => {
     if (!res.isConfirmed) return;
     const { value: nameToUpdate } = res;
     if (nameToUpdate.length === 0) {
-      toast.warning("변경할 이름을 입력해야 함");
+      alertToast(toastType.warning, "변경할 이름을 입력해야 함");
       return;
     } else if (nameToUpdate.length > 20) {
-      toast.warning("20자 이하로 입력");
+      alertToast(toastType.warning, "20자 이하로 입력");
       return;
     }
     if (selected.fileType === "folder") {
       if (nameToUpdate.includes(".")) {
-        toast.warning("폴더 이름에 점(.)을 넣을 수 없음");
+        alertToast(toastType.warning, "폴더 이름에 점(.)을 넣을 수 없음");
         return;
       }
     } else {
       if (!nameToUpdate.includes(".")) {
-        toast.warning("확장자까지 유효하게 입력해야 함");
+        alertToast(toastType.warning, "확장자까지 유효하게 입력해야 함");
         return;
       }
     }
@@ -196,7 +197,7 @@ export const Directory = (props) => {
       const updateDirectoryField = { directory: myDirectory };
       await updateDoc(projectsDocRef, updateDirectoryField); // directory 필드 덮어쓰기
       setSelected({ fileName: "", fileType: "", filePath: "" });
-      toast.success("이름 변경 성공");
+      alertToast(toastType.success, "이름 변경 성공");
     } catch (error) {
       console.error(error);
     }
@@ -231,7 +232,7 @@ export const Directory = (props) => {
       const updateDirectoryField = { directory: myDirectory };
       await updateDoc(projectsDocRef, updateDirectoryField); // directory 필드 덮어쓰기
       setSelected({ fileName: "", fileType: "", filePath: "" });
-      toast.success("삭제 성공");
+      alertToast(toastType.success, "삭제 성공");
     } catch (error) {
       console.error(error);
     }

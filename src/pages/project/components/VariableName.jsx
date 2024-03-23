@@ -1,7 +1,7 @@
 // React
 import { useState } from "react";
 // Toast
-import { toast } from "react-toastify";
+import { alertToast, toastType } from "../../../toast";
 
 export const VariableName = () => {
   const [variable, setVariable] = useState("");
@@ -24,7 +24,7 @@ export const VariableName = () => {
           className="mt-1 ml-[15px] text-xl text-white cursor-pointer hover:text-point_yellow transition"
           onClick={() => {
             clickHandler(li);
-            toast.success("클립보드에 복사 완료");
+            alertToast(toastType.success, "클립보드에 복사 완료");
           }}
         >
           {li}
@@ -36,7 +36,7 @@ export const VariableName = () => {
 
   const sendWord = (e) => {
     e.preventDefault();
-    toast.warning("현재 지원하지 않는 기능");
+    alertToast(toastType.warning, "현재 지원하지 않는 기능");
     return;
     // const body = JSON.stringify({ data: variable });
     // editorApi
