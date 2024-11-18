@@ -1,8 +1,6 @@
 # 까마귀 공방 (Crow Studio)
 
-**[프로젝트 상세·소감](https://sable-exhaust-9f0.notion.site/Crow-Studio-1caad688a104461482a87a5241230e2c?pvs=74)**
-
-**[배포 링크](https://crow-studio-fe.vercel.app/)**
+**[까마귀 공방](https://crow-studio-fe.vercel.app/)**
 
 ![까마귀 공방 프로젝트 화면](./images-readme/crow-studio-project.png)
 
@@ -548,3 +546,7 @@ const userToAdd = { ...basic, ...extra }; // firestore의 users 컬렉션에 추
 ## 8. 동작 GIF 모음
 
 [동작 GIF 모음](https://sable-exhaust-9f0.notion.site/GIF-d52fa869d94e4d21825f7390935594b6)
+
+[프로젝트 상세·소감](https://sable-exhaust-9f0.notion.site/Crow-Studio-1caad688a104461482a87a5241230e2c?pvs=74)
+
+- README로 이동 완료
