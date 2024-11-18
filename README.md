@@ -4,7 +4,7 @@
 
 **[배포 링크](https://crow-studio-fe.vercel.app/)**
 
-![까마귀 공방 프로젝트 화면](./images-readme/crow-studio-project-page.png)
+![까마귀 공방 프로젝트 화면](./images-readme/crow-studio-project.png)
 
 ## 0. 목차
 
